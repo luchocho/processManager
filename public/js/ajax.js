@@ -4,6 +4,10 @@ $('#new-process-sign').on('click', function() {
 	$('#new-process').toggle();
 });
 
+$('#edit-process').on('click', '#edit-process-close', function() {
+	$('#edit-process').toggle();
+});
+
 $('#new-process-form').submit(function(e) {
 	e.preventDefault();
 	var toDoItem = $(this).serialize();
@@ -29,15 +33,14 @@ $('#new-process-form').submit(function(e) {
 // Edit To Do Item
 
 $('#todo-list').on('click', '.edit-button', function() {
-	//$(this).parent().siblings('.edit-item-form').toggle();
-	console.log(this);
+
 	var actionUrl = "/todos/"+$(this).parent().siblings('span.lead').attr('id');
 	console.log(actionUrl);
 	$.get(actionUrl, function(data){
 		console.log(data);
 		$('#edit-process').html(
 			`
-			<h1>Editar Proceso</h1>
+			<h1><a id="edit-process-close" class="pull-left" href="#">x</a>Editar Proceso</h1>
 			<form action="/todos/${data._id}" method="POST" id="edit-process-form">
 				<div class="form-group">
 					<label for="name">Nombre del proceso</label>
@@ -45,15 +48,11 @@ $('#todo-list').on('click', '.edit-button', function() {
 				</div>
 				<div class="form-group">
 					<label for="client">Cliente</label>
-					<input type="text" name="todo[client]" class="form-control" value="${data.client.name}" id="client">
+					<input type="text" class="form-control" value="${data.client.name}" id="client" disabled>
 				</div>
-				<div class="form-group form-inline">
-					<label class="mr-sm-2" for="clientType">Tipo</label>
-					<select class="custom-select  mb-2 mr-sm-2 mb-sm-0" name="todo[clientType]" id="clientType" value="${data.client.clientType}">
-						<option value="1">Oro</option>
-						<option value="2">Plata</option>
-						<option value="3">Bronce</option>
-					</select>
+				<div class="form-group">
+					<label for="clientType">Tipo</label>
+					<input type="text" class="form-control" value="${data.client.clientType}" id="clientType" disabled>
 				</div>
 				<div class="form-group form-inline">
 					<label class="mr-sm-2" for="priority">Prioridad</label>
@@ -65,7 +64,7 @@ $('#todo-list').on('click', '.edit-button', function() {
 				</div>
 				<div class="form-group form-inline">
 					<label for="createAt">Inicio</label>
-					<input type="date" name="todo[createAt]" class="form-control" value="${moment(data.createAt).format('YYYY-MM-DD')}" id="createAt">
+					<input type="date" class="form-control" value="${moment(data.createAt).format('YYYY-MM-DD')}" id="createAt" disabled>
 				</div>
 				<div class="form-group form-inline">
 					<label for="dateDelivery">Entrega</label>
@@ -83,14 +82,12 @@ $('#todo-list').on('click', '.edit-button', function() {
 			</form>
 			`
 		)
-		$('#edit-process').toggle();
 	});
-
+	$('#edit-process').show();
 });
 
 $('#edit-process').on('submit', '#edit-process-form', function(e) {
 	e.preventDefault();
-	console.log('hola');
 	var toDoItem = $(this).serialize();
 	var actionUrl = $(this).attr('action');
 //	var $originalItem = $(this).parent('.list-group-item');

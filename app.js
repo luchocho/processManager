@@ -97,39 +97,75 @@ app.get("/todos/new", function(req, res){
 
 app.post("/todos", function(req, res){
  req.body.todo.name = req.sanitize(req.body.todo.name);
+
  var formData = req.body.todo;
- var clienData = {
+
+ var clientData = {
    name : formData.client,
    clientType : formData.clientType
  }
- Client.create(clienData, function(err, newClient){
+console.log("Antes de query");
+ Client.find({ name : clientData.name}, function(err, client){
+   console.log("Dentro de la query");
    if(err){
       console.log(err);
    } else {
-      formData.client = {
-          id : newClient._id,
-          name : newClient.name,
-          clientType : newClient.clientType
-      }
-      console.log('Crear TODO');
-      console.log('FormData');
-      console.log(formData);
-      console.log('newClient');
-      console.log(newClient);
-      Todo.create(formData, function(err, newTodo){
+     if(client.length){
+       console.log("entra a if");
+       console.log(client);
+       formData.client = {
+           id : client[0]._id,
+           name : client[0].name,
+           clientType : client[0].clientType
+       }
+       Todo.create(formData, function(err, newTodo){
+          if(err){
+            res.render("new");
+          } else {
+            console.log('Nuevo TOdo');
+            console.log(newTodo);
+            res.json(newTodo);
+          }
+       });
+
+     } else {
+       console.log("entra a else");
+       console.log(client);
+       Client.create(clientData, function(err, newClient){
          if(err){
-           res.render("new");
+            console.log(err);
          } else {
-           console.log('Nuevo TOdo');
-           console.log(newTodo);
-           res.json(newTodo);
-         }
-      });
-  }
- });
+            formData.client = {
+                id : newClient._id,
+                name : newClient.name,
+                clientType : newClient.clientType
+            }
+            console.log('Crear TODO');
+            console.log('FormData');
+            console.log(formData);
+            console.log('newClient');
+            console.log(newClient);
+            Todo.create(formData, function(err, newTodo){
+               if(err){
+                 res.render("new");
+               } else {
+                 console.log('Nuevo TOdo');
+                 console.log(newTodo);
+                 res.json(newTodo);
+               }
+            });
+        }
+       });
+     }
+
+   }
+
+ }).limit(1);
+
 });
 
 app.get("/todos/:id", function(req, res){
+console.log('Todos/id')  ;
 console.log(req.params.id);
  Todo.findById(req.params.id, function(err, todo){
    if(err){
@@ -148,6 +184,10 @@ console.log(req.params.id);
 });
 
 app.put("/todos/:id", function(req, res){
+  console.log('req.params.id');
+  console.log(req.params);
+  console.log('req.body.todo');
+  console.log(req.body.todo);
  Todo.findByIdAndUpdate(req.params.id, req.body.todo, {new: true}, function(err, todo){
    if(err){
      console.log(err);
