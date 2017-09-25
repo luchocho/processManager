@@ -12,14 +12,7 @@ $('#new-process-form').submit(function(e) {
 		$('#todo-list').append(
 			`
 			<li class="list-group-item">
-				<form action="/todos/${data._id}" method="POST" class="edit-item-form">
-					<div class="form-group">
-						<label for="${data._id}">Item Text</label>
-						<input type="text" value="${data.name}" name="todo[name]" class="form-control" id="${data._id}">
-					</div>
-					<button class="btn btn-primary">Update Item</button>
-				</form>
-				<span class="lead">
+				<span class="lead" id="${data._id}">
 					${data.name}
 				</span>
 				<div class="pull-right">
@@ -37,7 +30,8 @@ $('#new-process-form').submit(function(e) {
 
 $('#todo-list').on('click', '.edit-button', function() {
 	//$(this).parent().siblings('.edit-item-form').toggle();
-	var actionUrl = $(this).parent().siblings('.edit-item-form').attr('action');
+	console.log(this);
+	var actionUrl = "/todos/"+$(this).parent().siblings('span.lead').attr('id');
 	console.log(actionUrl);
 	$.get(actionUrl, function(data){
 		console.log(data);
@@ -51,12 +45,11 @@ $('#todo-list').on('click', '.edit-button', function() {
 				</div>
 				<div class="form-group">
 					<label for="client">Cliente</label>
-					<input type="text" name="todo[client]" class="form-control" value="${data.client}" id="client">
+					<input type="text" name="todo[client]" class="form-control" value="${data.client.name}" id="client">
 				</div>
 				<div class="form-group form-inline">
 					<label class="mr-sm-2" for="clientType">Tipo</label>
-					<select class="custom-select  mb-2 mr-sm-2 mb-sm-0" name="todo[clientType]" id="clientType">
-						<option selected>Elegir...</option>
+					<select class="custom-select  mb-2 mr-sm-2 mb-sm-0" name="todo[clientType]" id="clientType" value="${data.client.clientType}">
 						<option value="1">Oro</option>
 						<option value="2">Plata</option>
 						<option value="3">Bronce</option>
@@ -108,17 +101,10 @@ $('#edit-process').on('submit', '#edit-process-form', function(e) {
 		type: 'PUT',
 		//originalItem: $originalItem,
 		success: function(data) {
-			$('input#'+data._id).closest('.list-group-item').html(
+			$('span#'+data._id).closest('.list-group-item').html(
 
 				`
-				<form action="/todos/${data._id}" method="POST" class="edit-item-form">
-					<div class="form-group">
-						<label for="${data._id}">Item Text</label>
-						<input type="text" value="${data.name}" name="todo[name]" class="form-control" id="${data._id}">
-					</div>
-					<button class="btn btn-primary">Update Item</button>
-				</form>
-				<span class="lead">
+				<span class="lead" id="${data._id}">
 					${data.name}
 				</span>
 				<div class="pull-right">
@@ -163,14 +149,7 @@ $('#search').on('input', function(e) {
 			$('#todo-list').append(
 				`
 				<li class="list-group-item">
-					<form action="/todos/${todo._id}" method="POST" class="edit-item-form">
-						<div class="form-group">
-							<label for="${todo._id}">Item Text</label>
-							<input type="text" value="${todo.name}" name="todo[name]" class="form-control" id="${todo._id}">
-						</div>
-						<button class="btn btn-primary">Update Item</button>
-					</form>
-					<span class="lead">
+					<span class="lead" id="${data._id}">
 						${todo.name}
 					</span>
 					<div class="pull-right">

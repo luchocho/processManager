@@ -6,14 +6,7 @@
 			<ul class="list-group" id="todo-list">
 				<% todos.forEach(function(todo){ %>
 					<li class="list-group-item">
-						<form action="/todos/<%=todo._id%>" method="POST" class="edit-item-form">
-							<div class="form-group">
-								<label for="<%=todo._id%>">Item Text</label>
-								<input type="text" value="<%= todo.name %>" name="todo[name]" class="form-control" id="<%=todo._id%>">
-							</div>
-							<button class="btn btn-primary">Update Item</button>
-						</form>
-						<span class="lead">
+						<span class="lead" id="<%=todo._id%>">
 							<%= todo.name %>
 						</span>
 						<div class="pull-right">
@@ -42,9 +35,9 @@
 						<label class="mr-sm-2" for="clientType">Tipo</label>
   					<select class="custom-select  mb-2 mr-sm-2 mb-sm-0" name="todo[clientType]" id="clientType">
 					    <option selected>Elegir...</option>
-					    <option value="1">Oro</option>
-					    <option value="2">Plata</option>
-					    <option value="3">Bronce</option>
+					    <option value="Oro">Oro</option>
+					    <option value="Plata">Plata</option>
+					    <option value="Bronce">Bronce</option>
 					  </select>
 					</div>
 					<div class="form-group form-inline">
