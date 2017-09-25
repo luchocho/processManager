@@ -1,13 +1,15 @@
-// Create To Do Item
 
+// Muestra o oculta el form de creacion de proceso
 $('#new-process-sign').on('click', function() {
 	$('#new-process').toggle();
 });
 
+// oculta el form de editar el proceso
 $('#edit-process').on('click', '#edit-process-close', function() {
 	$('#edit-process').toggle();
 });
 
+// Create To Do Item
 $('#new-process-form').submit(function(e) {
 	e.preventDefault();
 	var toDoItem = $(this).serialize();
@@ -30,8 +32,7 @@ $('#new-process-form').submit(function(e) {
 	});
 });
 
-// Edit To Do Item
-
+//Carga el formulario con los datos ya existentes del proceso
 $('#todo-list').on('click', '.edit-button', function() {
 
 	var actionUrl = "/todos/"+$(this).parent().siblings('span.lead').attr('id');
@@ -86,6 +87,7 @@ $('#todo-list').on('click', '.edit-button', function() {
 	$('#edit-process').show();
 });
 
+// Update  del proceso
 $('#edit-process').on('submit', '#edit-process-form', function(e) {
 	e.preventDefault();
 	var toDoItem = $(this).serialize();
@@ -116,7 +118,6 @@ $('#edit-process').on('submit', '#edit-process-form', function(e) {
 });
 
 // Delete To Do Item
-
 $('#todo-list').on('submit', '.delete-item-form', function(e) {
 	e.preventDefault();
 	var confirmResponse = confirm('Are you sure?');
@@ -136,8 +137,24 @@ $('#todo-list').on('submit', '.delete-item-form', function(e) {
 	}
 });
 
-// Search functionality
+//Rellenar datos de cliente
+$('#client').on('focus', function(e) {
+	var dataList = $("#json-datalist");
+	var input = $("#client");
+	$.get("/client", function(data){
+		data.forEach(function(client){
+			var option = document.createElement('option');
+			option.value = client.name;
+			dataList[0].appendChild(option);
+		});
+	});
+});
 
+
+
+
+
+// Search functionality
 $('#search').on('input', function(e) {
 	e.preventDefault();
 	$.get(`/todos?keyword=${e.target.value}`, function(data) {

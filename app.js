@@ -99,26 +99,23 @@ app.post("/todos", function(req, res){
  req.body.todo.name = req.sanitize(req.body.todo.name);
 
  var formData = req.body.todo;
-
+//Creamos objeto con datos del cliente del formulario
  var clientData = {
    name : formData.client,
    clientType : formData.clientType
  }
-console.log("Antes de query");
+
  Client.find({ name : clientData.name}, function(err, client){
-   console.log("Dentro de la query");
    if(err){
       console.log(err);
    } else {
-     if(client.length){
-       console.log("entra a if");
-       console.log(client);
+     if(client.length){ //Si encuentra al cliente, setea los datos en el objeto
        formData.client = {
            id : client[0]._id,
            name : client[0].name,
            clientType : client[0].clientType
        }
-       Todo.create(formData, function(err, newTodo){
+       Todo.create(formData, function(err, newTodo){ //Crea el proceso sin actualizar los datos del cliente
           if(err){
             res.render("new");
           } else {
@@ -128,9 +125,7 @@ console.log("Antes de query");
           }
        });
 
-     } else {
-       console.log("entra a else");
-       console.log(client);
+     } else { //Si no encuentra el cliente, crea los datos del mismo con los datos del form
        Client.create(clientData, function(err, newClient){
          if(err){
             console.log(err);
@@ -145,7 +140,7 @@ console.log("Antes de query");
             console.log(formData);
             console.log('newClient');
             console.log(newClient);
-            Todo.create(formData, function(err, newTodo){
+            Todo.create(formData, function(err, newTodo){//crea el proceso luego de crear el cliente
                if(err){
                  res.render("new");
                } else {
@@ -181,6 +176,19 @@ console.log(req.params.id);
       }
    }
  });
+});
+
+
+app.get("/client", function(req, res){
+    console.log('recibe la llamada');
+    Client.find({},{name : 1}, function(err, clients){
+      if(err){
+        console.log(err);
+      } else {
+        console.log(clients);
+        res.json(clients);
+      }
+    });
 });
 
 app.put("/todos/:id", function(req, res){

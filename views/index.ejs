@@ -23,13 +23,15 @@
 			<div id="new-process">
 				<h1>Crear Proceso</h1>
 				<form action="/todos" method="POST" id="new-process-form">
+
 					<div class="form-group">
 						<label for="name">Nombre del proceso</label>
 						<input type="text" name="todo[name]" class="form-control" placeholder="Carretillero puerto" id="name">
 					</div>
 					<div class="form-group">
-						<label for="client">Cliente</label>
-						<input type="text" name="todo[client]" class="form-control" placeholder="Puerto Maderos BCN" id="client">
+						<label for="Cliente">Cliente</label>
+						<input type="text" name="todo[client]" class="form-control" id="client" list="json-datalist">
+						<datalist id="json-datalist"></datalist>
 					</div>
 					<div class="form-group form-inline">
 						<label class="mr-sm-2" for="clientType">Tipo</label>
