@@ -4,6 +4,7 @@ var express = require("express"),
     bodyParser = require("body-parser"),
     expressSanitizer = require("express-sanitizer"),
     methodOverride = require('method-override');
+    moment = require('moment');
 
 mongoose.connect("mongodb://localhost/todo_app");
 app.use(express.static('public'));
@@ -18,9 +19,11 @@ var todoSchema = new mongoose.Schema({
         id: { type: mongoose.Schema.Types.ObjectId,
               ref: "Client"},
         name: String,
-        clientType: String
+        clientType: String,
+        clientTypeNumber: Number
           },
   priority: String,
+  priorityNumber: Number,
   createAt: {type: Date, default: Date.now },
   dateDelivery: {type: Date, default: Date.now },
   dateEndProcess:  {type: Date, default: Date.now },
@@ -34,7 +37,8 @@ var todoSchema = new mongoose.Schema({
 
 var clientSchema = new mongoose.Schema({
   name: String,
-  clientType: String
+  clientType: String,
+  clientTypeNumber: Number
 });
 
 // var userSchema = new mongoose.Schema({
@@ -66,6 +70,43 @@ function escapeRegex(name) {
     return name.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
 };
 
+function orderTodos(req, res){
+  Todo.aggregate([
+        {
+          $project:
+              {
+                name:1,
+                priority:1,
+                priorityNumber:1,
+                office:1,
+                assignUser:1,
+                dateEndProcess:1,
+                dateDelivery:1,
+                createAt:1,
+                client:1,
+                dateDelivery:1,
+                tiempoRestante: {
+                        $subtract: [ "$dateDelivery" , new Date() ]
+                        }
+              }
+        },
+        {
+          $sort: {"client.clientTypeNumber":1, priorityNumber: 1 , tiempoRestante: 1}
+        }
+        ], function(err, todos){
+    if(err){
+      console.log(err);
+    } else {
+      if(req.xhr) {
+        console.log(todos);
+        res.json(todos);
+      } else {
+        res.render("index", {todos: todos});
+      }
+    }
+  });
+}
+
 app.get("/todos", function(req, res){
   if(req.query.keyword) {
     const regex = new RegExp(escapeRegex(req.query.keyword), 'gi');
@@ -77,17 +118,7 @@ app.get("/todos", function(req, res){
       }
     });
   } else {
-    Todo.find({}, function(err, todos){
-      if(err){
-        console.log(err);
-      } else {
-        if(req.xhr) {
-          res.json(todos);
-        } else {
-          res.render("index", {todos: todos});
-        }
-      }
-    });
+    orderTodos(req, res);
   }
 });
 
@@ -99,11 +130,38 @@ app.post("/todos", function(req, res){
  req.body.todo.name = req.sanitize(req.body.todo.name);
 
  var formData = req.body.todo;
+
+ switch(formData.clientTypeNumber){
+   case "1":
+             formData.clientType = "Oro";
+             break;
+   case "2":
+             formData.clientType = "Plata";
+             break;
+   case "3":
+             formData.clientType = "Bronce";
+             break;
+ }
 //Creamos objeto con datos del cliente del formulario
  var clientData = {
    name : formData.client,
-   clientType : formData.clientType
+   clientType: formData.clientType,
+   clientTypeNumber : formData.clientTypeNumber
  }
+switch(formData.priorityNumber){
+  case "1":
+            formData.priority = "Alta";
+            break;
+  case "2":
+            formData.priority = "Media";
+            break;
+  case "3":
+            formData.priority = "Baja";
+            break;
+}
+console.log("FormData3");
+console.log(formData);
+console.log(clientData);
 
  Client.find({ name : clientData.name}, function(err, client){
    if(err){
@@ -113,7 +171,8 @@ app.post("/todos", function(req, res){
        formData.client = {
            id : client[0]._id,
            name : client[0].name,
-           clientType : client[0].clientType
+           clientType: client[0].clientType,
+           clientTypeNumber : client[0].clientTypeNumber
        }
        Todo.create(formData, function(err, newTodo){ //Crea el proceso sin actualizar los datos del cliente
           if(err){
@@ -133,7 +192,8 @@ app.post("/todos", function(req, res){
             formData.client = {
                 id : newClient._id,
                 name : newClient.name,
-                clientType : newClient.clientType
+                clientType: newClient.clientType,
+                clientTypeNumber : newClient.clientTypeNumber
             }
             console.log('Crear TODO');
             console.log('FormData');
@@ -195,6 +255,30 @@ app.put("/todos/:id", function(req, res){
   console.log('req.params.id');
   console.log(req.params);
   console.log('req.body.todo');
+  console.log(req.body.todo);
+  switch(req.body.todo.priorityNumber){
+    case "1":
+              req.body.todo.priority = "Alta";
+              break;
+    case "2":
+              req.body.todo.priority = "Media";
+              break;
+    case "3":
+              req.body.todo.priority = "Baja";
+              break;
+  }
+  // switch(req.body.todo.clientTypeNumber){
+  //   case "1":
+  //             req.body.todo.clientType = "Oro";
+  //             break;
+  //   case "2":
+  //             req.body.todo.clientType = "Plata";
+  //             break;
+  //   case "3":
+  //             req.body.todo.clientType = "Bronce";
+  //             break;
+  // }
+  console.log('req.body.todo2');
   console.log(req.body.todo);
  Todo.findByIdAndUpdate(req.params.id, req.body.todo, {new: true}, function(err, todo){
    if(err){
