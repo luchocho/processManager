@@ -1,6 +1,9 @@
 
 // Muestra o oculta el form de creacion de proceso
 $('#new-process-sign').on('click', function() {
+	if($('#edit-process').css("display") !== "none" ){
+		return false;
+	}
 	$('#new-process').toggle();
 });
 
@@ -12,35 +15,36 @@ $('#edit-process').on('click', '#edit-process-close', function() {
 // Create To Do Item
 $('#new-process-form').submit(function(e) {
 	e.preventDefault();
-
 	var toDoItem = $(this).serialize();
-	console.log(toDoItem);
-
+	$('#todo-list').html('');
 	$.post('/todos', toDoItem, function(data) {
-		$('#todo-list').append(
-			`
-			<li class="list-group-item">
-				<span class="lead" id="${data._id}">
-					${data.name}
-				</span>
-				<div class="pull-right">
-					<button class="btn btn-sm btn-warning edit-button">Edit</button>
-				</div>
-				<div class="clearfix"></div>
-			</li>
-			`
-			);
-			$('#new-process').toggle();
+		data.forEach(function(todo){
+			$('#todo-list').append(
+				`
+				<li class="list-group-item" id="list${todo._id}">
+					<span class="lead" id="${todo._id}">
+						${todo.name}
+					</span>
+					<div class="pull-right">
+						<button class="btn btn-sm btn-warning edit-button">Edit</button>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+				`
+				);
+		});
+		calcSLATime(data);
+		$('#new-process').toggle();
 	});
 });
 
 //Carga el formulario con los datos ya existentes del proceso
 $('#todo-list').on('click', '.edit-button', function() {
-
+	if($('#new-process').css("display") !== "none" ){
+		return false;
+	}
 	var actionUrl = "/todos/"+$(this).parent().siblings('span.lead').attr('id');
-	console.log(actionUrl);
 	$.get(actionUrl, function(data){
-		console.log(data);
 		$('#edit-process').html(
 			`
 			<h1><a id="edit-process-close" class="pull-left" href="#">x</a>Editar Proceso</h1>
@@ -100,26 +104,28 @@ $('#edit-process').on('submit', '#edit-process-form', function(e) {
 	e.preventDefault();
 	var toDoItem = $(this).serialize();
 	var actionUrl = $(this).attr('action');
-//	var $originalItem = $(this).parent('.list-group-item');
-	console.log(toDoItem);
 	$.ajax({
 		url: actionUrl,
 		data: toDoItem,
 		type: 'PUT',
-		//originalItem: $originalItem,
 		success: function(data) {
-			$('span#'+data._id).closest('.list-group-item').html(
-
-				`
-				<span class="lead" id="${data._id}">
-					${data.name}
-				</span>
-				<div class="pull-right">
-					<button class="btn btn-sm btn-warning edit-button">Edit</button>
-				</div>
-				<div class="clearfix"></div>
-				`
-			);
+			$('#todo-list').html('');
+			data.forEach(function(todo){
+				$('#todo-list').append(
+					`
+					<li class="list-group-item" id="list${todo._id}">
+						<span class="lead" id="${todo._id}">
+								${todo.name}
+							</span>
+							<div class="pull-right">
+								<button class="btn btn-sm btn-warning edit-button">Edit</button>
+							</div>
+							<div class="clearfix"></div>
+						</li>
+					`
+				);
+			});
+			calcSLATime(data);
 		}
 	});
 	$('#edit-process').toggle();
@@ -147,14 +153,28 @@ $('#todo-list').on('submit', '.delete-item-form', function(e) {
 
 //Rellenar datos de cliente
 $('#client').on('focus', function(e) {
+	$("#json-datalist").html('');
 	var dataList = $("#json-datalist");
-	var input = $("#client");
+	//var input = $("#client");
 	$.get("/client", function(data){
 		data.forEach(function(client){
 			var option = document.createElement('option');
 			option.value = client.name;
 			dataList[0].appendChild(option);
 		});
+	});
+});
+
+//Rellena el campo tipo de empresa al elegir una empresa ya existente del form crear proceso
+$('#client').on('blur', function(e) {
+	$.get(`/client?name=${e.target.value}`, function(client){
+		if(client.length !== 0){
+			$("#clientTypeNumber option").each(function(el){
+				if((el) == client[0].clientTypeNumber){
+					($(this)).attr('selected', true)
+				}
+			});
+		}
 	});
 });
 
@@ -167,7 +187,7 @@ $('#search').on('input', function(e) {
 			$('#todo-list').append(
 				`
 				<li class="list-group-item">
-					<span class="lead" id="${data._id}">
+					<span class="lead" id="${todo._id}">
 						${todo.name}
 					</span>
 					<div class="pull-right">
@@ -180,6 +200,47 @@ $('#search').on('input', function(e) {
 		});
 	});
 });
+
+//Calcula el tiempo restande de un proceso y asigna los estilos
+function calcSLATime(todos){
+	todos.forEach(function(todo){
+		// console.log(todo.dateDelivery.diff(todo.createAt, 'days'), ' dias de diferencia');
+		var fecha2 = moment(todo.dateDelivery);
+		var fecha1 = moment(todo.createAt);
+		var total = fecha2.diff(fecha1, 'minutes');
+		var restante = ((todo.tiempoRestante-7200000)/1000/60);
+		var restante = (restante*100)/total;
+		//SLA = Tiempo consumido del proceso
+		var sla = (100-restante);
+		console.log('div?');
+		console.log($('#list'+todo._id));
+		switch(true) {
+			case (sla >= 100):
+												$('#list'+todo._id).css("backgroundColor", "white");
+												break;
+			case (sla >= 75):
+												$('#list'+todo._id).addClass("dangerTime");
+												break;
+			case (sla >= 50):
+												$('#list'+todo._id).addClass("warningTime");
+												break;
+			case (sla >= 0):
+												$('#list'+todo._id).addClass("safeTime");
+												break;
+		}
+	});
+}
+
+//LLamada al calculo del tiempo SLA cada 30 mins
+$(document).ready(function() {
+		console.log('entra a ready');
+		$.get('/todos', function(todos) {
+    	calcSLATime(todos);
+		});
+		setInterval('calcSLATime()', 1800000);
+		});
+
+
 
 //prueba
 // $.get('/todos', function(data){

@@ -98,7 +98,6 @@ function orderTodos(req, res){
       console.log(err);
     } else {
       if(req.xhr) {
-        console.log(todos);
         res.json(todos);
       } else {
         res.render("index", {todos: todos});
@@ -159,10 +158,6 @@ switch(formData.priorityNumber){
             formData.priority = "Baja";
             break;
 }
-console.log("FormData3");
-console.log(formData);
-console.log(clientData);
-
  Client.find({ name : clientData.name}, function(err, client){
    if(err){
       console.log(err);
@@ -178,9 +173,8 @@ console.log(clientData);
           if(err){
             res.render("new");
           } else {
-            console.log('Nuevo TOdo');
-            console.log(newTodo);
-            res.json(newTodo);
+            orderTodos(req,res);
+            //res.json(newTodo);
           }
        });
 
@@ -195,40 +189,28 @@ console.log(clientData);
                 clientType: newClient.clientType,
                 clientTypeNumber : newClient.clientTypeNumber
             }
-            console.log('Crear TODO');
-            console.log('FormData');
-            console.log(formData);
-            console.log('newClient');
-            console.log(newClient);
             Todo.create(formData, function(err, newTodo){//crea el proceso luego de crear el cliente
                if(err){
                  res.render("new");
                } else {
-                 console.log('Nuevo TOdo');
-                 console.log(newTodo);
-                 res.json(newTodo);
+                 orderTodos(req,res);
+                 //res.json(newTodo);
                }
             });
         }
        });
      }
-
    }
 
  }).limit(1);
-
 });
 
 app.get("/todos/:id", function(req, res){
-console.log('Todos/id')  ;
-console.log(req.params.id);
  Todo.findById(req.params.id, function(err, todo){
    if(err){
      console.log(err);
      res.redirect("/")
    } else {
-     console.log("Busca un todo");
-     console.log(todo);
       if(req.xhr) {
         res.json(todo);
       } else {
@@ -241,21 +223,29 @@ console.log(req.params.id);
 
 app.get("/client", function(req, res){
     console.log('recibe la llamada');
-    Client.find({},{name : 1}, function(err, clients){
-      if(err){
-        console.log(err);
-      } else {
-        console.log(clients);
-        res.json(clients);
-      }
-    });
+    if(req.query.name) {
+      Client.find({name: req.query.name},{ clientTypeNumber: 1}, function(err, client){
+        if(err){
+          console.log(err);
+        } else {
+          console.log(client);
+          res.json(client);
+        }
+      });
+    } else {
+      Client.find({},{name : 1}, function(err, clients){
+        if(err){
+          console.log(err);
+        } else {
+          console.log(clients);
+          res.json(clients);
+        }
+      });
+    }
 });
 
+
 app.put("/todos/:id", function(req, res){
-  console.log('req.params.id');
-  console.log(req.params);
-  console.log('req.body.todo');
-  console.log(req.body.todo);
   switch(req.body.todo.priorityNumber){
     case "1":
               req.body.todo.priority = "Alta";
@@ -267,24 +257,11 @@ app.put("/todos/:id", function(req, res){
               req.body.todo.priority = "Baja";
               break;
   }
-  // switch(req.body.todo.clientTypeNumber){
-  //   case "1":
-  //             req.body.todo.clientType = "Oro";
-  //             break;
-  //   case "2":
-  //             req.body.todo.clientType = "Plata";
-  //             break;
-  //   case "3":
-  //             req.body.todo.clientType = "Bronce";
-  //             break;
-  // }
-  console.log('req.body.todo2');
-  console.log(req.body.todo);
  Todo.findByIdAndUpdate(req.params.id, req.body.todo, {new: true}, function(err, todo){
    if(err){
      console.log(err);
    } else {
-      res.json(todo);
+      orderTodos(req, res);
    }
  });
 });

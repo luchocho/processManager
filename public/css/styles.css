@@ -12,13 +12,22 @@ body {
   display: none;
 }
 
-.form-inline {
+/*.form-inline {
   width: auto;
   display: inline-block;
-}
+}*/
 /*.form-inline label {
   width: 70px;
 }*/
 .hidden{
   display: none;
+}
+.warningTime{
+  background-color: rgba(255,255,0,.3)
+}
+.dangerTime{
+  background-color: rgba(255,0,0,.3)
+}
+.safeTime{
+  background-color: rgba(0,255,0,.2)
 }

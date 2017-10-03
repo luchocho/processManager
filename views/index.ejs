@@ -5,7 +5,7 @@
 			<h1>Procesos Abiertos<a id="new-process-sign" class="pull-right" href="#">+</a></h1>
 			<ul class="list-group" id="todo-list">
 				<% todos.forEach(function(todo){ %>
-					<li class="list-group-item">
+					<li class="list-group-item" id="list<%=todo._id%>" >
 						<span class="lead" id="<%=todo._id%>">
 							<%= todo.name %>
 						</span>
@@ -28,14 +28,28 @@
 						<label for="name">Nombre del proceso</label>
 						<input type="text" name="todo[name]" class="form-control" placeholder="Carretillero puerto" id="name">
 					</div>
+
+					<div class="d-flex p-2" style="border-style: solid; border-color: black; border-width: 1px">
+						I'm a flexbox container!
+					</div>
+					<div class="" style="border-style: solid; border-color: black; border-width: 1px;">
+
+							<div class="p-2">Flex item 1</div>
+  						<div class="p-2">Flex item 2</div>
+  						<div class="p-2">Flex item 3</div>
+
+					</div>
+
 					<div class="form-group">
-						<label for="Cliente">Cliente</label>
+						<label for="client">Cliente</label>
 						<input type="text" name="todo[client]" class="form-control" id="client" list="json-datalist">
 						<datalist id="json-datalist"></datalist>
 					</div>
 					<div class="form-group form-inline">
-						<label class="mr-sm-2" for="clientTypeNumber">Tipo</label>
-  					<select class="custom-select  mb-2 mr-sm-2 mb-sm-0" name="todo[clientTypeNumber]" id="clientTypeNumber">
+						<!-- <label class="mr-sm-2" for="clientTypeNumber">Tipo</label> -->
+  					<!-- <select class="custom-select mb-2 mr-sm-2 mb-sm-0" name="todo[clientTypeNumber]" id="clientTypeNumber"> -->
+						<label class="" for="clientTypeNumber">Tipo</label>
+						<select class="custom-select" name="todo[clientTypeNumber]" id="clientTypeNumber">
 					    <option selected>Elegir...</option>
 					    <option value="1">Oro</option>
 					    <option value="2">Plata</option>
@@ -53,7 +67,7 @@
 					</div>
 					<div class="form-group form-inline">
 						<label for="createAt">Inicio</label>
-						<input type="date" name="todo[createAt]" class="form-control" placeholder="13/09/2017" id="createAt">
+						<input type="date" name="todo[createAt]" class="form-control" value="<%=moment().format('YYYY-MM-DD') %>" id="createAt">
 					</div>
 					<div class="form-group form-inline">
 						<label for="dateDelivery">Entrega</label>
