@@ -26,7 +26,7 @@ $('#new-process-form').submit(function(e) {
 						${todo.name}
 					</span>
 					<div class="pull-right">
-						<button class="btn btn-sm btn-warning edit-button">Edit</button>
+						<button class="btn btn-sm btn-primary edit-button">Editar</button>
 					</div>
 					<div class="clearfix"></div>
 				</li>
@@ -49,48 +49,67 @@ $('#todo-list').on('click', '.edit-button', function() {
 			`
 			<h1><a id="edit-process-close" class="pull-left" href="#">x</a>Editar Proceso</h1>
 			<form action="/todos/${data._id}" method="POST" id="edit-process-form">
-				<div class="form-group">
-					<label for="name">Nombre del proceso</label>
-					<input type="text" name="todo[name]" class="form-control" value="${data.name}" id="name">
+				<div class="row">
+					<div class="form-group col-md-12">
+						<label class="col-md-6" for="name">Nombre del proceso</label>
+						<input type="text" name="todo[name]" class="form-control col-md-9" value="${data.name}" id="name">
+					</div>
 				</div>
-				<div class="form-group">
-					<label for="client">Cliente</label>
-					<input type="text" class="form-control" value="${data.client.name}" id="client" disabled>
+				<div class="row">
+					<div class="form-group col-md-8">
+						<label for="client" class="col-md-3">Cliente</label>
+						<input type="text" class="form-control col-md-9" value="${data.client.name}" id="client" disabled>
+					</div>
+					<div class="form-group col-md-4">
+						<label class="col-md-3" for="clientTypeNumber">Tipo</label>
+						<input type="number" class="form-control hidden" value="${data.client.clientTypeNumber}" id="clientTypeNumber" disabled>
+						<input type="text" class="form-control col-md-9" value="${data.client.clientType}" id="clientType" disabled>
+					</div>
 				</div>
-				<div class="form-group">
-					<label for="clientTypeNumber">Tipo</label>
-					<input type="number" class="form-control hidden" value="${data.client.clientTypeNumber}" id="clientTypeNumber" disabled>
-					<input type="text" class="form-control" value="${data.client.clientType}" id="clientType" disabled>
+				<div class="row">
+					<div class="form-group col-md-6">
+						<label class="col-md-3" for="priorityNumber">Prioridad</label>
+						<select class="form-control col-md-9" name="todo[priorityNumber]" id="priorityNumber" value="${data.priorityNumber}">
+							<option value="1">Alta</option>
+							<option value="2">Normal</option>
+							<option value="3">Baja</option>
+						</select>
+					</div>
+					<div class="form-group col-md-6">
+						<label class="col-md-3" for="selection">Selección</label>
+						<input type="text" class="form-control col-md-9" value="${data.processType}" id="selection" disabled>
+					</div>
 				</div>
-				<div class="form-group form-inline">
-					<label class="mr-sm-2" for="priorityNumber">Prioridad</label>
-					<select class="custom-select  mb-2 mr-sm-2 mb-sm-0" name="todo[priorityNumber]" id="priorityNumber" value="${data.priorityNumber}">
-						<option value="1">Alta</option>
-						<option value="2">Normal</option>
-						<option value="3">Baja</option>
-					</select>
+				<div class="row">
+					<div class="form-group col-md-6">
+						<label class="col-md-3" for="createAt">Inicio</label>
+						<input type="date" class="form-control col-md-9" value="${moment(data.createAt).format('YYYY-MM-DD')}" id="createAt" disabled>
+					</div>
+					<div class="form-group col-md-6">
+						<label class="col-md-3" for="dateDelivery">Entrega</label>
+						<input type="date" name="todo[dateDelivery]" class="form-control col-md-9" value="${moment(data.dateDelivery).format('YYYY-MM-DD')}" id="dateDelivery">
+					</div>
 				</div>
-				<div class="form-group form-inline">
-					<label for="createAt">Inicio</label>
-					<input type="date" class="form-control" value="${moment(data.createAt).format('YYYY-MM-DD')}" id="createAt" disabled>
+
+				<div class="row">
+					<div class="form-group col-md-6">
+						<label class="col-md-3" for="office">Oficina</label>
+						<input type="text" name="todo[office]" class="form-control col-md-9" value="${data.office}" id="office">
+					</div>
+					<div class="form-group col-md-6">
+						<label class="col-md-3" for="assignUser">Responsable</label>
+						<input type="text" name="todo[assignUser]" class="form-control col-md-9" value="${data.assignUser}" id="assignUser">
+					</div>
 				</div>
-				<div class="form-group form-inline">
-					<label for="dateDelivery">Entrega</label>
-					<input type="date" name="todo[dateDelivery]" class="form-control" value="${moment(data.dateDelivery).format('YYYY-MM-DD')}" id="dateDelivery">
-				</div>
-				<div class="form-group">
-					<label for="office">Oficina</label>
-					<input type="text" name="todo[office]" class="form-control" value="${data.office}" id="office">
-				</div>
-				<div class="form-group">
-					<label for="assignUser">Responsable</label>
-					<input type="text" name="todo[assignUser]" class="form-control" value="${data.assignUser}" id="assignUser">
-				</div>
-				<button class="btn btn-primary">Actualizar</button>
+				<button class="btn btn-block btn-primary">Actualizar</button>
 			</form>
 			`
 		);
+		console.log('Prioridades');
+		console.log(data.priorityNumber);
 		$("#edit-process option").each(function(el){
+			console.log('Elemento');
+			console.log(el);
 			if((el+1) == data.priorityNumber){
 				($(this)).attr('selected', true)
 			}
@@ -118,7 +137,7 @@ $('#edit-process').on('submit', '#edit-process-form', function(e) {
 								${todo.name}
 							</span>
 							<div class="pull-right">
-								<button class="btn btn-sm btn-warning edit-button">Edit</button>
+								<button class="btn btn-sm btn-primary edit-button">Editar</button>
 							</div>
 							<div class="clearfix"></div>
 						</li>
@@ -191,7 +210,7 @@ $('#search').on('input', function(e) {
 						${todo.name}
 					</span>
 					<div class="pull-right">
-						<button class="btn btn-sm btn-warning edit-button">Edit</button>
+						<button class="btn btn-sm btn-primary edit-button">Editar</button>
 					</div>
 					<div class="clearfix"></div>
 				</li>

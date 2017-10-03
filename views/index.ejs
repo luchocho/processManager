@@ -10,7 +10,7 @@
 							<%= todo.name %>
 						</span>
 						<div class="pull-right">
-							<button class="btn btn-sm btn-warning edit-button">Edit</button>
+							<button class="btn btn-sm btn-primary edit-button">Editar</button>
 						</div>
 						<div class="clearfix"></div>
 					</li>
@@ -23,65 +23,74 @@
 			<div id="new-process">
 				<h1>Crear Proceso</h1>
 				<form action="/todos" method="POST" id="new-process-form">
-
-					<div class="form-group">
-						<label for="name">Nombre del proceso</label>
-						<input type="text" name="todo[name]" class="form-control" placeholder="Carretillero puerto" id="name">
+					<div class="row">
+						<div class="form-group col-md-12">
+							<label class="col-md-6" for="name">Nombre del proceso</label>
+							<input type="text" name="todo[name]" class="form-control col-md-9" placeholder="Carretillero puerto" id="name">
+						</div>
 					</div>
-
-					<div class="d-flex p-2" style="border-style: solid; border-color: black; border-width: 1px">
-						I'm a flexbox container!
+					<div class="row">
+						<div class="form-group col-md-8">
+							<label for="client" class="col-md-3">Cliente</label>
+							<input type="text" name="todo[client]" class="form-control col-md-9" id="client" list="json-datalist">
+							<datalist id="json-datalist"></datalist>
+						</div>
+						<div class="form-group col-md-4">
+							<label class="col-md-3" for="clientTypeNumber">Tipo</label>
+							<select class="form-control col-md-9" name="todo[clientTypeNumber]" id="clientTypeNumber">
+								<option selected>Elegir...</option>
+								<option value="1">Platino</option>
+								<option value="2">Oro</option>
+								<option value="3">Plata</option>
+								<option value="4">Bronce</option>
+								<option value="5">Estrategico/Clave</option>
+								<option value="6">A exito</option>
+							</select>
+						</div>
 					</div>
-					<div class="" style="border-style: solid; border-color: black; border-width: 1px;">
-
-							<div class="p-2">Flex item 1</div>
-  						<div class="p-2">Flex item 2</div>
-  						<div class="p-2">Flex item 3</div>
-
+					<div class="row">
+						<div class="form-group col-md-6">
+							<label class="col-md-3" for="priorityNumber">Prioridad</label>
+							<select class="form-control col-md-9" name="todo[priorityNumber]" id="priorityNumber">
+								<option selected>Elegir...</option>
+								<option value="1">Alta</option>
+								<option value="2">Normal</option>
+								<option value="3">Baja</option>
+							</select>
+						</div>
+						<div class="form-group col-md-6">
+							<label class="col-md-3" for="selection">Selección</label>
+							<select class="form-control col-md-9" name="todo[processType]" id="selection">
+								<option selected>Elegir...</option>
+								<option value="Recurrente">Recurrente</option>
+								<option value="Habitual">Habitual</option>
+								<option value="Agil y de expertise">Agil y de expertise</option>
+								<option value="Estrategica y de impacto">Estratégica y de impacto</option>
+								<option value="Otra">Otra</option>
+							</select>
+						</div>
 					</div>
-
-					<div class="form-group">
-						<label for="client">Cliente</label>
-						<input type="text" name="todo[client]" class="form-control" id="client" list="json-datalist">
-						<datalist id="json-datalist"></datalist>
+					<div class="row">
+						<div class="form-group col-md-6">
+							<label class="col-md-3" for="createAt">Inicio</label>
+							<input type="date" name="todo[createAt]" class="form-control col-md-9" value="<%=moment().format('YYYY-MM-DD') %>" id="createAt">
+						</div>
+						<div class="form-group col-md-6">
+							<label class="col-md-3" for="dateDelivery">Entrega</label>
+							<input type="date" name="todo[dateDelivery]" class="form-control col-md-9" id="dateDelivery">
+						</div>
 					</div>
-					<div class="form-group form-inline">
-						<!-- <label class="mr-sm-2" for="clientTypeNumber">Tipo</label> -->
-  					<!-- <select class="custom-select mb-2 mr-sm-2 mb-sm-0" name="todo[clientTypeNumber]" id="clientTypeNumber"> -->
-						<label class="" for="clientTypeNumber">Tipo</label>
-						<select class="custom-select" name="todo[clientTypeNumber]" id="clientTypeNumber">
-					    <option selected>Elegir...</option>
-					    <option value="1">Oro</option>
-					    <option value="2">Plata</option>
-					    <option value="3">Bronce</option>
-					  </select>
+					<div class="row">
+						<div class="form-group col-md-6">
+							<label class="col-md-3" for="office">Oficina</label>
+							<input type="text" name="todo[office]" class="form-control col-md-9" placeholder="Barcelona" id="office">
+						</div>
+						<div class="form-group col-md-6">
+							<label class="col-md-3" for="assignUser">Responsable</label>
+							<input type="text" name="todo[assignUser]" class="form-control col-md-9" placeholder="Usuario" id="assignUser">
+						</div>
 					</div>
-					<div class="form-group form-inline">
-						<label class="mr-sm-2" for="priorityNumber">Prioridad</label>
-  					<select class="custom-select  mb-2 mr-sm-2 mb-sm-0" name="todo[priorityNumber]" id="priorityNumber">
-					    <option selected>Elegir...</option>
-					    <option value="1">Alta</option>
-					    <option value="2">Normal</option>
-					    <option value="3">Baja</option>
-					  </select>
-					</div>
-					<div class="form-group form-inline">
-						<label for="createAt">Inicio</label>
-						<input type="date" name="todo[createAt]" class="form-control" value="<%=moment().format('YYYY-MM-DD') %>" id="createAt">
-					</div>
-					<div class="form-group form-inline">
-						<label for="dateDelivery">Entrega</label>
-						<input type="date" name="todo[dateDelivery]" class="form-control" placeholder="28/12/2018" id="dateDelivery">
-					</div>
-					<div class="form-group">
-						<label for="office">Oficina</label>
-						<input type="text" name="todo[office]" class="form-control" placeholder="Barcelona" id="office">
-					</div>
-					<div class="form-group">
-						<label for="assignUser">Responsable</label>
-						<input type="text" name="todo[assignUser]" class="form-control" placeholder="Fabiola Colotto" id="assignUser">
-					</div>
-					<button class="btn btn-primary">Crear</button>
+					<button class="btn btn-block btn-primary">Crear</button>
 				</form>
 			</div>
 		</div><!-- end create new process -->

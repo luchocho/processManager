@@ -78,6 +78,7 @@ function orderTodos(req, res){
                 name:1,
                 priority:1,
                 priorityNumber:1,
+                processType:1,
                 office:1,
                 assignUser:1,
                 dateEndProcess:1,
@@ -132,13 +133,22 @@ app.post("/todos", function(req, res){
 
  switch(formData.clientTypeNumber){
    case "1":
-             formData.clientType = "Oro";
+             formData.clientType = "Platino";
              break;
    case "2":
-             formData.clientType = "Plata";
+             formData.clientType = "Oro";
              break;
    case "3":
+             formData.clientType = "Plata";
+             break;
+   case "4":
              formData.clientType = "Bronce";
+             break;
+   case "5":
+             formData.clientType = "Estrategico/Clave";
+             break;
+   case "6":
+             formData.clientType = "A exito";
              break;
  }
 //Creamos objeto con datos del cliente del formulario
