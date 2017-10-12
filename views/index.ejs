@@ -2,15 +2,34 @@
 	<div class="row">
 		<!-- Show process -->
 		<div class="col-md-6">
-			<h1>Procesos Abiertos<a id="new-process-sign" class="pull-right" href="#">+</a></h1>
+			<div class="row">
+				<div class="col-md-9">
+					<h1>Procesos Abiertos</h1>
+				</div>
+				<div class="col-md-3">
+					<a id="new-process-sign" href="#"><h2 class="glyphicon glyphicon-plus"></h2></a>
+				</div>
+			</div>
 			<ul class="list-group" id="todo-list">
 				<% todos.forEach(function(todo){ %>
 					<li class="list-group-item" id="list<%=todo._id%>" >
-						<span class="lead" id="<%=todo._id%>">
-							<%= todo.name %>
-						</span>
+						<div class="row">
+							<div class="col-md-9">
+								<span class="lead" id="<%=todo._id%>">
+									<%= todo.name %>
+								</span>
+							</div>
+							<div class="col-md-3">
+								<img src="/img/medal.svg" class="svg <%= "svg"+todo.client.clientTypeNumber %>" alt="">
+							</div>
+						</div>
+						<div class="progress">
+							<div class="progress-bar progress-bar-striped active" id="progress<%=todo._id%>" role="progressbar"
+  								aria-valuenow="" aria-valuemin="0" aria-valuemax="100" style="width:">
+							</div>
+						</div>
 						<div class="pull-right">
-							<button class="btn btn-sm btn-primary edit-button">Editar</button>
+							<button class="btn btn-sm btn-primary edit-button" id="button<%=todo._id%>">Editar</button>
 						</div>
 						<div class="clearfix"></div>
 					</li>
@@ -22,7 +41,7 @@
 		<div class="col-md-6">
 			<div id="new-process">
 				<h1>Crear Proceso</h1>
-				<form action="/todos" method="POST" id="new-process-form">
+				<form action="/todos" method="POST" autocomplete="off" id="new-process-form">
 					<div class="row">
 						<div class="form-group col-md-12">
 							<label class="col-md-6" for="name">Nombre del proceso</label>
@@ -98,9 +117,73 @@
 		<!-- Edit Process -->
 		<div class="col-md-6">
 			<div id="edit-process">
+				<div class="row">
+					<div class="col-md-9">
+						<h1>Editar Proceso</h1>
+					</div>
+					<div class="col-md-3">
+						<a id="edit-process-close" href="#"><h2 class="glyphicon glyphicon-remove"></h2></a>
+					</div>
+				</div>
+				<form action="" method="POST" id="edit-process-form">
+					<div class="row">
+						<div class="form-group col-md-12">
+							<label class="col-md-6" for="name">Nombre del proceso</label>
+							<input type="text" name="todo[name]" class="form-control col-md-9" value="" id="name">
+						</div>
+					</div>
+					<div class="row">
+						<div class="form-group col-md-8">
+							<label for="client" class="col-md-3">Cliente</label>
+							<input type="text" class="form-control col-md-9" value="" id="client" disabled>
+						</div>
+						<div class="form-group col-md-4">
+							<label class="col-md-3" for="clientTypeNumber">Tipo</label>
+							<input type="number" class="form-control hidden" value="" id="clientTypeNumber" disabled>
+							<input type="text" class="form-control col-md-9" value="" id="clientType" disabled>
+						</div>
+					</div>
+					<div class="row">
+						<div class="form-group col-md-6">
+							<label class="col-md-3" for="priorityNumber">Prioridad</label>
+							<select class="form-control col-md-9" name="todo[priorityNumber]" id="priorityNumber" value="">
+								<option value="1">Alta</option>
+								<option value="2">Normal</option>
+								<option value="3">Baja</option>
+							</select>
+						</div>
+						<div class="form-group col-md-6">
+							<label class="col-md-3" for="selection">Selección</label>
+							<input type="text" class="form-control col-md-9" value="" id="selection" disabled>
+						</div>
+					</div>
+					<div class="row">
+						<div class="form-group col-md-6">
+							<label class="col-md-3" for="createAt">Inicio</label>
+							<input type="date" class="form-control col-md-9" value="" id="createAt" disabled>
+						</div>
+						<div class="form-group col-md-6">
+							<label class="col-md-3" for="dateDelivery">Entrega</label>
+							<input type="date" name="todo[dateDelivery]" class="form-control col-md-9" value="" id="dateDelivery">
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="form-group col-md-6">
+							<label class="col-md-3" for="office">Oficina</label>
+							<input type="text" name="todo[office]" class="form-control col-md-9" value="" id="office">
+						</div>
+						<div class="form-group col-md-6">
+							<label class="col-md-3" for="assignUser">Responsable</label>
+							<input type="text" name="todo[assignUser]" class="form-control col-md-9" value="" id="assignUser">
+						</div>
+					</div>
+					<button class="btn btn-block btn-primary">Actualizar</button>
+				</form>
 			</div>
 		</div><!-- end edit process -->
 
 	</div><!-- cierra row -->
+
 
 <% include partials/footer %>

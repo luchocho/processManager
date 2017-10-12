@@ -1,6 +1,7 @@
 /* Move content out from beneath bootstrap navbar */
 body {
   padding-top: 80px;
+  font-family: 'Nunito', sans-serif;
 }
 
 a:link {
@@ -15,6 +16,25 @@ a:link {
   display: none;
 }
 
+#new-process-sign{
+  margin-left: 50%;
+}
+
+#edit-process-close{
+  margin-left: 50%;
+  color: #e74c3c;
+}
+
+#new-process-form, #edit-process-form {
+  padding: 15px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.list-group-item{
+  margin-bottom:10px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
 /*.form-inline {
   width: auto;
   display: inline-block;
@@ -25,7 +45,7 @@ a:link {
 .hidden{
   display: none;
 }
-.warningTime{
+/*.warningTime{
   background-color: rgba(255,255,0,.3)
 }
 .dangerTime{
@@ -33,4 +53,37 @@ a:link {
 }
 .safeTime{
   background-color: rgba(0,255,0,.2)
+}*/
+.svg{
+  height: 40px;
+  width: 40px;
+  margin-bottom: 10px;
+}
+
+.svg1{
+    fill: #bdc3c7;
+}
+
+.svg1 .icon2, .svg1 .icon3{
+    fill: black;
+}
+
+.svg2{
+    fill: #f1c40f;
+}
+
+.svg3{
+    fill: ##bdc3c7;
+}
+
+.svg4{
+    fill: #d35400;
+}
+
+.svg5{
+    fill: #bdc3c7;
+}
+
+.svg6{
+    fill: #bdc3c7;
 }

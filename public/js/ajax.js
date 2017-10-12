@@ -21,10 +21,22 @@ $('#new-process-form').submit(function(e) {
 		data.forEach(function(todo){
 			$('#todo-list').append(
 				`
-				<li class="list-group-item" id="list${todo._id}">
-					<span class="lead" id="${todo._id}">
-						${todo.name}
-					</span>
+				<li class="list-group-item" id="list${todo._id}" >
+					<div class="row">
+						<div class="col-md-9">
+							<span class="lead" id="${todo._id}">
+								${todo.name}
+							</span>
+						</div>
+						<div class="col-md-3">
+							<img src="/img/medal.svg" class="svg svg${todo.client.clientTypeNumber}" alt="">
+						</div>
+					</div>
+					<div class="progress">
+						<div class="progress-bar progress-bar-striped active" id="progress${todo._id}" role="progressbar"
+								aria-valuenow="" aria-valuemin="0" aria-valuemax="100" style="width:">
+						</div>
+					</div>
 					<div class="pull-right">
 						<button class="btn btn-sm btn-primary edit-button">Editar</button>
 					</div>
@@ -43,73 +55,22 @@ $('#todo-list').on('click', '.edit-button', function() {
 	if($('#new-process').css("display") !== "none" ){
 		return false;
 	}
-	var actionUrl = "/todos/"+$(this).parent().siblings('span.lead').attr('id');
+	var buttonId = $(this).attr('id').split("button");
+	var actionUrl = "/todos/"+buttonId[1];
 	$.get(actionUrl, function(data){
-		$('#edit-process').html(
-			`
-			<h1><a id="edit-process-close" class="pull-left" href="#">x</a>Editar Proceso</h1>
-			<form action="/todos/${data._id}" method="POST" id="edit-process-form">
-				<div class="row">
-					<div class="form-group col-md-12">
-						<label class="col-md-6" for="name">Nombre del proceso</label>
-						<input type="text" name="todo[name]" class="form-control col-md-9" value="${data.name}" id="name">
-					</div>
-				</div>
-				<div class="row">
-					<div class="form-group col-md-8">
-						<label for="client" class="col-md-3">Cliente</label>
-						<input type="text" class="form-control col-md-9" value="${data.client.name}" id="client" disabled>
-					</div>
-					<div class="form-group col-md-4">
-						<label class="col-md-3" for="clientTypeNumber">Tipo</label>
-						<input type="number" class="form-control hidden" value="${data.client.clientTypeNumber}" id="clientTypeNumber" disabled>
-						<input type="text" class="form-control col-md-9" value="${data.client.clientType}" id="clientType" disabled>
-					</div>
-				</div>
-				<div class="row">
-					<div class="form-group col-md-6">
-						<label class="col-md-3" for="priorityNumber">Prioridad</label>
-						<select class="form-control col-md-9" name="todo[priorityNumber]" id="priorityNumber" value="${data.priorityNumber}">
-							<option value="1">Alta</option>
-							<option value="2">Normal</option>
-							<option value="3">Baja</option>
-						</select>
-					</div>
-					<div class="form-group col-md-6">
-						<label class="col-md-3" for="selection">Selección</label>
-						<input type="text" class="form-control col-md-9" value="${data.processType}" id="selection" disabled>
-					</div>
-				</div>
-				<div class="row">
-					<div class="form-group col-md-6">
-						<label class="col-md-3" for="createAt">Inicio</label>
-						<input type="date" class="form-control col-md-9" value="${moment(data.createAt).format('YYYY-MM-DD')}" id="createAt" disabled>
-					</div>
-					<div class="form-group col-md-6">
-						<label class="col-md-3" for="dateDelivery">Entrega</label>
-						<input type="date" name="todo[dateDelivery]" class="form-control col-md-9" value="${moment(data.dateDelivery).format('YYYY-MM-DD')}" id="dateDelivery">
-					</div>
-				</div>
+		$('#edit-process #name').val(data.name);
+		$('#edit-process #client').val(data.client.name);
+		$('#edit-process #client').val(data.client.name);
+		$('#edit-process #clientTypeNumber').val(data.client.clientTypeNumber);
+		$('#edit-process #clientType').val(data.client.clientType);
+		$('#edit-process #priorityNumber').val(data.priorityNumber);
+		$('#edit-process #selection').val(data.processType);
+		$('#edit-process #createAt').val(moment(data.createAt).format('YYYY-MM-DD'));
+		$('#edit-process #dateDelivery').val(moment(data.dateDelivery).format('YYYY-MM-DD'));
+		$('#edit-process #office').val(data.office);
+		$('#edit-process #assignUser').val(data.assignUser);
 
-				<div class="row">
-					<div class="form-group col-md-6">
-						<label class="col-md-3" for="office">Oficina</label>
-						<input type="text" name="todo[office]" class="form-control col-md-9" value="${data.office}" id="office">
-					</div>
-					<div class="form-group col-md-6">
-						<label class="col-md-3" for="assignUser">Responsable</label>
-						<input type="text" name="todo[assignUser]" class="form-control col-md-9" value="${data.assignUser}" id="assignUser">
-					</div>
-				</div>
-				<button class="btn btn-block btn-primary">Actualizar</button>
-			</form>
-			`
-		);
-		console.log('Prioridades');
-		console.log(data.priorityNumber);
 		$("#edit-process option").each(function(el){
-			console.log('Elemento');
-			console.log(el);
 			if((el+1) == data.priorityNumber){
 				($(this)).attr('selected', true)
 			}
@@ -132,15 +93,27 @@ $('#edit-process').on('submit', '#edit-process-form', function(e) {
 			data.forEach(function(todo){
 				$('#todo-list').append(
 					`
-					<li class="list-group-item" id="list${todo._id}">
-						<span class="lead" id="${todo._id}">
-								${todo.name}
-							</span>
-							<div class="pull-right">
-								<button class="btn btn-sm btn-primary edit-button">Editar</button>
+					<li class="list-group-item" id="list${todo._id}" >
+						<div class="row">
+							<div class="col-md-9">
+								<span class="lead" id="${todo._id}">
+									${todo.name}
+								</span>
 							</div>
-							<div class="clearfix"></div>
-						</li>
+							<div class="col-md-3">
+								<img src="/img/medal.svg" class="svg svg${todo.client.clientTypeNumber}" alt="">
+							</div>
+						</div>
+						<div class="progress">
+							<div class="progress-bar progress-bar-striped active" id="progress${todo._id}" role="progressbar"
+									aria-valuenow="" aria-valuemin="0" aria-valuemax="100" style="width:">
+							</div>
+						</div>
+						<div class="pull-right">
+							<button class="btn btn-sm btn-primary edit-button">Editar</button>
+						</div>
+						<div class="clearfix"></div>
+					</li>
 					`
 				);
 			});
@@ -205,10 +178,22 @@ $('#search').on('input', function(e) {
 		data.forEach(function(todo){
 			$('#todo-list').append(
 				`
-				<li class="list-group-item">
-					<span class="lead" id="${todo._id}">
-						${todo.name}
-					</span>
+				<li class="list-group-item" id="list${todo._id}" >
+					<div class="row">
+						<div class="col-md-9">
+							<span class="lead" id="${todo._id}">
+								${todo.name}
+							</span>
+						</div>
+						<div class="col-md-3">
+							<img src="/img/medal.svg" class="svg svg${todo.client.clientTypeNumber}" alt="">
+						</div>
+					</div>
+					<div class="progress">
+						<div class="progress-bar progress-bar-striped active" id="progress${todo._id}" role="progressbar"
+								aria-valuenow="" aria-valuemin="0" aria-valuemax="100" style="width:">
+						</div>
+					</div>
 					<div class="pull-right">
 						<button class="btn btn-sm btn-primary edit-button">Editar</button>
 					</div>
@@ -231,20 +216,31 @@ function calcSLATime(todos){
 		var restante = (restante*100)/total;
 		//SLA = Tiempo consumido del proceso
 		var sla = (100-restante);
-		console.log('div?');
-		console.log($('#list'+todo._id));
 		switch(true) {
 			case (sla >= 100):
-												$('#list'+todo._id).css("backgroundColor", "white");
+												// $('#list'+todo._id).css("backgroundColor", "white");
+												$('#progress'+todo._id).addClass('progress-bar-danger');
+												$('#progress'+todo._id).removeClass('active progress-bar-striped');
+												$('#progress'+todo._id).attr('aria-valuenow',Math.round(sla));
+												$('#progress'+todo._id).attr('style','width:'+Math.round(sla)+'%');
 												break;
 			case (sla >= 75):
-												$('#list'+todo._id).addClass("dangerTime");
+												// $('#list'+todo._id).addClass("dangerTime");
+												$('#progress'+todo._id).addClass('progress-bar-danger');
+												$('#progress'+todo._id).attr('aria-valuenow',Math.round(sla));
+												$('#progress'+todo._id).attr('style','width:'+Math.round(sla)+'%');
 												break;
 			case (sla >= 50):
-												$('#list'+todo._id).addClass("warningTime");
+												// $('#list'+todo._id).addClass("warningTime");
+												$('#progress'+todo._id).addClass('progress-bar-warning');
+												$('#progress'+todo._id).attr('aria-valuenow',Math.round(sla));
+												$('#progress'+todo._id).attr('style','width:'+Math.round(sla)+'%');
 												break;
 			case (sla >= 0):
-												$('#list'+todo._id).addClass("safeTime");
+												// $('#list'+todo._id).addClass("safeTime");
+												$('#progress'+todo._id).addClass('progress-bar-success');
+												$('#progress'+todo._id).attr('aria-valuenow',Math.round(sla));
+												$('#progress'+todo._id).attr('style','width:'+Math.round(sla)+'%');
 												break;
 		}
 	});
@@ -256,8 +252,45 @@ $(document).ready(function() {
 		$.get('/todos', function(todos) {
     	calcSLATime(todos);
 		});
-		setInterval('calcSLATime()', 1800000);
-		});
+		setInterval('calcSLATime(todos)', 1800000);
+});
+
+/*
+ * Replace all SVG images with inline SVG
+ */
+jQuery('img.svg').each(function(){
+    var $img = jQuery(this);
+    var imgID = $img.attr('id');
+    var imgClass = $img.attr('class');
+    var imgURL = $img.attr('src');
+
+    jQuery.get(imgURL, function(data) {
+        // Get the SVG tag, ignore the rest
+        var $svg = jQuery(data).find('svg');
+
+        // Add replaced image's ID to the new SVG
+        if(typeof imgID !== 'undefined') {
+            $svg = $svg.attr('id', imgID);
+        }
+        // Add replaced image's classes to the new SVG
+        if(typeof imgClass !== 'undefined') {
+            $svg = $svg.attr('class', imgClass+' replaced-svg');
+        }
+
+        // Remove any invalid XML tags as per http://validator.w3.org
+        $svg = $svg.removeAttr('xmlns:a');
+
+        // Check if the viewport is set, if the viewport is not set the SVG wont't scale.
+        if(!$svg.attr('viewBox') && $svg.attr('height') && $svg.attr('width')) {
+            $svg.attr('viewBox', '0 0 ' + $svg.attr('height') + ' ' + $svg.attr('width'))
+        }
+
+        // Replace image with new SVG
+        $img.replaceWith($svg);
+
+    }, 'xml');
+
+});
 
 
 
