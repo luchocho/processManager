@@ -16,36 +16,8 @@ $('#edit-process').on('click', '#edit-process-close', function() {
 $('#new-process-form').submit(function(e) {
 	e.preventDefault();
 	var toDoItem = $(this).serialize();
-	$('#todo-list').html('');
 	$.post('/todos', toDoItem, function(data) {
-		data.forEach(function(todo){
-			$('#todo-list').append(
-				`
-				<li class="list-group-item" id="list${todo._id}" >
-					<div class="row">
-						<div class="col-md-9">
-							<span class="lead" id="${todo._id}">
-								${todo.name}
-							</span>
-						</div>
-						<div class="col-md-3">
-							<img src="/img/medal.svg" class="svg svg${todo.client.clientTypeNumber}" alt="">
-						</div>
-					</div>
-					<div class="progress">
-						<div class="progress-bar progress-bar-striped active" id="progress${todo._id}" role="progressbar"
-								aria-valuenow="" aria-valuemin="0" aria-valuemax="100" style="width:">
-						</div>
-					</div>
-					<div class="pull-right">
-					<button class="btn btn-sm btn-primary edit-button" id="button${todo._id}">Editar</button>
-					<button type="button" class="btn btn-sm btn-info close-button" id="close${todo._id}" data-toggle="modal" data-target="#closeForm">Cerrar</button>
-					</div>
-					<div class="clearfix"></div>
-				</li>
-				`
-				);
-		});
+		paintProcess(data);
 		calcSLATime(data);
 		$('#new-process').toggle();
 	});
@@ -86,46 +58,12 @@ $('#edit-process').on('submit', '#edit-process-form', function(e) {
 	e.preventDefault();
 	var toDoItem = $(this).serialize();
 	var actionUrl = '/todos/' + $(this).find('#edit_processId').val();
-	console.log(this);
-	console.log('toDoItem');
-	console.log(toDoItem);
-	console.log('actionURL' + actionUrl);
 	$.ajax({
 		url: actionUrl,
 		data: toDoItem,
 		type: 'PUT',
 		success: function(data) {
-			console.log('entra a success PUT');
-			console.log(data);
-			$('#todo-list').html('');
-			data.forEach(function(todo){
-				$('#todo-list').append(
-					`
-					<li class="list-group-item" id="list${todo._id}" >
-						<div class="row">
-							<div class="col-md-9">
-								<span class="lead" id="${todo._id}">
-									${todo.name}
-								</span>
-							</div>
-							<div class="col-md-3">
-								<img src="/img/medal.svg" class="svg svg${todo.client.clientTypeNumber}" alt="">
-							</div>
-						</div>
-						<div class="progress">
-							<div class="progress-bar progress-bar-striped active" id="progress${todo._id}" role="progressbar"
-									aria-valuenow="" aria-valuemin="0" aria-valuemax="100" style="width:">
-							</div>
-						</div>
-						<div class="pull-right">
-							<button class="btn btn-sm btn-primary edit-button" id="button${todo._id}">Editar</button>
-							<button type="button" class="btn btn-sm btn-info close-button" id="close${todo._id}" data-toggle="modal" data-target="#closeForm">Cerrar</button>
-						</div>
-						<div class="clearfix"></div>
-					</li>
-					`
-				);
-			});
+			paintProcess(data);
 			calcSLATime(data);
 		}
 	});
@@ -179,50 +117,11 @@ $('#client').on('blur', function(e) {
 	});
 });
 
-// Search functionality
-$('#search').on('input', function(e) {
-	e.preventDefault();
-	$.get(`/todos?keyword=${e.target.value}`, function(data) {
-		$('#todo-list').html('');
-		data.forEach(function(todo){
-			$('#todo-list').append(
-				`
-				<li class="list-group-item" id="list${todo._id}" >
-					<div class="row">
-						<div class="col-md-9">
-							<span class="lead" id="${todo._id}">
-								${todo.name}
-							</span>
-						</div>
-						<div class="col-md-3">
-							<img src="/img/medal.svg" class="svg svg${todo.client.clientTypeNumber}" alt="">
-						</div>
-					</div>
-					<div class="progress">
-						<div class="progress-bar progress-bar-striped active" id="progress${todo._id}" role="progressbar"
-								aria-valuenow="" aria-valuemin="0" aria-valuemax="100" style="width:">
-						</div>
-					</div>
-					<div class="pull-right">
-						<button class="btn btn-sm btn-primary edit-button">Editar</button>
-					</div>
-					<div class="clearfix"></div>
-				</li>
-				`
-				);
-		});
-	});
-});
-
 //Modal Cerrar proceso
 $('#todo-list').on('click','.close-button', function(e){
 	e.preventDefault();
 	var buttonId = $(this).attr('id').split("close");
 	var actionUrl = "/todos/"+buttonId[1];
-	console.log('buttonId');
-	console.log(buttonId);
-	console.log('actionUrl');
-	console.log(actionUrl);
 	$.get(actionUrl, function(todo){
 		var fecha2 = moment();
 		var fecha1 = moment(todo.createAt);
@@ -238,46 +137,14 @@ $('.modal-body').on('submit', '#close-process-form', function(e){
 	e.preventDefault();
 	var toDoItem = $(this).serialize();
 	var actionUrl = '/todos/'+$('#modal-id').val();
-	console.log('toDoItem');
-	console.log(toDoItem);
 	$.ajax({
 		url: actionUrl,
 		data: toDoItem,
 		type: 'PUT',
 		success: function(data) {
-			console.log('entra a success PUT 2');
-			console.log(data);
-			$('#todo-list').html('');
-			data.forEach(function(todo){
-				$('#todo-list').append(
-					`
-					<li class="list-group-item" id="list${todo._id}" >
-						<div class="row">
-							<div class="col-md-9">
-								<span class="lead" id="${todo._id}">
-									${todo.name}
-								</span>
-							</div>
-							<div class="col-md-3">
-								<img src="/img/medal.svg" class="svg svg${todo.client.clientTypeNumber}" alt="">
-							</div>
-						</div>
-						<div class="progress">
-							<div class="progress-bar progress-bar-striped active" id="progress${todo._id}" role="progressbar"
-									aria-valuenow="" aria-valuemin="0" aria-valuemax="100" style="width:">
-							</div>
-						</div>
-						<div class="pull-right">
-							<button class="btn btn-sm btn-primary edit-button" id="button${todo._id}">Editar</button>
-							<button type="button" class="btn btn-sm btn-info close-button" id="close${todo._id}" data-toggle="modal" data-target="#closeForm">Cerrar</button>
-						</div>
-						<div class="clearfix"></div>
-					</li>
-					`
-				);
-			});
-			$('#closeForm').modal('hide');
+			paintProcess(data);
 			calcSLATime(data);
+			$('#closeForm').modal('hide');
 		}
 	});
 });
@@ -320,6 +187,39 @@ function calcSLATime(todos){
 												$('#progress'+todo._id).attr('style','width:'+Math.round(sla)+'%');
 												break;
 		}
+	});
+	loadSVG();
+}
+
+function paintProcess(todos){
+	$('#todo-list').html('');
+	todos.forEach(function(todo){
+		$('#todo-list').append(
+			`
+			<li class="list-group-item" id="list${todo._id}" >
+				<div class="row">
+					<div class="col-md-9">
+						<span class="lead" id="${todo._id}">
+							${todo.name}
+						</span>
+					</div>
+					<div class="col-md-3">
+						<img src="/img/medal.svg" class="svg svg${todo.client.clientTypeNumber}" alt="">
+					</div>
+				</div>
+				<div class="progress">
+					<div class="progress-bar progress-bar-striped active" id="progress${todo._id}" role="progressbar"
+							aria-valuenow="" aria-valuemin="0" aria-valuemax="100" style="width:">
+					</div>
+				</div>
+				<div class="pull-right">
+				<button class="btn btn-sm btn-primary edit-button" id="button${todo._id}">Editar</button>
+				<button type="button" class="btn btn-sm btn-info close-button" id="close${todo._id}" data-toggle="modal" data-target="#closeForm">Cerrar</button>
+				</div>
+				<div class="clearfix"></div>
+			</li>
+			`
+			);
 	});
 }
 
@@ -372,7 +272,40 @@ $(document).ready(function() {
 
  }
 
-
+ // Search functionality
+ $('#search').on('input', function(e) {
+ 	e.preventDefault();
+ 	$.get(`/todos?keyword=${e.target.value}`, function(data) {
+ 		$('#todo-list').html('');
+ 		data.forEach(function(todo){
+ 			$('#todo-list').append(
+ 				`
+ 				<li class="list-group-item" id="list${todo._id}" >
+ 					<div class="row">
+ 						<div class="col-md-9">
+ 							<span class="lead" id="${todo._id}">
+ 								${todo.name}
+ 							</span>
+ 						</div>
+ 						<div class="col-md-3">
+ 							<img src="/img/medal.svg" class="svg svg${todo.client.clientTypeNumber}" alt="">
+ 						</div>
+ 					</div>
+ 					<div class="progress">
+ 						<div class="progress-bar progress-bar-striped active" id="progress${todo._id}" role="progressbar"
+ 								aria-valuenow="" aria-valuemin="0" aria-valuemax="100" style="width:">
+ 						</div>
+ 					</div>
+ 					<div class="pull-right">
+ 						<button class="btn btn-sm btn-primary edit-button">Editar</button>
+ 					</div>
+ 					<div class="clearfix"></div>
+ 				</li>
+ 				`
+ 				);
+ 		});
+ 	});
+ });
 
 //prueba
 // $.get('/todos', function(data){
