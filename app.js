@@ -77,6 +77,9 @@ function orderTodos(callback){
   console.log('3');
   Todo.aggregate([
         {
+          $match: {stateNumber: {$nin: [1,2,3]}}
+        },
+        {
           $project:
               {
                 name:1,
@@ -91,8 +94,9 @@ function orderTodos(callback){
                 client:1,
                 dateDelivery:1,
                 tiempoRestante: {
-                        $subtract: [ "$dateDelivery" , new Date() ]
-                        }
+                          $subtract: [ "$dateDelivery" , new Date() ]
+                        },
+                stateNumber:1
               }
         },
         {
