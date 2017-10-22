@@ -51,6 +51,7 @@ $('#todo-list').on('click', '.edit-button', function() {
 		});
 	});
 	$('#edit-process').show();
+	$("html, body").animate({ scrollTop: 0 }, "slow");
 });
 
 // Update  del proceso
