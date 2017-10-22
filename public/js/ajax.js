@@ -38,7 +38,8 @@ $('#new-process-form').submit(function(e) {
 						</div>
 					</div>
 					<div class="pull-right">
-						<button class="btn btn-sm btn-primary edit-button">Editar</button>
+					<button class="btn btn-sm btn-primary edit-button" id="button${todo._id}">Editar</button>
+					<button type="button" class="btn btn-sm btn-info close-button" id="close${todo._id}" data-toggle="modal" data-target="#closeForm">Cerrar</button>
 					</div>
 					<div class="clearfix"></div>
 				</li>
@@ -58,6 +59,7 @@ $('#todo-list').on('click', '.edit-button', function() {
 	var buttonId = $(this).attr('id').split("button");
 	var actionUrl = "/todos/"+buttonId[1];
 	$.get(actionUrl, function(data){
+		$('#edit-process #edit_processId').val(data._id);
 		$('#edit-process #name').val(data.name);
 		$('#edit-process #client').val(data.client.name);
 		$('#edit-process #client').val(data.client.name);
@@ -83,12 +85,18 @@ $('#todo-list').on('click', '.edit-button', function() {
 $('#edit-process').on('submit', '#edit-process-form', function(e) {
 	e.preventDefault();
 	var toDoItem = $(this).serialize();
-	var actionUrl = $(this).attr('action');
+	var actionUrl = '/todos/' + $(this).find('#edit_processId').val();
+	console.log(this);
+	console.log('toDoItem');
+	console.log(toDoItem);
+	console.log('actionURL' + actionUrl);
 	$.ajax({
 		url: actionUrl,
 		data: toDoItem,
 		type: 'PUT',
 		success: function(data) {
+			console.log('entra a success PUT');
+			console.log(data);
 			$('#todo-list').html('');
 			data.forEach(function(todo){
 				$('#todo-list').append(
@@ -110,7 +118,8 @@ $('#edit-process').on('submit', '#edit-process-form', function(e) {
 							</div>
 						</div>
 						<div class="pull-right">
-							<button class="btn btn-sm btn-primary edit-button">Editar</button>
+							<button class="btn btn-sm btn-primary edit-button" id="button${todo._id}">Editar</button>
+							<button type="button" class="btn btn-sm btn-info close-button" id="close${todo._id}" data-toggle="modal" data-target="#closeForm">Cerrar</button>
 						</div>
 						<div class="clearfix"></div>
 					</li>
@@ -205,6 +214,74 @@ $('#search').on('input', function(e) {
 	});
 });
 
+//Modal Cerrar proceso
+$('#todo-list').on('click','.close-button', function(e){
+	e.preventDefault();
+	var buttonId = $(this).attr('id').split("close");
+	var actionUrl = "/todos/"+buttonId[1];
+	console.log('buttonId');
+	console.log(buttonId);
+	console.log('actionUrl');
+	console.log(actionUrl);
+	$.get(actionUrl, function(todo){
+		var fecha2 = moment();
+		var fecha1 = moment(todo.createAt);
+		var total = fecha2.diff(fecha1, 'minutes');
+		$('#modal-name').val(todo.name);
+		$('#modal-id').val(todo._id);
+		$('.proccessTime').text('Tiempo aproximado del proceso: ' + Math.round(total/60/24) + 'días');
+	});
+});
+
+//Guardar cierre de proceso
+$('.modal-body').on('submit', '#close-process-form', function(e){
+	e.preventDefault();
+	var toDoItem = $(this).serialize();
+	var actionUrl = '/todos/'+$('#modal-id').val();
+	console.log('toDoItem');
+	console.log(toDoItem);
+	$.ajax({
+		url: actionUrl,
+		data: toDoItem,
+		type: 'PUT',
+		success: function(data) {
+			console.log('entra a success PUT 2');
+			console.log(data);
+			$('#todo-list').html('');
+			data.forEach(function(todo){
+				$('#todo-list').append(
+					`
+					<li class="list-group-item" id="list${todo._id}" >
+						<div class="row">
+							<div class="col-md-9">
+								<span class="lead" id="${todo._id}">
+									${todo.name}
+								</span>
+							</div>
+							<div class="col-md-3">
+								<img src="/img/medal.svg" class="svg svg${todo.client.clientTypeNumber}" alt="">
+							</div>
+						</div>
+						<div class="progress">
+							<div class="progress-bar progress-bar-striped active" id="progress${todo._id}" role="progressbar"
+									aria-valuenow="" aria-valuemin="0" aria-valuemax="100" style="width:">
+							</div>
+						</div>
+						<div class="pull-right">
+							<button class="btn btn-sm btn-primary edit-button" id="button${todo._id}">Editar</button>
+							<button type="button" class="btn btn-sm btn-info close-button" id="close${todo._id}" data-toggle="modal" data-target="#closeForm">Cerrar</button>
+						</div>
+						<div class="clearfix"></div>
+					</li>
+					`
+				);
+			});
+			$('#closeForm').modal('hide');
+			calcSLATime(data);
+		}
+	});
+});
+
 //Calcula el tiempo restande de un proceso y asigna los estilos
 function calcSLATime(todos){
 	todos.forEach(function(todo){
@@ -258,39 +335,42 @@ $(document).ready(function() {
 /*
  * Replace all SVG images with inline SVG
  */
-jQuery('img.svg').each(function(){
-    var $img = jQuery(this);
-    var imgID = $img.attr('id');
-    var imgClass = $img.attr('class');
-    var imgURL = $img.attr('src');
+ function loadSVG(){
+	 jQuery('img.svg').each(function(){
+			 var $img = jQuery(this);
+			 var imgID = $img.attr('id');
+			 var imgClass = $img.attr('class');
+			 var imgURL = $img.attr('src');
 
-    jQuery.get(imgURL, function(data) {
-        // Get the SVG tag, ignore the rest
-        var $svg = jQuery(data).find('svg');
+			 jQuery.get(imgURL, function(data) {
+					 // Get the SVG tag, ignore the rest
+					 var $svg = jQuery(data).find('svg');
 
-        // Add replaced image's ID to the new SVG
-        if(typeof imgID !== 'undefined') {
-            $svg = $svg.attr('id', imgID);
-        }
-        // Add replaced image's classes to the new SVG
-        if(typeof imgClass !== 'undefined') {
-            $svg = $svg.attr('class', imgClass+' replaced-svg');
-        }
+					 // Add replaced image's ID to the new SVG
+					 if(typeof imgID !== 'undefined') {
+							 $svg = $svg.attr('id', imgID);
+					 }
+					 // Add replaced image's classes to the new SVG
+					 if(typeof imgClass !== 'undefined') {
+							 $svg = $svg.attr('class', imgClass+' replaced-svg');
+					 }
 
-        // Remove any invalid XML tags as per http://validator.w3.org
-        $svg = $svg.removeAttr('xmlns:a');
+					 // Remove any invalid XML tags as per http://validator.w3.org
+					 $svg = $svg.removeAttr('xmlns:a');
 
-        // Check if the viewport is set, if the viewport is not set the SVG wont't scale.
-        if(!$svg.attr('viewBox') && $svg.attr('height') && $svg.attr('width')) {
-            $svg.attr('viewBox', '0 0 ' + $svg.attr('height') + ' ' + $svg.attr('width'))
-        }
+					 // Check if the viewport is set, if the viewport is not set the SVG wont't scale.
+					 if(!$svg.attr('viewBox') && $svg.attr('height') && $svg.attr('width')) {
+							 $svg.attr('viewBox', '0 0 ' + $svg.attr('height') + ' ' + $svg.attr('width'))
+					 }
 
-        // Replace image with new SVG
-        $img.replaceWith($svg);
+					 // Replace image with new SVG
+					 $img.replaceWith($svg);
 
-    }, 'xml');
+			 }, 'xml');
 
-});
+	 });
+
+ }
 
 
 

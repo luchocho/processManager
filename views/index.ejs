@@ -30,6 +30,7 @@
 						</div>
 						<div class="pull-right">
 							<button class="btn btn-sm btn-primary edit-button" id="button<%=todo._id%>">Editar</button>
+							<button type="button" class="btn btn-sm btn-info close-button" id="close<%=todo._id%>" data-toggle="modal" data-target="#closeForm">Cerrar</button>
 						</div>
 						<div class="clearfix"></div>
 					</li>
@@ -129,6 +130,7 @@
 					<div class="row">
 						<div class="form-group col-md-12">
 							<label class="col-md-6" for="name">Nombre del proceso</label>
+							<input type="text" class="hidden" value="" id="edit_processId">
 							<input type="text" name="todo[name]" class="form-control col-md-9" value="" id="name">
 						</div>
 					</div>
@@ -167,7 +169,6 @@
 							<input type="date" name="todo[dateDelivery]" class="form-control col-md-9" value="" id="dateDelivery">
 						</div>
 					</div>
-
 					<div class="row">
 						<div class="form-group col-md-6">
 							<label class="col-md-3" for="office">Oficina</label>
@@ -185,5 +186,57 @@
 
 	</div><!-- cierra row -->
 
+
+	<!-- Modal -->
+	<div id="closeForm" class="modal fade" role="dialog">
+	  <div class="modal-dialog">
+	    <!-- Modal content-->
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal">&times;</button>
+	        <h2 class="modal-title">Cerrar Proceso</h2>
+	      </div>
+	      <div class="modal-body">
+					<form id="close-process-form">
+						<div class="row">
+							<div class="form-group col-md-12">
+								<label class="col-md-6" for="name">Nombre del proceso</label>
+								<input type="text" class="form-control col-md-9" value="" id="modal-name" disabled>
+								<input type="text" class="hidden" value="" name="todo[id]" id="modal-id">
+							</div>
+						</div>
+						<div class="row">
+							<div class="form-group col-md-12">
+								<label class="col-md-3" for="stateNumber">Estado</label>
+								<select class="form-control col-md-9" name="todo[stateNumber]" id="stateNumber">
+									<option value="1">Cerrado</option>
+									<option value="2">Anulado</option>
+									<option value="3">Anulado por cliente</option>
+								</select>
+							</div>
+						</div>
+						<div class="row">
+							<div class="form-group col-md-6">
+								<label class="col-md-3" for="closeOrigin">Procendencia</label>
+								<select class="form-control col-md-9" name="todo[closeOrigin]" id="closeOrigin">
+									<option value="1">TalentPool</option>
+									<option value="2">No TalentPool</option>
+								</select>
+							</div>
+							<div class="form-group col-md-6">
+								<label class="col-md-3" for="dateDelivered">Finalizado</label>
+								<input type="date" name="todo[dateDelivered]" class="form-control col-md-9" value="<%= moment().format('YYYY-MM-DD') %>" id="dateDelivered" disabled>
+							</div>
+						</div>
+						<button class="btn btn-block btn-default save-modal">Guardar Proceso</button>
+					</form>
+	      </div>
+	      <div class="modal-footer">
+					<span class="pull-left proccessTime"></span>
+	        <button type="button" class="btn btn-default btn-danger cancel-modal" data-dismiss="modal">Cancelar</button>
+	      </div>
+	    </div>
+	  </div>
+	</div>
 
 <% include partials/footer %>

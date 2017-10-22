@@ -27,12 +27,14 @@ var todoSchema = new mongoose.Schema({
   createAt: {type: Date, default: Date.now },
   dateDelivery: {type: Date, default: Date.now },
   dateEndProcess:  {type: Date, default: Date.now },
+  dateDelivered: {type: Date, default: Date.now },
   office: String,
   comments: String,
   createUser: String,
   assignUser: String,
+  closeOrigin: Number,
   processType: String,
-  state: String
+  stateNumber: Number
 });
 
 var clientSchema = new mongoose.Schema({
@@ -70,7 +72,9 @@ function escapeRegex(name) {
     return name.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
 };
 
-function orderTodos(req, res){
+function orderTodos(callback){
+
+  console.log('3');
   Todo.aggregate([
         {
           $project:
@@ -97,17 +101,15 @@ function orderTodos(req, res){
         ], function(err, todos){
     if(err){
       console.log(err);
+      return callback(err);
     } else {
-      if(req.xhr) {
-        res.json(todos);
-      } else {
-        res.render("index", {todos: todos});
-      }
+      callback(null, todos);
     }
   });
 }
 
 app.get("/todos", function(req, res){
+  console.log('2');
   if(req.query.keyword) {
     const regex = new RegExp(escapeRegex(req.query.keyword), 'gi');
     Todo.find({ name: regex }, function(err, todos){
@@ -118,7 +120,22 @@ app.get("/todos", function(req, res){
       }
     });
   } else {
-    orderTodos(req, res);
+      console.log('7');
+      orderTodos(function(err, todos){
+      if(err){
+        console.log(err);
+      } else {
+        // console.log(todos);
+        if(req.xhr) {
+          res.json(todos);
+        } else {
+          res.render("index", {todos: todos});
+        }
+      }
+    });
+
+
+
   }
 });
 
@@ -127,6 +144,7 @@ app.get("/todos/new", function(req, res){
 });
 
 app.post("/todos", function(req, res){
+  console.log('1');
  req.body.todo.name = req.sanitize(req.body.todo.name);
 
  var formData = req.body.todo;
@@ -151,6 +169,7 @@ app.post("/todos", function(req, res){
              formData.clientType = "A exito";
              break;
  }
+
 //Creamos objeto con datos del cliente del formulario
  var clientData = {
    name : formData.client,
@@ -181,9 +200,15 @@ switch(formData.priorityNumber){
        }
        Todo.create(formData, function(err, newTodo){ //Crea el proceso sin actualizar los datos del cliente
           if(err){
-            res.render("new");
+            console.log(err);
           } else {
-            orderTodos(req,res);
+            orderTodos(function(err, todos){
+              if(err){
+                console.log(err);
+              }else{
+                res.json(todos);
+              }
+            });
             //res.json(newTodo);
           }
        });
@@ -201,9 +226,15 @@ switch(formData.priorityNumber){
             }
             Todo.create(formData, function(err, newTodo){//crea el proceso luego de crear el cliente
                if(err){
-                 res.render("new");
+                 console.log(err);
                } else {
-                 orderTodos(req,res);
+                 orderTodos(function(err, todos){
+                   if(err){
+                     console.log(err);
+                   }else{
+                     res.json(todos);
+                   }
+                 });
                  //res.json(newTodo);
                }
             });
@@ -216,6 +247,7 @@ switch(formData.priorityNumber){
 });
 
 app.get("/todos/:id", function(req, res){
+  console.log('todos/id');
  Todo.findById(req.params.id, function(err, todo){
    if(err){
      console.log(err);
@@ -256,6 +288,7 @@ app.get("/client", function(req, res){
 
 
 app.put("/todos/:id", function(req, res){
+console.log('4');
   switch(req.body.todo.priorityNumber){
     case "1":
               req.body.todo.priority = "Alta";
@@ -271,7 +304,16 @@ app.put("/todos/:id", function(req, res){
    if(err){
      console.log(err);
    } else {
-      orderTodos(req, res);
+     orderTodos(function(err, todos){
+       if(err){
+         console.log(err);
+       }else{
+         //res.json(todos);
+         console.log('todo ok');
+         res.json(todos);
+       }
+     });
+      console.log('5');
    }
  });
 });
