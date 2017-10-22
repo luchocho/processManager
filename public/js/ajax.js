@@ -1,6 +1,7 @@
 
 // Muestra o oculta el form de creacion de proceso
-$('#new-process-sign').on('click', function() {
+$('#new-process-sign').on('click', function(e) {
+	e.preventDefault();
 	if($('#edit-process').css("display") !== "none" ){
 		return false;
 	}

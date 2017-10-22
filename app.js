@@ -3,8 +3,12 @@ var express = require("express"),
     mongoose = require("mongoose"),
     bodyParser = require("body-parser"),
     expressSanitizer = require("express-sanitizer"),
-    methodOverride = require('method-override');
-    moment = require('moment');
+    methodOverride = require("method-override"),
+    passport = require("passport"),
+    LocalStrategy = require("passport-local"),
+    passportLocalMongoose = require("passport-local-mongoose");
+
+app.locals.moment = require('moment');
 
 mongoose.connect("mongodb://localhost/todo_app");
 app.use(express.static('public'));
@@ -43,25 +47,43 @@ var clientSchema = new mongoose.Schema({
   clientTypeNumber: Number
 });
 
-// var userSchema = new mongoose.Schema({
-//   username: String,
-//   firstname: String,
-//   lastname: String,
-//   office: {
-//             id: { type: mongoose.Schema.Types.ObjectId,
-//                   ref: "Office" },
-//             name: String
-//               }
-// });
+var UserSchema = new mongoose.Schema({
+    username: {type:String, unique:true, required:true },
+    password: String,
+    avatar: String,
+    firstname: String,
+    lastname: String,
+    email: {type:String, unique:true, required:true },
+    resetPasswordToken: String,
+    resetPasswordExpires: Date,
+    isAdmin: {type: Boolean, default: false}
+});
 
-// var officeSchema = new mongoose.Schema({
-//   name: String
-// });
+UserSchema.plugin(passportLocalMongoose);
 
 var Todo = mongoose.model("Todo", todoSchema);
 var Client = mongoose.model("Client", clientSchema);
+var User = mongoose.model("User", UserSchema);
 // var User = mongoose.model("User", userSchema);
 // var Office = mongoose.model("Office", officeSchema);
+
+// PASSPORT CONFIGURATION
+app.use(require("express-session")({
+    secret: "Once again Rusty wins cutest dog!",
+    resave: false,
+    saveUninitialized: false
+}));
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new LocalStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
+app.use(function(req,res,next){
+    res.locals.currentUser = req.user;
+    next();
+});
+
 
 app.get("/", function(req, res){
   res.redirect("/todos");
@@ -143,11 +165,11 @@ app.get("/todos", function(req, res){
   }
 });
 
-app.get("/todos/new", function(req, res){
- res.render("new");
-});
+// app.get("/todos/new", function(req, res){
+//  res.render("new");
+// });
 
-app.post("/todos", function(req, res){
+app.post("/todos",isLoggedIn, function(req, res){
   console.log('1');
  req.body.todo.name = req.sanitize(req.body.todo.name);
 
@@ -291,7 +313,7 @@ app.get("/client", function(req, res){
 });
 
 
-app.put("/todos/:id", function(req, res){
+app.put("/todos/:id",isLoggedIn, function(req, res){
 console.log('4');
   switch(req.body.todo.priorityNumber){
     case "1":
@@ -322,7 +344,7 @@ console.log('4');
  });
 });
 
-app.delete("/todos/:id", function(req, res){
+app.delete("/todos/:id",isLoggedIn, function(req, res){
  Todo.findByIdAndRemove(req.params.id, function(err, todo){
    if(err){
      console.log(err);
@@ -331,6 +353,80 @@ app.delete("/todos/:id", function(req, res){
    }
  });
 });
+
+
+//USERS
+
+//Show register form
+app.get("/register", function(req, res){
+    res.render("register", {page: 'register'});
+});
+
+//Sign up logic
+app.post("/register", function(req, res){
+    var newUser = new User({
+            username: req.body.username,
+            firstname: req.body.firstname,
+            lastname: req.body.lastname,
+            email: req.body.email,
+            avatar: req.body.avatar
+        });
+    if(req.body.adminCode === 'secretcode123'){
+        newUser.isAdmin = true;
+    }
+
+    User.register(newUser, req.body.password, function(err, user){
+        if(err){
+            // req.flash("error", err.message);
+            return res.render("register");
+        }
+        passport.authenticate("local")(req, res, function(){
+            res.redirect("/todos");
+        });
+    });
+});
+
+//Show login form
+app.get("/login", function(req, res){
+    res.render("login", {page: 'login'});
+});
+
+//Login logic
+app.post('/login', function(req, res, next){
+    passport.authenticate('local', function(err, user, info){
+        if(err){
+            return next(err);
+        }
+        if(!user){
+            return res.redirect('/todos');
+        }
+        req.logIn(user, function(err){
+            if(err){
+                return next(err);
+            }
+            console.log(req.session.redirectTo);
+            var redirectTo = req.session.redirectTo ? req.session.redirectTo : '/todos' ;
+            delete req.session.redirectTo;
+            res.redirect(redirectTo);
+        });
+    })(req, res, next);
+});
+
+
+//Logout logic
+app.get("/logout", function(req, res){
+    req.logout();
+    res.redirect("/todos");
+});
+
+function isLoggedIn(req, res, next){
+    if(req.isAuthenticated()){
+        return next();
+    }
+    // console.log(req.originalUrl);
+    // req.session.redirectTo = req.originalUrl;
+    res.redirect("/todos");
+}
 
 //Conexion a Cloud9
 // app.listen(process.env.PORT, process.env.IP, function(){
