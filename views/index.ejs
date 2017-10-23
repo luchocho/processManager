@@ -31,7 +31,7 @@
 							</div>
 						</div>
 						<div class="pull-right">
-							<% if((currentUser) || (currentUser && currentUser.isAdmin)){ %>
+							<% if((currentUser && todo.assignUser.id.equals(currentUser._id )) || (currentUser && currentUser.isAdmin)){ %>
 							<button class="btn btn-sm btn-primary edit-button" id="button<%=todo._id%>">Editar</button>
 							<button type="button" class="btn btn-sm btn-info close-button" id="close<%=todo._id%>" data-toggle="modal" data-target="#closeForm">Cerrar</button>
 							<% } %>
@@ -112,7 +112,9 @@
 						</div>
 						<div class="form-group col-md-6">
 							<label class="col-md-3" for="assignUser">Responsable</label>
-							<input type="text" name="todo[assignUser]" class="form-control col-md-9" placeholder="Usuario" id="assignUser">
+							<% if(currentUser) { %>
+								<input type="text" name="todo[assignUser]" class="form-control col-md-9" value="<%= currentUser.username %>" id="assignUser" readonly >
+							<% } %>
 						</div>
 					</div>
 					<button class="btn btn-block btn-primary">Crear</button>
@@ -142,12 +144,12 @@
 					<div class="row">
 						<div class="form-group col-md-8">
 							<label for="client" class="col-md-3">Cliente</label>
-							<input type="text" class="form-control col-md-9" value="" id="client" disabled>
+							<input type="text" class="form-control col-md-9" value="" id="client" readonly>
 						</div>
 						<div class="form-group col-md-4">
 							<label class="col-md-3" for="clientTypeNumber">Tipo</label>
-							<input type="number" class="form-control hidden" value="" id="clientTypeNumber" disabled>
-							<input type="text" class="form-control col-md-9" value="" id="clientType" disabled>
+							<input type="number" class="hidden" value="" id="clientTypeNumber">
+							<input type="text" class="form-control col-md-9" value="" id="clientType" readonly>
 						</div>
 					</div>
 					<div class="row">
@@ -161,13 +163,13 @@
 						</div>
 						<div class="form-group col-md-6">
 							<label class="col-md-3" for="selection">Selección</label>
-							<input type="text" class="form-control col-md-9" value="" id="selection" disabled>
+							<input type="text" class="form-control col-md-9" value="" id="selection" readonly>
 						</div>
 					</div>
 					<div class="row">
 						<div class="form-group col-md-6">
 							<label class="col-md-3" for="createAt">Inicio</label>
-							<input type="date" class="form-control col-md-9" value="" id="createAt" disabled>
+							<input type="date" class="form-control col-md-9" value="" id="createAt" readonly>
 						</div>
 						<div class="form-group col-md-6">
 							<label class="col-md-3" for="dateDelivery">Entrega</label>
@@ -181,7 +183,7 @@
 						</div>
 						<div class="form-group col-md-6">
 							<label class="col-md-3" for="assignUser">Responsable</label>
-							<input type="text" name="todo[assignUser]" class="form-control col-md-9" value="" id="assignUser">
+							<input type="text" name="todo[assignUser]" class="form-control col-md-9" value="" id="assignUser" readonly>
 						</div>
 					</div>
 					<button class="btn btn-block btn-primary">Actualizar</button>
@@ -206,7 +208,7 @@
 						<div class="row">
 							<div class="form-group col-md-12">
 								<label class="col-md-6" for="name">Nombre del proceso</label>
-								<input type="text" class="form-control col-md-9" value="" id="modal-name" disabled>
+								<input type="text" class="form-control col-md-9" value="" id="modal-name" readonly>
 								<input type="text" class="hidden" value="" name="todo[id]" id="modal-id">
 							</div>
 						</div>
@@ -230,7 +232,7 @@
 							</div>
 							<div class="form-group col-md-6">
 								<label class="col-md-3" for="dateDelivered">Finalizado</label>
-								<input type="date" name="todo[dateDelivered]" class="form-control col-md-9" value="<%= moment().format('YYYY-MM-DD') %>" id="dateDelivered" disabled>
+								<input type="date" name="todo[dateDelivered]" class="form-control col-md-9" value="<%= moment().format('YYYY-MM-DD') %>" id="dateDelivered" readonly>
 							</div>
 						</div>
 						<button class="btn btn-block btn-default save-modal">Guardar Proceso</button>

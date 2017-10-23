@@ -18,8 +18,9 @@ $('#new-process-form').submit(function(e) {
 	e.preventDefault();
 	var toDoItem = $(this).serialize();
 	$.post('/todos', toDoItem, function(data) {
+		console.log(data);
 		paintProcess(data);
-		calcSLATime(data);
+		calcSLATime(data.todos);
 		$('#new-process').toggle();
 	});
 });
@@ -43,7 +44,7 @@ $('#todo-list').on('click', '.edit-button', function() {
 		$('#edit-process #createAt').val(moment(data.createAt).format('YYYY-MM-DD'));
 		$('#edit-process #dateDelivery').val(moment(data.dateDelivery).format('YYYY-MM-DD'));
 		$('#edit-process #office').val(data.office);
-		$('#edit-process #assignUser').val(data.assignUser);
+		$('#edit-process #assignUser').val(data.assignUser.username);
 
 		$("#edit-process option").each(function(el){
 			if((el+1) == data.priorityNumber){
@@ -65,8 +66,9 @@ $('#edit-process').on('submit', '#edit-process-form', function(e) {
 		data: toDoItem,
 		type: 'PUT',
 		success: function(data) {
+			console.log(data);
 			paintProcess(data);
-			calcSLATime(data);
+			calcSLATime(data.todos);
 		}
 	});
 	$('#edit-process').toggle();
@@ -145,7 +147,7 @@ $('.modal-body').on('submit', '#close-process-form', function(e){
 		type: 'PUT',
 		success: function(data) {
 			paintProcess(data);
-			calcSLATime(data);
+			calcSLATime(data.todos);
 			$('#closeForm').modal('hide');
 		}
 	});
@@ -195,7 +197,7 @@ function calcSLATime(todos){
 
 function paintProcess(todos){
 	$('#todo-list').html('');
-	todos.forEach(function(todo){
+	todos.todos.forEach(function(todo){
 		$('#todo-list').append(
 			`
 			<li class="list-group-item" id="list${todo._id}" >
@@ -215,8 +217,9 @@ function paintProcess(todos){
 					</div>
 				</div>
 				<div class="pull-right">
-				<button class="btn btn-sm btn-primary edit-button" id="button${todo._id}">Editar</button>
-				<button type="button" class="btn btn-sm btn-info close-button" id="close${todo._id}" data-toggle="modal" data-target="#closeForm">Cerrar</button>
+				${todos.isAdmin == true || todos.id == todo.assignUser.id  ?
+					`<button class="btn btn-sm btn-primary edit-button" id="button${todo._id}">Editar</button>
+					<button type="button" class="btn btn-sm btn-info close-button" id="close${todo._id}" data-toggle="modal" data-target="#closeForm">Cerrar</button>` : '' }
 				</div>
 				<div class="clearfix"></div>
 			</li>

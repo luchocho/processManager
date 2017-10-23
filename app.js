@@ -35,7 +35,13 @@ var todoSchema = new mongoose.Schema({
   office: String,
   comments: String,
   createUser: String,
-  assignUser: String,
+  assignUser: {
+           id: {
+              type: mongoose.Schema.Types.ObjectId,
+              ref: "User"
+           },
+           username: String
+  },
   closeOrigin: Number,
   processType: String,
   stateNumber: Number
@@ -172,7 +178,6 @@ app.get("/todos", function(req, res){
 app.post("/todos",isLoggedIn, function(req, res){
   console.log('1');
  req.body.todo.name = req.sanitize(req.body.todo.name);
-
  var formData = req.body.todo;
 
  switch(formData.clientTypeNumber){
@@ -196,13 +201,13 @@ app.post("/todos",isLoggedIn, function(req, res){
              break;
  }
 
-//Creamos objeto con datos del cliente del formulario
+ //Creamos objeto con datos del cliente del formulario
  var clientData = {
    name : formData.client,
    clientType: formData.clientType,
    clientTypeNumber : formData.clientTypeNumber
  }
-switch(formData.priorityNumber){
+ switch(formData.priorityNumber){
   case "1":
             formData.priority = "Alta";
             break;
@@ -212,64 +217,74 @@ switch(formData.priorityNumber){
   case "3":
             formData.priority = "Baja";
             break;
-}
- Client.find({ name : clientData.name}, function(err, client){
-   if(err){
-      console.log(err);
-   } else {
-     if(client.length){ //Si encuentra al cliente, setea los datos en el objeto
-       formData.client = {
-           id : client[0]._id,
-           name : client[0].name,
-           clientType: client[0].clientType,
-           clientTypeNumber : client[0].clientTypeNumber
+ }
+ User.find({ username : formData.assignUser}, function(err, user){
+  if(err){
+     console.log(err);
+  } else {
+     if(user.length){ //Si encuentra al usuario, setea los datos en el objeto
+       formData.assignUser = {
+         id: user[0]._id,
+         username: user[0].username
        }
-       Todo.create(formData, function(err, newTodo){ //Crea el proceso sin actualizar los datos del cliente
-          if(err){
-            console.log(err);
-          } else {
-            orderTodos(function(err, todos){
-              if(err){
-                console.log(err);
-              }else{
-                res.json(todos);
-              }
-            });
-            //res.json(newTodo);
-          }
-       });
-
-     } else { //Si no encuentra el cliente, crea los datos del mismo con los datos del form
-       Client.create(clientData, function(err, newClient){
+       Client.find({ name : clientData.name}, function(err, client){
          if(err){
             console.log(err);
          } else {
-            formData.client = {
-                id : newClient._id,
-                name : newClient.name,
-                clientType: newClient.clientType,
-                clientTypeNumber : newClient.clientTypeNumber
-            }
-            Todo.create(formData, function(err, newTodo){//crea el proceso luego de crear el cliente
+           if(client.length){ //Si encuentra al cliente, setea los datos en el objeto
+             formData.client = {
+                 id : client[0]._id,
+                 name : client[0].name,
+                 clientType: client[0].clientType,
+                 clientTypeNumber : client[0].clientTypeNumber
+             }
+             Todo.create(formData, function(err, newTodo){ //Crea el proceso sin actualizar los datos del cliente
+                if(err){
+                  console.log(err);
+                } else {
+                  orderTodos(function(err, todos){
+                    if(err){
+                      console.log(err);
+                    }else{
+                      res.json({todos:todos, id:req.user._id, isAdmin: req.user.isAdmin});
+                    }
+                  });
+                  //res.json(newTodo);
+                }
+             });
+           } else { //Si no encuentra el cliente, crea los datos del mismo con los datos del form
+             Client.create(clientData, function(err, newClient){
                if(err){
-                 console.log(err);
+                  console.log(err);
                } else {
-                 orderTodos(function(err, todos){
-                   if(err){
-                     console.log(err);
-                   }else{
-                     res.json(todos);
-                   }
-                 });
-                 //res.json(newTodo);
-               }
-            });
-        }
-       });
+                  formData.client = {
+                      id : newClient._id,
+                      name : newClient.name,
+                      clientType: newClient.clientType,
+                      clientTypeNumber : newClient.clientTypeNumber
+                  }
+                  Todo.create(formData, function(err, newTodo){//crea el proceso luego de crear el cliente
+                     if(err){
+                       console.log(err);
+                     } else {
+                       orderTodos(function(err, todos){
+                         if(err){
+                           console.log(err);
+                         }else{
+                           res.json({todos:todos, id:req.user._id, isAdmin: req.user.isAdmin});
+                         }
+                       });
+                       //res.json(newTodo);
+                     }
+                  });
+              }
+             });
+           }
+         }
+       }).limit(1);
      }
-   }
-
- }).limit(1);
+  }
+ });
 });
 
 app.get("/todos/:id", function(req, res){
@@ -313,8 +328,9 @@ app.get("/client", function(req, res){
 });
 
 
-app.put("/todos/:id",isLoggedIn, function(req, res){
+app.put("/todos/:id",checkProcessOwnership, function(req, res){
 console.log('4');
+console.log(req.user);
   switch(req.body.todo.priorityNumber){
     case "1":
               req.body.todo.priority = "Alta";
@@ -326,25 +342,58 @@ console.log('4');
               req.body.todo.priority = "Baja";
               break;
   }
- Todo.findByIdAndUpdate(req.params.id, req.body.todo, {new: true}, function(err, todo){
-   if(err){
-     console.log(err);
-   } else {
-     orderTodos(function(err, todos){
-       if(err){
+  if (typeof req.body.todo.assignUser !== 'undefined'){
+    //Si usuario esta definido, modificar todo
+    User.find({ username : req.body.todo.assignUser}, function(err, user){
+      if(err){
          console.log(err);
-       }else{
-         //res.json(todos);
-         console.log('todo ok');
-         res.json(todos);
-       }
-     });
-      console.log('5');
-   }
- });
+      } else {
+          if(user.length){ //Si encuentra al usuario, setea los datos en el objeto
+           req.body.todo.assignUser = {
+             id: user[0]._id,
+             username: user[0].username
+           }
+           Todo.findByIdAndUpdate(req.params.id, req.body.todo, {new: true}, function(err, todo){
+             if(err){
+               console.log(err);
+             } else {
+               orderTodos(function(err, todos){
+                 if(err){
+                   console.log(err);
+                 }else{
+                   console.log('todo ok');
+                   res.json({todos:todos, id:req.user._id, isAdmin: req.user.isAdmin});
+                 }
+               });
+                console.log('5');
+             }
+           });
+         }
+      }
+    });
+  } else{
+    //Si usuario no esta definido, cerrar proceso
+    Todo.findByIdAndUpdate(req.params.id, req.body.todo, {new: true}, function(err, todo){
+      if(err){
+        console.log(err);
+      } else {
+        orderTodos(function(err, todos){
+          if(err){
+            console.log(err);
+          }else{
+            console.log('todo ok');
+            res.json({todos:todos, id:req.user._id, isAdmin: req.user.isAdmin});
+          }
+        });
+         console.log('5');
+      }
+    });
+  }
+
+
 });
 
-app.delete("/todos/:id",isLoggedIn, function(req, res){
+app.delete("/todos/:id",checkProcessOwnership, function(req, res){
  Todo.findByIdAndRemove(req.params.id, function(err, todo){
    if(err){
      console.log(err);
@@ -426,6 +475,25 @@ function isLoggedIn(req, res, next){
     // console.log(req.originalUrl);
     // req.session.redirectTo = req.originalUrl;
     res.redirect("/todos");
+}
+
+function checkProcessOwnership(req,res, next) {
+    if(req.isAuthenticated()){
+        Todo.findById(req.params.id, function(err, foundTodo){
+            if(err){
+                console.log(err);
+            } else {
+                //Does the user own the campground?
+                if(foundTodo.assignUser.id.equals(req.user._id) || req.user.isAdmin){
+                    next();
+                } else {
+                    console.log('No tiene permiso para realizar estos cambios');
+                }
+            }
+        });
+    } else {
+        console.log('Necesitas estar logueado para realizar estos cambios');
+    }
 }
 
 //Conexion a Cloud9
