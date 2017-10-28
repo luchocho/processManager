@@ -58,7 +58,14 @@
 		<!-- Create new Process -->
 		<div class="col-md-6">
 			<div id="new-process">
-				<h1>Crear Proceso</h1>
+				<div class="row">
+					<div class="col-md-12">
+						<h1>Crear Proceso</h1>
+					</div>
+				</div>
+
+
+
 				<form action="/todos" method="POST" autocomplete="off" id="new-process-form">
 					<div class="row">
 						<div class="form-group col-md-12">
@@ -322,7 +329,7 @@
 								<input type="date" name="todo[dateDelivered]" class="form-control col-md-9" value="<%= moment().format('YYYY-MM-DD') %>" id="dateDelivered" readonly>
 							</div>
 						</div>
-						<button class="btn btn-block btn-default save-modal">Guardar Proceso</button>
+						<button class="btn btn-block btn-success save-modal">Guardar Proceso</button>
 					</form>
 	      </div>
 	      <div class="modal-footer">

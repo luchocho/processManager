@@ -30,6 +30,7 @@ a:link {
 }
 
 #new-process-form, #edit-process-form, .show-process-container {
+  margin-top: 28px;
   padding: 15px;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
@@ -49,6 +50,12 @@ a:link {
 .hidden{
   display: none;
 }
+
+.modal-header{
+  color: #fff;
+  background-color: #5cb85c;
+}
+
 /*.warningTime{
   background-color: rgba(255,255,0,.3)
 }
