@@ -98,11 +98,26 @@ $('#todo-list').on('submit', '.delete-item-form', function(e) {
 $('#client').on('focus', function(e) {
 	$("#json-datalist").html('');
 	var dataList = $("#json-datalist");
-	//var input = $("#client");
+
 	$.get("/client", function(data){
 		data.forEach(function(client){
 			var option = document.createElement('option');
 			option.value = client.name;
+			dataList[0].appendChild(option);
+		});
+	});
+});
+
+//Rellenar datos de usuario
+$('.assignUser').on('focus', function(e) {
+	console.log('entra');
+	$("#json-userlist").html('');
+	var dataList = $("#json-userlist");
+
+	$.get("/user", function(data){
+		data.forEach(function(user){
+			var option = document.createElement('option');
+			option.value = user.username;
 			dataList[0].appendChild(option);
 		});
 	});
@@ -120,6 +135,17 @@ $('#client').on('blur', function(e) {
 		}
 	});
 });
+
+
+//Filtros
+$('.list-inline a').on('click', function(e){
+	console.log(e.currentTarget.text);
+	$.get('/todos?name=' + e.currentTarget.text, function(data){
+		paintProcess(data);
+		calcSLATime(data.todos);
+	});
+})
+
 
 //Modal Cerrar proceso
 $('#todo-list').on('click','.close-button', function(e){
@@ -232,9 +258,9 @@ function paintProcess(todos){
 $(document).ready(function() {
 		console.log('entra a ready');
 		$.get('/todos', function(todos) {
-    	calcSLATime(todos);
+    	calcSLATime(todos.todos);
 		});
-		setInterval('calcSLATime(todos)', 1800000);
+		setInterval('calcSLATime(todos.todos)', 1800000);
 });
 
 /*
@@ -281,36 +307,10 @@ $(document).ready(function() {
  $('#search').on('input', function(e) {
  	e.preventDefault();
  	$.get(`/todos?keyword=${e.target.value}`, function(data) {
- 		$('#todo-list').html('');
- 		data.forEach(function(todo){
- 			$('#todo-list').append(
- 				`
- 				<li class="list-group-item" id="list${todo._id}" >
- 					<div class="row">
- 						<div class="col-md-9">
- 							<span class="lead" id="${todo._id}">
- 								${todo.name}
- 							</span>
- 						</div>
- 						<div class="col-md-3">
- 							<img src="/img/medal.svg" class="svg svg${todo.client.clientTypeNumber}" alt="">
- 						</div>
- 					</div>
- 					<div class="progress">
- 						<div class="progress-bar progress-bar-striped active" id="progress${todo._id}" role="progressbar"
- 								aria-valuenow="" aria-valuemin="0" aria-valuemax="100" style="width:">
- 						</div>
- 					</div>
- 					<div class="pull-right">
- 						<button class="btn btn-sm btn-primary edit-button">Editar</button>
- 					</div>
- 					<div class="clearfix"></div>
- 				</li>
- 				`
- 				);
+		paintProcess(data);
+		calcSLATime(data.todos);
  		});
  	});
- });
 
 //prueba
 // $.get('/todos', function(data){

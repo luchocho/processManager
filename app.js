@@ -17,6 +17,10 @@ app.use(expressSanitizer());
 app.set("view engine", "ejs");
 app.use(methodOverride('_method'));
 
+
+
+
+//SCHEMAS
 var todoSchema = new mongoose.Schema({
   name: String,
   client: {
@@ -70,8 +74,8 @@ UserSchema.plugin(passportLocalMongoose);
 var Todo = mongoose.model("Todo", todoSchema);
 var Client = mongoose.model("Client", clientSchema);
 var User = mongoose.model("User", UserSchema);
-// var User = mongoose.model("User", userSchema);
 // var Office = mongoose.model("Office", officeSchema);
+
 
 // PASSPORT CONFIGURATION
 app.use(require("express-session")({
@@ -91,6 +95,8 @@ app.use(function(req,res,next){
 });
 
 
+
+//ROUTES
 app.get("/", function(req, res){
   res.redirect("/todos");
 });
@@ -140,6 +146,50 @@ function orderTodos(callback){
   });
 }
 
+function orderTodosByName(name, callback){
+  console.log('3bis');
+  Todo.aggregate([
+        {
+          $match: {
+              $and: [
+                        {stateNumber: {$nin: [1,2,3]}},
+                        {'assignUser.username': name}
+                    ]
+            }
+        },
+        {
+          $project:
+              {
+                name:1,
+                priority:1,
+                priorityNumber:1,
+                processType:1,
+                office:1,
+                assignUser:1,
+                dateEndProcess:1,
+                dateDelivery:1,
+                createAt:1,
+                client:1,
+                dateDelivery:1,
+                tiempoRestante: {
+                          $subtract: [ "$dateDelivery" , new Date() ]
+                        },
+                stateNumber:1
+              }
+        },
+        {
+          $sort: {"client.clientTypeNumber":1, priorityNumber: 1 , tiempoRestante: 1}
+        }
+        ], function(err, todos){
+    if(err){
+      console.log(err);
+      return callback(err);
+    } else {
+      callback(null, todos);
+    }
+  });
+}
+
 app.get("/todos", function(req, res){
   console.log('2');
   if(req.query.keyword) {
@@ -148,10 +198,18 @@ app.get("/todos", function(req, res){
       if(err){
         console.log(err);
       } else {
-        res.json(todos);
+        res.json({todos:todos});
       }
     });
-  } else {
+  } else if(req.query.name && req.query.name !== 'Todos') {
+      orderTodosByName(req.query.name,function(err,todos){
+        if(err){
+          console.log(err);
+        } else {
+          res.json({todos:todos, id:req.user._id, isAdmin: req.user.isAdmin});
+        }
+      });
+    } else {
       console.log('7');
       orderTodos(function(err, todos){
       if(err){
@@ -159,15 +217,16 @@ app.get("/todos", function(req, res){
       } else {
         // console.log(todos);
         if(req.xhr) {
-          res.json(todos);
+          if(req.user){
+              res.json({todos:todos, id:req.user._id, isAdmin: req.user.isAdmin});
+          }else{
+              res.json({todos:todos});
+          }
         } else {
           res.render("index", {todos: todos});
         }
       }
     });
-
-
-
   }
 });
 
@@ -325,6 +384,19 @@ app.get("/client", function(req, res){
         }
       });
     }
+});
+
+
+app.get("/user", function(req, res){
+  console.log('recibe la llamada');
+  User.find({},{username : 1}, function(err, users){
+    if(err){
+      console.log(err);
+    } else {
+      console.log(users);
+      res.json(users);
+    }
+  });
 });
 
 
