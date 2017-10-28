@@ -102,7 +102,7 @@ function escapeRegex(name) {
 
 function orderTodos(callback){
 
-  console.log('3');
+  console.log('13');
   Todo.aggregate([
         {
           $match: {stateNumber: {$nin: [1,2,3]}}
