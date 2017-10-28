@@ -212,6 +212,72 @@
 			</div>
 		</div><!-- end edit process -->
 
+		<!-- Show Process -->
+		<div class="col-md-6">
+			<div id="show-process">
+				<div class="row">
+					<div class="col-md-9">
+						<h1>Proceso</h1>
+					</div>
+					<div class="col-md-3">
+						<a id="show-process-close" href="#"><h2 class="glyphicon glyphicon-remove"></h2></a>
+					</div>
+				</div>
+				<div class="show-process-container">
+					<div class="row show-process">
+						<div class="form-group col-md-12">
+							<label class="col-md-6" for="name">Nombre del proceso</label>
+							<input type="text" name="todo[name]" class="form-control col-md-9" value="" id="name" readonly>
+						</div>
+					</div>
+					<div class="row">
+						<div class="form-group col-md-8">
+							<label for="client" class="col-md-3">Cliente</label>
+							<input type="text" class="form-control col-md-9" value="" id="client" readonly>
+						</div>
+						<div class="form-group col-md-4">
+							<label class="col-md-3" for="clientTypeNumber">Tipo</label>
+							<input type="text" class="form-control col-md-9" value="" id="clientType" readonly>
+						</div>
+					</div>
+					<div class="row">
+						<div class="form-group col-md-6">
+							<label class="col-md-3" for="priorityNumber">Prioridad</label>
+							<select class="form-control col-md-9" name="todo[priorityNumber]" id="priorityNumber" value="" readonly>
+								<option value="1">Alta</option>
+								<option value="2">Normal</option>
+								<option value="3">Baja</option>
+							</select>
+						</div>
+						<div class="form-group col-md-6">
+							<label class="col-md-3" for="selection">Selección</label>
+							<input type="text" class="form-control col-md-9" value="" id="selection" readonly>
+						</div>
+					</div>
+					<div class="row">
+						<div class="form-group col-md-6">
+							<label class="col-md-3" for="createAt">Inicio</label>
+							<input type="date" class="form-control col-md-9" value="" id="createAt" readonly>
+						</div>
+						<div class="form-group col-md-6">
+							<label class="col-md-3" for="dateDelivery">Entrega</label>
+							<input type="date" name="todo[dateDelivery]" class="form-control col-md-9" value="" id="dateDelivery" readonly>
+						</div>
+					</div>
+					<div class="row">
+						<div class="form-group col-md-6">
+							<label class="col-md-3" for="office">Oficina</label>
+							<input type="text" name="todo[office]" class="form-control col-md-9" value="" id="office" readonly>
+						</div>
+						<div class="form-group col-md-6">
+							<label class="col-md-3" for="assignUser">Responsable</label>
+							<input type="text" name="todo[assignUser]" class="form-control col-md-9 assignUser" value="" id="assignUser" readonly>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div><!-- end show process -->
+
 	</div><!-- cierra row -->
 
 

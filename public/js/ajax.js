@@ -2,7 +2,7 @@
 // Muestra o oculta el form de creacion de proceso
 $('#new-process-sign').on('click', function(e) {
 	e.preventDefault();
-	if($('#edit-process').css("display") !== "none" ){
+	if(($('#edit-process').css("display") !== "none" ) || ($('#show-process').css("display") !== "none" )){
 		return false;
 	}
 	$('#new-process').toggle();
@@ -11,6 +11,10 @@ $('#new-process-sign').on('click', function(e) {
 // oculta el form de editar el proceso
 $('#edit-process').on('click', '#edit-process-close', function() {
 	$('#edit-process').toggle();
+});
+
+$('#show-process').on('click', '#show-process-close', function() {
+	$('#show-process').toggle();
 });
 
 // Create To Do Item
@@ -26,8 +30,38 @@ $('#new-process-form').submit(function(e) {
 });
 
 //Carga el formulario con los datos ya existentes del proceso
-$('#todo-list').on('click', '.edit-button', function() {
-	if($('#new-process').css("display") !== "none" ){
+$('#todo-list').on('click', '.list-group-item', function() {
+	if(($('#new-process').css("display") !== "none" ) || ($('#edit-process').css("display") !== "none" )){
+		return false;
+	}
+	var listId = $(this).attr('id').split("list");
+	var actionUrl = "/todos/"+listId[1];
+	$.get(actionUrl, function(data){
+		$('#show-process #name').val(data.name);
+		$('#show-process #client').val(data.client.name);
+		$('#show-process #clientTypeNumber').val(data.client.clientTypeNumber);
+		$('#show-process #clientType').val(data.client.clientType);
+		$('#show-process #priorityNumber').val(data.priorityNumber);
+		$('#show-process #selection').val(data.processType);
+		$('#show-process #createAt').val(moment(data.createAt).format('YYYY-MM-DD'));
+		$('#show-process #dateDelivery').val(moment(data.dateDelivery).format('YYYY-MM-DD'));
+		$('#show-process #office').val(data.office);
+		$('#show-process #assignUser').val(data.assignUser.username);
+		$("#show-process option").each(function(el){
+			if((el+1) == data.priorityNumber){
+				($(this)).attr('selected', true)
+			}
+		});
+
+	});
+	$('#show-process').show();
+	$("html, body").animate({ scrollTop: 0 }, "slow");
+});
+
+
+//Carga el formulario con los datos ya existentes del proceso para editarlo
+$('#todo-list').on('click', '.edit-button', function(e) {
+	if(($('#new-process').css("display") !== "none" ) || ($('#show-process').css("display") !== "none" )){
 		return false;
 	}
 	var buttonId = $(this).attr('id').split("button");
@@ -150,6 +184,7 @@ $('.list-inline a').on('click', function(e){
 //Modal Cerrar proceso
 $('#todo-list').on('click','.close-button', function(e){
 	e.preventDefault();
+	e.stopPropagation();
 	var buttonId = $(this).attr('id').split("close");
 	var actionUrl = "/todos/"+buttonId[1];
 	$.get(actionUrl, function(todo){
@@ -160,6 +195,7 @@ $('#todo-list').on('click','.close-button', function(e){
 		$('#modal-id').val(todo._id);
 		$('.proccessTime').text('Tiempo aproximado del proceso: ' + Math.round(total/60/24) + 'días');
 	});
+	$('#closeForm').modal('show');
 });
 
 //Guardar cierre de proceso

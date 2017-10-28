@@ -12,7 +12,7 @@ a:link {
 	display: none;
 }
 
-#new-process, #edit-process {
+#new-process, #edit-process, #show-process {
   display: none;
 }
 
@@ -25,7 +25,11 @@ a:link {
   color: #e74c3c;
 }
 
-#new-process-form, #edit-process-form {
+#show-process-close{
+  margin-left: 50%;
+}
+
+#new-process-form, #edit-process-form, .show-process-container {
   padding: 15px;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
