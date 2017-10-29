@@ -13,11 +13,11 @@
 				</div>
 			</div>
 			<% if(currentUser){ %>
-				<div class="row">
-					<div class="col-md-3">
+				<div class="row filtros">
+					<div class="col-md-2">
 						<span>Filtros: </span>
 					</div>
-					<div class="col-md-9">
+					<div class="col-md-10">
 						<ul class="list-inline">
 							<li><a href="#">Todos</a></li>
 							<li><a href="#"><%= currentUser.username %></a></li>
@@ -63,9 +63,6 @@
 						<h1>Crear Proceso</h1>
 					</div>
 				</div>
-
-
-
 				<form action="/todos" method="POST" autocomplete="off" id="new-process-form">
 					<div class="row">
 						<div class="form-group col-md-12">

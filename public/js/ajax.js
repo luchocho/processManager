@@ -229,8 +229,8 @@ function calcSLATime(todos){
 		switch(true) {
 			case (sla >= 100):
 												// $('#list'+todo._id).css("backgroundColor", "white");
-												$('#progress'+todo._id).addClass('progress-bar-danger');
-												$('#progress'+todo._id).removeClass('active progress-bar-striped');
+												$('#list'+todo._id).addClass('time-over');
+												$('#progress'+todo._id).addClass('progress-bar-grey');
 												$('#progress'+todo._id).attr('aria-valuenow',Math.round(sla));
 												$('#progress'+todo._id).attr('style','width:'+Math.round(sla)+'%');
 												break;

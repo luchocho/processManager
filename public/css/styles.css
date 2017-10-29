@@ -56,6 +56,18 @@ a:link {
   background-color: #5cb85c;
 }
 
+.filtros{
+  margin-left: 0px;
+}
+
+.progress-bar-grey{
+  background-color: rgba(149, 165, 166,1.0);
+}
+
+.time-over{
+  background-color: #DADFE1;
+  border: none;
+}
 /*.warningTime{
   background-color: rgba(255,255,0,.3)
 }

@@ -190,15 +190,55 @@ function orderTodosByName(name, callback){
   });
 }
 
+function searchByName(name, callback){
+  console.log('3tris');
+  Todo.aggregate([
+        {
+          $match: { name: { $regex: name, $options: 'gi' } }
+        },
+        {
+          $project:
+              {
+                name:1,
+                priority:1,
+                priorityNumber:1,
+                processType:1,
+                office:1,
+                assignUser:1,
+                dateEndProcess:1,
+                dateDelivery:1,
+                createAt:1,
+                client:1,
+                dateDelivery:1,
+                tiempoRestante: {
+                          $subtract: [ "$dateDelivery" , new Date() ]
+                        },
+                stateNumber:1
+              }
+        }
+        ], function(err, todos){
+    if(err){
+      console.log(err);
+      return callback(err);
+    } else {
+      console.log(todos);
+      callback(null, todos);
+    }
+  });
+}
+
+
 app.get("/todos", function(req, res){
   console.log('2');
   if(req.query.keyword) {
     const regex = new RegExp(escapeRegex(req.query.keyword), 'gi');
-    Todo.find({ name: regex }, function(err, todos){
-      if(err){
-        console.log(err);
-      } else {
-        res.json({todos:todos});
+    searchByName(regex, function(err, todos){
+      if(req.xhr) {
+        if(req.user){
+            res.json({todos:todos, id:req.user._id, isAdmin: req.user.isAdmin});
+        }else{
+            res.json({todos:todos});
+        }
       }
     });
   } else if(req.query.name && req.query.name !== 'Todos') {
