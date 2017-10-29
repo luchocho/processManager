@@ -205,17 +205,18 @@ $('#client').on('focus', function(e) {
 
 //Rellenar datos de usuario
 $('.assignUser').on('focus', function(e) {
-	console.log('entra');
-	$("#json-userlist").html('');
-	var dataList = $("#json-userlist");
+	if(!($('#edit-process-form #assignUser').is('[readonly]')) || !($('#new-process-form #assignUser').is('[readonly]'))){
+		$("#json-userlist").html('');
+		var dataList = $("#json-userlist");
 
-	$.get("/user", function(data){
-		data.forEach(function(user){
-			var option = document.createElement('option');
-			option.value = user.username;
-			dataList[0].appendChild(option);
+		$.get("/user", function(data){
+			data.forEach(function(user){
+				var option = document.createElement('option');
+				option.value = user.username;
+				dataList[0].appendChild(option);
+			});
 		});
-	});
+	}
 });
 
 //Rellena el campo tipo de empresa al elegir una empresa ya existente del form crear proceso
