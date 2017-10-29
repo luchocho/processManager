@@ -20,6 +20,32 @@ $('#show-process').on('click', '#show-process-close', function() {
 // Create To Do Item
 $('#new-process-form').submit(function(e) {
 	e.preventDefault();
+	var formData = {
+		name: $(this).find('#name').val(),
+		clientName : $(this).find('#client').val(),
+		clientTypeNumber : $(this).find('#clientTypeNumber').val(),
+		priorityNumber : $(this).find('#priorityNumber').val(),
+		processType : $(this).find('#selection').val(),
+		createAt : $(this).find('#createAt').val(),
+		dateDelivery : $(this).find('#dateDelivery').val(),
+		office : $(this).find('#office').val(),
+		assignUser : $(this).find('#assignUser').val()
+	}
+	var result = formValidation(formData);
+
+	$('#new-process-form .form-result ul').html('');
+	if(result.length > 0){
+		$('#new-process-form .form-result').addClass('form-error');
+		$('#new-process-form .form-result h4').text('Revisa los siguientes campos: ')
+		result.forEach(function(error){
+			$('#new-process-form .form-result ul').append('<li>' + error.msg + '</li>')
+		});
+		$('#new-process-form .form-result').css('display', 'block');
+		return false;
+	} else {
+		$('#new-process-form .form-result').css('display', 'none');
+		$('#new-process-form .form-result').removeClass('form-error');
+	};
 	var toDoItem = $(this).serialize();
 	$.post('/todos', toDoItem, function(data) {
 		console.log(data);
@@ -69,7 +95,6 @@ $('#todo-list').on('click', '.edit-button', function(e) {
 	$.get(actionUrl, function(data){
 		$('#edit-process #edit_processId').val(data._id);
 		$('#edit-process #name').val(data.name);
-		$('#edit-process #client').val(data.client.name);
 		$('#edit-process #client').val(data.client.name);
 		$('#edit-process #clientTypeNumber').val(data.client.clientTypeNumber);
 		$('#edit-process #clientType').val(data.client.clientType);
@@ -288,6 +313,39 @@ function paintProcess(todos){
 			`
 			);
 	});
+}
+
+function formValidation(data){
+	var result = [];
+	if((typeof data.name == 'undefined') || (data.name == '')){
+		 result.push({error : 'true', msg : 'Nombre del proceso'});
+	};
+	if((typeof data.clientName == 'undefined') || (data.clientName == '')){
+		result.push({error : 'true', msg : 'Nombre del cliente'});
+	};
+	if((typeof data.clientTypeNumber == 'undefined') || (data.clientTypeNumber == '') || (data.clientTypeNumber == 'Elegir...')){
+		result.push({error : 'true', msg : 'Tipo de cliente'});
+	};
+	if((typeof data.priorityNumber == 'undefined') || (data.priorityNumber == '') || (data.priorityNumber == 'Elegir...')){
+		 result.push({error : 'true', msg : 'Prioridad'});
+	};
+	if((typeof data.processType == 'undefined') || (data.processType == '') || (data.processType == 'Elegir...')){
+		result.push({error : 'true', msg : 'Selección'});
+	};
+	if((typeof data.createAt == 'undefined') || (data.createAt == '') || (data.createAt > data.dateDelivery)){
+		result.push({error : 'true', msg : 'Fecha Inicio'});
+	};
+	if((typeof data.dateDelivery == 'undefined') || (data.dateDelivery == '') || (data.dateDelivery < data.createAt)){
+		result.push({error : 'true', msg : 'Fecha de Entrega'});
+	};
+	if((typeof data.office == 'undefined') || (data.office == '')){
+		result.push({error : 'true', msg : 'Oficina'});
+	};
+	if((typeof data.assignUser == 'undefined') || (data.assignUser == '')){
+		result.push({error : 'true', msg : 'Responsable'});
+	};
+
+	return result;
 }
 
 //LLamada al calculo del tiempo SLA cada 30 mins

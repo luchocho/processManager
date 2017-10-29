@@ -68,6 +68,17 @@ a:link {
   background-color: #DADFE1;
   border: none;
 }
+
+.form-error, .form-result{
+  margin-top: 15px;
+  background-color: rgba(231, 76, 60,1.0);
+  color: white;
+  display: none;
+}
+
+.form-error ul{
+  list-style-type: none;
+}
 /*.warningTime{
   background-color: rgba(255,255,0,.3)
 }
