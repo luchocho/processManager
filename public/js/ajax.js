@@ -132,6 +132,28 @@ $('#todo-list').on('click', '.edit-button', function(e) {
 // Update  del proceso
 $('#edit-process').on('submit', '#edit-process-form', function(e) {
 	e.preventDefault();
+	var formData = {
+		name: $(this).find('#name').val(),
+		priorityNumber : $(this).find('#priorityNumber').val(),
+		createAt : $(this).find('#createAt').val(),
+		dateDelivery : $(this).find('#dateDelivery').val(),
+		office : $(this).find('#office').val(),
+	}
+	var result = formValidation(formData);
+
+	$('#edit-process-form .form-result ul').html('');
+	if(result.length > 0){
+		$('#edit-process-form .form-result').addClass('form-error');
+		$('#edit-process-form .form-result h4').text('Revisa los siguientes campos: ')
+		result.forEach(function(error){
+			$('#edit-process-form .form-result ul').append('<li>' + error.msg + '</li>')
+		});
+		$('#edit-process-form .form-result').css('display', 'block');
+		return false;
+	} else {
+		$('#edit-process-form .form-result').css('display', 'none');
+		$('#edit-process-form .form-result').removeClass('form-error');
+	};
 	var toDoItem = $(this).serialize();
 	var actionUrl = '/todos/' + $(this).find('#edit_processId').val();
 	$.ajax({
@@ -331,31 +353,31 @@ function paintProcess(todos){
 
 function formValidation(data){
 	var result = [];
-	if((typeof data.name == 'undefined') || (data.name == '')){
+	if((typeof data.name !== 'undefined') && (data.name == '')){
 		 result.push({error : 'true', msg : 'Nombre del proceso'});
 	};
-	if((typeof data.clientName == 'undefined') || (data.clientName == '')){
+	if((typeof data.clientName !== 'undefined') && (data.clientName == '')){
 		result.push({error : 'true', msg : 'Nombre del cliente'});
 	};
-	if((typeof data.clientTypeNumber == 'undefined') || (data.clientTypeNumber == '') || (data.clientTypeNumber == 'Elegir...')){
+	if((typeof data.clientTypeNumber !== 'undefined') && ((data.clientTypeNumber == '') || (data.clientTypeNumber == 'Elegir...'))){
 		result.push({error : 'true', msg : 'Tipo de cliente'});
 	};
-	if((typeof data.priorityNumber == 'undefined') || (data.priorityNumber == '') || (data.priorityNumber == 'Elegir...')){
+	if((typeof data.priorityNumber !== 'undefined') && ((data.priorityNumber == '') || (data.priorityNumber == 'Elegir...'))){
 		 result.push({error : 'true', msg : 'Prioridad'});
 	};
-	if((typeof data.processType == 'undefined') || (data.processType == '') || (data.processType == 'Elegir...')){
+	if((typeof data.processType !== 'undefined') && ((data.processType == '') || (data.processType == 'Elegir...'))){
 		result.push({error : 'true', msg : 'Selección'});
 	};
-	if((typeof data.createAt == 'undefined') || (data.createAt == '') || (data.createAt > data.dateDelivery)){
+	if((typeof data.createAt !== 'undefined') && ((data.createAt == '') || (data.createAt > data.dateDelivery))){
 		result.push({error : 'true', msg : 'Fecha Inicio'});
 	};
-	if((typeof data.dateDelivery == 'undefined') || (data.dateDelivery == '') || (data.dateDelivery < data.createAt)){
+	if((typeof data.dateDelivery !== 'undefined') && ((data.dateDelivery == '') || (data.dateDelivery < data.createAt))){
 		result.push({error : 'true', msg : 'Fecha de Entrega'});
 	};
-	if((typeof data.office == 'undefined') || (data.office == '')){
+	if((typeof data.office !== 'undefined') && (data.office == '')){
 		result.push({error : 'true', msg : 'Oficina'});
 	};
-	if((typeof data.assignUser == 'undefined') || (data.assignUser == '')){
+	if((typeof data.assignUser !== 'undefined') && (data.assignUser == '')){
 		result.push({error : 'true', msg : 'Responsable'});
 	};
 
