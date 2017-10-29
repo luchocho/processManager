@@ -6,6 +6,20 @@ $('#new-process-sign').on('click', function(e) {
 		return false;
 	}
 	$('#new-process').toggle();
+	//Reinicia errores de formulario
+	$('#new-process-form .form-result').css('display', 'none');
+	$('#new-process-form .form-result').removeClass('form-error');
+	$('#new-process-form .form-result ul').html('');
+	//reinicia valores de formulario
+	$('#new-process-form #name').val('');
+	$('#new-process-form #client').val('');
+	$('#new-process-form #clientTypeNumber').val('Elegir...');
+	$('#new-process-form #clientType').val('');
+	$('#new-process-form #priorityNumber').val('Elegir...');
+	$('#new-process-form #selection').val('Elegir...');
+	$('#new-process-form #dateDelivery').val('');
+	$('#new-process-form #office').val('');
+
 });
 
 // oculta el form de editar el proceso
