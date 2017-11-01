@@ -281,7 +281,6 @@ $('.modal-body').on('submit', '#close-process-form', function(e){
 function calcSLATime(todos){
 	todos.forEach(function(todo){
 		// console.log(todo.dateDelivery.diff(todo.createAt, 'days'), ' dias de diferencia');
-
 		//Fecha Inicio
 		var fecha1 = moment(todo.createAt);
 		//Fecha Fin
@@ -328,6 +327,10 @@ function calcSLATime(todos){
 												$('#progress'+todo._id).attr('style','width:'+Math.round(sla)+'%');
 												break;
 		}
+		if(todo.stateNumber !== 0){
+			$('#progress'+todo._id).removeClass('active');
+			$('.lead#'+todo._id).css('text-decoration', 'line-through');
+		}
 	});
 	loadSVG();
 }
@@ -354,7 +357,8 @@ function paintProcess(todos){
 					</div>
 				</div>
 				<div class="pull-right">
-				${todos.isAdmin == true || todos.id == todo.assignUser.id  ?
+				${todos.isAdmin == false && todos.id !== todo.assignUser.id  ? ''
+					: todo.stateNumber == 0 ?
 					`<button class="btn btn-sm btn-primary edit-button" id="button${todo._id}">Editar</button>
 					<button type="button" class="btn btn-sm btn-info close-button" id="close${todo._id}" data-toggle="modal" data-target="#closeForm">Cerrar</button>` : '' }
 				</div>
