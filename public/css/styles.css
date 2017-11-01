@@ -79,6 +79,10 @@ a:link {
 .form-error ul{
   list-style-type: none;
 }
+
+.modal-content{
+  border: 1px solid #999;
+}
 /*.warningTime{
   background-color: rgba(255,255,0,.3)
 }

@@ -281,13 +281,26 @@ $('.modal-body').on('submit', '#close-process-form', function(e){
 function calcSLATime(todos){
 	todos.forEach(function(todo){
 		// console.log(todo.dateDelivery.diff(todo.createAt, 'days'), ' dias de diferencia');
-		var fecha2 = moment(todo.dateDelivery);
+
+		//Fecha Inicio
 		var fecha1 = moment(todo.createAt);
+		//Fecha Fin
+		var fecha2 = moment(todo.dateDelivery);
+		//Total de tiempo para el proceso
 		var total = fecha2.diff(fecha1, 'minutes');
-		var restante = ((todo.tiempoRestante-7200000)/1000/60);
+
+		if(todo.stateNumber !== 0){
+				//Si proceso cerrado - Diferencia desde fecha de entrega a fecha entregado
+				var restante = fecha2.diff(todo.dateDelivered, 'minutes');
+		} else {
+				//Si proceso abierto - Tiempo restante calculado desde bbdd
+				var restante = ((todo.tiempoRestante-7200000)/1000/60);
+		}
+		//Tiempo restante en %
 		var restante = (restante*100)/total;
 		//SLA = Tiempo consumido del proceso
 		var sla = (100-restante);
+
 		switch(true) {
 			case (sla >= 100):
 												// $('#list'+todo._id).css("backgroundColor", "white");

@@ -30,11 +30,10 @@ function orderTodos(callback){
                 processType:1,
                 office:1,
                 assignUser:1,
-                dateEndProcess:1,
                 dateDelivery:1,
                 createAt:1,
                 client:1,
-                dateDelivery:1,
+                dateDelivered:1,
                 tiempoRestante: {
                           $subtract: [ "$dateDelivery" , new Date() ]
                         },
@@ -74,11 +73,10 @@ function orderTodosByName(name, callback){
                 processType:1,
                 office:1,
                 assignUser:1,
-                dateEndProcess:1,
                 dateDelivery:1,
                 createAt:1,
                 client:1,
-                dateDelivery:1,
+                dateDelivered:1,
                 tiempoRestante: {
                           $subtract: [ "$dateDelivery" , new Date() ]
                         },
@@ -113,11 +111,10 @@ function searchByName(name, callback){
                 processType:1,
                 office:1,
                 assignUser:1,
-                dateEndProcess:1,
                 dateDelivery:1,
                 createAt:1,
                 client:1,
-                dateDelivery:1,
+                dateDelivered:1,
                 tiempoRestante: {
                           $subtract: [ "$dateDelivery" , new Date() ]
                         },

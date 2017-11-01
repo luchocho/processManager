@@ -13,7 +13,6 @@ var todoSchema = new mongoose.Schema({
   priorityNumber: Number,
   createAt: {type: Date, default: Date.now },
   dateDelivery: {type: Date, default: Date.now },
-  dateEndProcess:  {type: Date, default: Date.now },
   dateDelivered: {type: Date, default: Date.now },
   office: String,
   comments: String,
