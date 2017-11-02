@@ -195,10 +195,12 @@ $('#client').on('focus', function(e) {
 	var dataList = $("#json-datalist");
 
 	$.get("/client", function(data){
+		console.log(data);
 		data.forEach(function(client){
 			var option = document.createElement('option');
 			option.value = client.name;
 			dataList[0].appendChild(option);
+			console.log(dataList);
 		});
 	});
 });
@@ -331,12 +333,21 @@ function calcSLATime(todos){
 			$('#progress'+todo._id).removeClass('active');
 			$('.lead#'+todo._id).css('text-decoration', 'line-through');
 		}
+		if(typeof todo.assignUser.initials !== 'undefined'){
+			console.log(todo.assignUser.initials);
+			$('#initials-container'+todo._id).text(todo.assignUser.initials);
+			console.log($('#initials-container'+todo._id).val());
+		} else {
+			$('#bio-image'+todo._id).hide();
+		}
 	});
 	loadSVG();
+
 }
 
 function paintProcess(todos){
 	$('#todo-list').html('');
+	console.log(todos);
 	todos.todos.forEach(function(todo){
 		$('#todo-list').append(
 			`
@@ -349,6 +360,10 @@ function paintProcess(todos){
 					</div>
 					<div class="col-md-3">
 						<img src="/img/medal.svg" class="svg svg${todo.client.clientTypeNumber}" alt="">
+						<div id="bio-image${todo._id}" class="bio-image">
+							<div id="initials-container${todo._id}" class="initials-container">
+							</div>
+						</div>
 					</div>
 				</div>
 				<div class="progress">
@@ -357,7 +372,8 @@ function paintProcess(todos){
 					</div>
 				</div>
 				<div class="pull-right">
-				${todos.isAdmin == false && todos.id !== todo.assignUser.id  ? ''
+				${todos.isAdmin == false && todos.id !== todo.assignUser._id  ? ''
+					: todos.isAdmin == undefined ? ''
 					: todo.stateNumber == 0 ?
 					`<button class="btn btn-sm btn-primary edit-button" id="button${todo._id}">Editar</button>
 					<button type="button" class="btn btn-sm btn-info close-button" id="close${todo._id}" data-toggle="modal" data-target="#closeForm">Cerrar</button>` : '' }
@@ -450,6 +466,7 @@ $(document).ready(function() {
 	 });
 
  }
+
 
  // Search functionality
  $('#search').on('input', function(e) {

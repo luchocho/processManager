@@ -36,6 +36,10 @@
 							</div>
 							<div class="col-md-3">
 								<img src="/img/medal.svg" class="svg <%= "svg"+todo.client.clientTypeNumber %>" alt="">
+								<div id="bio-image<%=todo._id%>" class="bio-image">
+									<div id="initials-container<%=todo._id%>" class="initials-container">
+									</div>
+								</div>
 							</div>
 						</div>
 						<div class="progress">
@@ -44,7 +48,7 @@
 							</div>
 						</div>
 						<div class="pull-right">
-							<% if(((currentUser && todo.assignUser.id.equals(currentUser._id )) || (currentUser && currentUser.isAdmin)) && (todo.stateNumber == 0)){ %>
+							<% if(((currentUser && todo.assignUser._id.equals(currentUser._id )) || (currentUser && currentUser.isAdmin)) && (todo.stateNumber == 0)){ %>
 							<button class="btn btn-sm btn-primary edit-button" id="button<%=todo._id%>">Editar</button>
 							<button type="button" class="btn btn-sm btn-info close-button" id="close<%=todo._id%>" data-toggle="modal" data-target="#closeForm">Cerrar</button>
 							<% } %>
@@ -63,7 +67,7 @@
 						<h1>Crear Proceso</h1>
 					</div>
 				</div>
-				<form action="/todos" method="POST" autocomplete="off" id="new-process-form">
+				<form action="/todos" method="POST" id="new-process-form">
 					<div class="row">
 						<div class="form-group col-md-12">
 							<label class="col-md-6" for="name">Nombre del proceso</label>

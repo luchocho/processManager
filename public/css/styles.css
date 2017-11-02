@@ -2,10 +2,26 @@
 body {
   padding-top: 80px;
   font-family: 'Nunito', sans-serif;
+  background-color: #f1f1f1;
 }
 
 a:link {
     text-decoration: none;
+}
+.navbar-inverse a.navbar-brand{
+  color: white;
+}
+.navbar-inverse{
+  background-color: #889696;
+  border-color: #889696;
+}
+
+.navbar-inverse .navbar-nav>li>a{
+  color: white;
+}
+
+.navbar-inverse .navbar-nav>.active>a, .navbar-inverse .navbar-nav>.active>a:focus, .navbar-inverse .navbar-nav>.active>a:hover{
+  background-color: #889696;
 }
 /* Hide to do item edit forms on page load */
 .edit-item-form {
@@ -33,6 +49,7 @@ a:link {
   margin-top: 28px;
   padding: 15px;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  background-color: white;
 }
 
 .list-group-item{
@@ -83,6 +100,24 @@ a:link {
 .modal-content{
   border: 1px solid #999;
 }
+
+.bio-image{
+  background-color: #337ab7;
+  display: inline-block;
+  height: 35px;
+  width: 35px;
+  position: absolute;
+  color: white;
+  border-radius: 10px;
+  font-size: 17px;
+  font-weight: 800;
+  border: 1px solid #337ab7;
+
+}
+
+.bio-image div{
+  margin: 5px 6px;
+}
 /*.warningTime{
   background-color: rgba(255,255,0,.3)
 }
@@ -93,8 +128,8 @@ a:link {
   background-color: rgba(0,255,0,.2)
 }*/
 .svg{
-  height: 40px;
-  width: 40px;
+  height: 35px;
+  width: 35px;
   margin-bottom: 10px;
 }
 
