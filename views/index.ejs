@@ -29,15 +29,16 @@
 				<% todos.forEach(function(todo){ %>
 					<li class="list-group-item" id="list<%=todo._id%>" >
 						<div class="row">
-							<div class="col-md-9">
+							<div class="col-md-8">
 								<span class="lead" id="<%=todo._id%>">
 									<%= todo.name %>
 								</span>
 							</div>
-							<div class="col-md-3">
-								<img src="/img/medal.svg" class="svg <%= "svg"+todo.client.clientTypeNumber %>" alt="">
-								<div id="bio-image<%=todo._id%>" class="bio-image">
-									<div id="initials-container<%=todo._id%>" class="initials-container">
+							<div class="col-md-4">
+								<img src="/img/medal.svg" class="pull-right svg <%= "svg"+todo.client.clientTypeNumber %>" alt="">
+								<img src="" class="pull-right selection-image" id="selection-image<%=todo._id%>">
+								<div id="bio-image<%=todo._id%>" class="pull-right bio-image">
+									<div id="initials-container<%=todo._id%>" class="pull-right initials-container">
 									</div>
 								</div>
 							</div>

@@ -302,46 +302,84 @@ function calcSLATime(todos){
 		//SLA = Tiempo consumido del proceso
 		var sla = (100-restante);
 
-		switch(true) {
-			case (sla >= 100):
-												// $('#list'+todo._id).css("backgroundColor", "white");
-												$('#list'+todo._id).addClass('time-over');
-												$('#progress'+todo._id).addClass('progress-bar-grey');
-												$('#progress'+todo._id).attr('aria-valuenow',Math.round(sla));
-												$('#progress'+todo._id).attr('style','width:'+Math.round(sla)+'%');
-												break;
-			case (sla >= 75):
-												// $('#list'+todo._id).addClass("dangerTime");
-												$('#progress'+todo._id).addClass('progress-bar-danger');
-												$('#progress'+todo._id).attr('aria-valuenow',Math.round(sla));
-												$('#progress'+todo._id).attr('style','width:'+Math.round(sla)+'%');
-												break;
-			case (sla >= 50):
-												// $('#list'+todo._id).addClass("warningTime");
-												$('#progress'+todo._id).addClass('progress-bar-warning');
-												$('#progress'+todo._id).attr('aria-valuenow',Math.round(sla));
-												$('#progress'+todo._id).attr('style','width:'+Math.round(sla)+'%');
-												break;
-			case (sla >= 0):
-												// $('#list'+todo._id).addClass("safeTime");
-												$('#progress'+todo._id).addClass('progress-bar-success');
-												$('#progress'+todo._id).attr('aria-valuenow',Math.round(sla));
-												$('#progress'+todo._id).attr('style','width:'+Math.round(sla)+'%');
-												break;
-		}
-		if(todo.stateNumber !== 0){
-			$('#progress'+todo._id).removeClass('active');
-			$('.lead#'+todo._id).css('text-decoration', 'line-through');
-		}
-		if(typeof todo.assignUser.initials !== 'undefined'){
-			console.log(todo.assignUser.initials);
-			$('#initials-container'+todo._id).text(todo.assignUser.initials);
-			console.log($('#initials-container'+todo._id).val());
-		} else {
-			$('#bio-image'+todo._id).hide();
-		}
+		paintProgress(sla, todo);
+		paintCloseProcess(todo);
+		paintImgUser(todo);
+		paintImgSelection(todo);
+
 	});
 	loadSVG();
+
+}
+
+function paintProgress(sla, todo){
+	switch(true) {
+		case (sla >= 100):
+											// $('#list'+todo._id).css("backgroundColor", "white");
+											$('#list'+todo._id).addClass('time-over');
+											$('#progress'+todo._id).addClass('progress-bar-grey');
+											$('#progress'+todo._id).attr('aria-valuenow',Math.round(sla));
+											$('#progress'+todo._id).attr('style','width:'+Math.round(sla)+'%');
+											break;
+		case (sla >= 75):
+											// $('#list'+todo._id).addClass("dangerTime");
+											$('#progress'+todo._id).addClass('progress-bar-danger');
+											$('#progress'+todo._id).attr('aria-valuenow',Math.round(sla));
+											$('#progress'+todo._id).attr('style','width:'+Math.round(sla)+'%');
+											break;
+		case (sla >= 50):
+											// $('#list'+todo._id).addClass("warningTime");
+											$('#progress'+todo._id).addClass('progress-bar-warning');
+											$('#progress'+todo._id).attr('aria-valuenow',Math.round(sla));
+											$('#progress'+todo._id).attr('style','width:'+Math.round(sla)+'%');
+											break;
+		case (sla >= 0):
+											// $('#list'+todo._id).addClass("safeTime");
+											$('#progress'+todo._id).addClass('progress-bar-success');
+											$('#progress'+todo._id).attr('aria-valuenow',Math.round(sla));
+											$('#progress'+todo._id).attr('style','width:'+Math.round(sla)+'%');
+											break;
+	}
+}
+
+function paintCloseProcess(todo){
+	if(todo.stateNumber !== 0){
+		$('#progress'+todo._id).removeClass('active');
+		$('.lead#'+todo._id).css('text-decoration', 'line-through');
+	}
+}
+
+function paintImgUser(todo){
+	if(typeof todo.assignUser.initials !== 'undefined'){
+		console.log(todo.assignUser.initials);
+		$('#initials-container'+todo._id).text(todo.assignUser.initials);
+		console.log($('#initials-container'+todo._id).val());
+	} else {
+		$('#bio-image'+todo._id).hide();
+	}
+}
+
+function paintImgSelection(todo){
+	if(typeof todo.processType !== 'undefined'){
+
+		switch(todo.processType) {
+			case 'Recurrente':
+				$('#selection-image'+todo._id).attr('src','/img/icons8-24hour.png');
+				break;
+			case 'Habitual':
+				$('#selection-image'+todo._id).attr('src','/img/icons8-run.png');
+				break;
+			case 'Agil y de expertise':
+				$('#selection-image'+todo._id).attr('src','/img/icons8-agil.png');
+				break;
+			case 'Estrategica y de impacto':
+				$('#selection-image'+todo._id).attr('src','/img/icons8-king.png');
+				break;
+			case 'Otra':
+				$('#selection-image'+todo._id).attr('src','/img/icons8-otros.png');
+				break;
+		}
+	}
 
 }
 
@@ -353,15 +391,16 @@ function paintProcess(todos){
 			`
 			<li class="list-group-item" id="list${todo._id}" >
 				<div class="row">
-					<div class="col-md-9">
+					<div class="col-md-8">
 						<span class="lead" id="${todo._id}">
 							${todo.name}
 						</span>
 					</div>
-					<div class="col-md-3">
-						<img src="/img/medal.svg" class="svg svg${todo.client.clientTypeNumber}" alt="">
-						<div id="bio-image${todo._id}" class="bio-image">
-							<div id="initials-container${todo._id}" class="initials-container">
+					<div class="col-md-4">
+						<img src="/img/medal.svg" class="pull-right svg svg${todo.client.clientTypeNumber}" alt="">
+						<img src="" id="selection-image${todo._id}" class="pull-right selection-image">
+						<div id="bio-image${todo._id}" class="pull-right bio-image">
+							<div id="initials-container${todo._id}" class="pull-right initials-container">
 							</div>
 						</div>
 					</div>

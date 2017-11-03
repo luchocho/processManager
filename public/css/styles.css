@@ -12,8 +12,8 @@ a:link {
   color: white;
 }
 .navbar-inverse{
-  background-color: #889696;
-  border-color: #889696;
+  background-color: #1c6fb6;
+  border-color: #1c6fb6;
 }
 
 .navbar-inverse .navbar-nav>li>a{
@@ -21,7 +21,7 @@ a:link {
 }
 
 .navbar-inverse .navbar-nav>.active>a, .navbar-inverse .navbar-nav>.active>a:focus, .navbar-inverse .navbar-nav>.active>a:hover{
-  background-color: #889696;
+  background-color: #1c6fb6;
 }
 /* Hide to do item edit forms on page load */
 .edit-item-form {
@@ -106,17 +106,26 @@ a:link {
   display: inline-block;
   height: 35px;
   width: 35px;
-  position: absolute;
   color: white;
-  border-radius: 10px;
+  border-radius: 50px;
   font-size: 17px;
   font-weight: 800;
   border: 1px solid #337ab7;
-
+  position: relative;
+  right: -2px;
+  bottom: 3px;
 }
 
 .bio-image div{
   margin: 5px 6px;
+}
+
+.selection-image{
+  position: relative;
+  right: -5px;
+  bottom: 4px;
+  height: 38px;
+  width: 35px;
 }
 /*.warningTime{
   background-color: rgba(255,255,0,.3)
@@ -128,7 +137,7 @@ a:link {
   background-color: rgba(0,255,0,.2)
 }*/
 .svg{
-  height: 35px;
+  height: 33px;
   width: 35px;
   margin-bottom: 10px;
 }
