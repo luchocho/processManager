@@ -7,8 +7,9 @@ var User = require("../models/user");
 // var crypto = require("crypto");
 
 
-router.get("/", function(req, res){
-  res.redirect("/todos");
+//Root Route
+router.get('/',function(req,res){
+   res.render('landing');
 });
 
 //Show register form
@@ -51,7 +52,7 @@ router.post('/login', function(req, res, next){
             return next(err);
         }
         if(!user){
-            return res.redirect('/todos');
+            return res.redirect('/');
         }
         req.logIn(user, function(err){
             if(err){
@@ -69,7 +70,7 @@ router.post('/login', function(req, res, next){
 //Logout logic
 router.get("/logout", function(req, res){
     req.logout();
-    res.redirect("/todos");
+    res.redirect("/");
 });
 
 module.exports = router;

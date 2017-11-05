@@ -62,7 +62,6 @@ $('#new-process-form').submit(function(e) {
 	};
 	var toDoItem = $(this).serialize();
 	$.post('/todos', toDoItem, function(data) {
-		console.log(data);
 		paintProcess(data);
 		calcSLATime(data.todos);
 		$('#new-process').toggle();
@@ -161,7 +160,6 @@ $('#edit-process').on('submit', '#edit-process-form', function(e) {
 		data: toDoItem,
 		type: 'PUT',
 		success: function(data) {
-			console.log(data);
 			paintProcess(data);
 			calcSLATime(data.todos);
 		}
@@ -195,12 +193,10 @@ $('#client').on('focus', function(e) {
 	var dataList = $("#json-datalist");
 
 	$.get("/client", function(data){
-		console.log(data);
 		data.forEach(function(client){
 			var option = document.createElement('option');
 			option.value = client.name;
 			dataList[0].appendChild(option);
-			console.log(dataList);
 		});
 	});
 });
@@ -237,7 +233,6 @@ $('#client').on('blur', function(e) {
 
 //Filtros
 $('.list-inline a').on('click', function(e){
-	console.log(e.currentTarget.text);
 	$.get('/todos?name=' + e.currentTarget.text, function(data){
 		paintProcess(data);
 		calcSLATime(data.todos);
@@ -282,7 +277,6 @@ $('.modal-body').on('submit', '#close-process-form', function(e){
 //Calcula el tiempo restande de un proceso y asigna los estilos
 function calcSLATime(todos){
 	todos.forEach(function(todo){
-		// console.log(todo.dateDelivery.diff(todo.createAt, 'days'), ' dias de diferencia');
 		//Fecha Inicio
 		var fecha1 = moment(todo.createAt);
 		//Fecha Fin
@@ -351,9 +345,7 @@ function paintCloseProcess(todo){
 
 function paintImgUser(todo){
 	if(typeof todo.assignUser.initials !== 'undefined'){
-		console.log(todo.assignUser.initials);
 		$('#initials-container'+todo._id).text(todo.assignUser.initials);
-		console.log($('#initials-container'+todo._id).val());
 	} else {
 		$('#bio-image'+todo._id).hide();
 	}
@@ -385,7 +377,6 @@ function paintImgSelection(todo){
 
 function paintProcess(todos){
 	$('#todo-list').html('');
-	console.log(todos);
 	todos.todos.forEach(function(todo){
 		$('#todo-list').append(
 			`
@@ -459,7 +450,6 @@ function formValidation(data){
 
 //LLamada al calculo del tiempo SLA cada 30 mins
 $(document).ready(function() {
-		console.log('entra a ready');
 		$.get('/todos', function(todos) {
     	calcSLATime(todos.todos);
 		});

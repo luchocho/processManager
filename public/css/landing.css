@@ -1,0 +1,41 @@
+body {
+    background : #333;
+    background-size: auto;
+    background-position: 50% 60%;
+    background-repeat: no-repeat;
+    background-image: url(/img/landingPsicoapp4.png);
+    z-index: 0;
+}
+
+#landing-header {
+    z-index: 1;
+    position: relative;
+    text-align: center;
+    padding-top: 10vh;
+    color: #fff;
+}
+
+.form-group label{
+  color: white;
+}
+
+p{
+  color: white;
+  text-align: center;
+}
+
+#logoPsicoac{
+  width: 13%;
+}
+
+#logoDPL{
+  width: 13%;
+  margin: 23px;
+}
+
+.hashtag{
+  position: relative;
+  top: 200px;
+  text-align: center;
+  color: white;
+}

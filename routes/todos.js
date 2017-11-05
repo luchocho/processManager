@@ -210,7 +210,7 @@ router.get("/", function(req, res){
               res.json({todos:todos});
           }
         } else {
-          res.render("index", {todos: todos});
+          res.render("index", {todos: todos, page: 'todos'});
         }
       }
     });
