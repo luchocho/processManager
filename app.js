@@ -32,7 +32,7 @@ var indexRoutes = require("./routes/index");
 
 // PASSPORT CONFIGURATION
 app.use(require("express-session")({
-    secret: "Once again Rusty wins cutest dog!",
+    secret: secretsession,
     resave: false,
     saveUninitialized: false
 }));
