@@ -11,7 +11,7 @@ var express = require("express"),
 app.locals.moment = require('moment');
 
 // mongoose.connect("mongodb://localhost/todo_app");
-mongoose.connect("mongodb://process.env.userdb:process.env.passdb@cluster0-shard-00-00-cnrcg.mongodb.net:27017,cluster0-shard-00-01-cnrcg.mongodb.net:27017,cluster0-shard-00-02-cnrcg.mongodb.net:27017/todo_app?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin");
+mongoose.connect("mongodb://process.env.userdb:process.env.passdb@cluster0-shard-00-00-cnrcg.mongodb.net:27017,cluster0-shard-00-01-cnrcg.mongodb.net:27017,cluster0-shard-00-02-cnrcg.mongodb.net:27017/todo_app?ssl=true&replicaSet=Cluster0-shard-0");
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(expressSanitizer());
@@ -62,6 +62,6 @@ app.use("/user", userRoutes);
 //     console.log('The server has started ..');
 // });
 
-app.listen(3000, function() {
-  console.log('Server running on port 3000');
-});
+// app.listen(3000, function() {
+//   console.log('Server running on port 3000');
+// });
