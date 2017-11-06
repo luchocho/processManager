@@ -11,6 +11,7 @@ var express = require("express"),
 app.locals.moment = require('moment');
 
 mongoose.connect("mongodb://localhost/todo_app");
+mongoose.connect("mongodb://process.env.userdb:process.env.passdb@cluster0-shard-00-00-cnrcg.mongodb.net:27017,cluster0-shard-00-01-cnrcg.mongodb.net:27017,cluster0-shard-00-02-cnrcg.mongodb.net:27017/psicoapp?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin");
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(expressSanitizer());
