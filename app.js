@@ -9,11 +9,9 @@ var express = require("express"),
     passportLocalMongoose = require("passport-local-mongoose");
 
 app.locals.moment = require('moment');
-
+var uriConnect = `mongodb://${process.env.userdb}:${process.env.passdb}@cluster0-shard-00-00-cnrcg.mongodb.net:27017,cluster0-shard-00-01-cnrcg.mongodb.net:27017,cluster0-shard-00-02-cnrcg.mongodb.net:27017/todo_app?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin`
 // mongoose.connect("mongodb://localhost/todo_app");
-mongoose.connect("mongodb://prueba:prueba@cluster0-shard-00-00-cnrcg.mongodb.net:27017,cluster0-shard-00-01-cnrcg.mongodb.net:27017,cluster0-shard-00-02-cnrcg.mongodb.net:27017/todo_app?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin", {
-  useMongoClient: true
-});
+mongoose.connect(uriConnect, {useMongoClient: true});
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(expressSanitizer());
