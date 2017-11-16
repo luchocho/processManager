@@ -8,10 +8,15 @@ var express = require("express"),
     LocalStrategy = require("passport-local"),
     passportLocalMongoose = require("passport-local-mongoose");
 
+const fs = require('fs');
+
+var configData = JSON.parse(fs.readFileSync('./config_files/config_data.json'));
+
 app.locals.moment = require('moment');
-var uriConnect = `mongodb://${process.env.userdb}:${process.env.passdb}@cluster0-shard-00-00-cnrcg.mongodb.net:27017,cluster0-shard-00-01-cnrcg.mongodb.net:27017,cluster0-shard-00-02-cnrcg.mongodb.net:27017/todo_app?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin`
-// mongoose.connect("mongodb://localhost/todo_app");
+var uriConnect = `mongodb://${configData.dbUser}:${configData.dbPassword}@${configData.uriConnect}`
 mongoose.connect(uriConnect, {useMongoClient: true});
+//mongoose.connect("mongodb://localhost/todo_app");
+
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(expressSanitizer());
@@ -21,7 +26,6 @@ app.use(methodOverride('_method'));
 var Todo = require("./models/todo");
 var Client = require("./models/client");
 var User = require("./models/user");
-
 
 // UserSchema.plugin(passportLocalMongoose);
 
@@ -33,7 +37,7 @@ var indexRoutes = require("./routes/index");
 
 // PASSPORT CONFIGURATION
 app.use(require("express-session")({
-    secret: process.env.secretsession,
+    secret: configData.session,
     resave: false,
     saveUninitialized: false
 }));
@@ -58,10 +62,10 @@ app.use("/user", userRoutes);
 
 
 //Conexion a Cloud9
-app.listen(process.env.PORT, process.env.IP, function(){
-    console.log('The server has started ..');
-});
+//app.listen(process.env.PORT, process.env.IP, function(){
+//    console.log('The server has started ..');
+//});
 
-// app.listen(3000, function() {
-//   console.log('Server running on port 3000');
-// });
+ app.listen(3000, function() {
+   console.log('Server running on port 3000');
+ });
