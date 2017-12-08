@@ -12,6 +12,7 @@ $('#new-process-sign').on('click', function(e) {
 	$('#new-process-form .form-result ul').html('');
 	//reinicia valores de formulario
 	$('#new-process-form #name').val('');
+	$('#new-process-form #client').val('Elige un cliente');
 	// $("#new-process-form #client").html('');
 	$('#new-process-form #clientTypeNumber').val('Elegir...');
 	$('#new-process-form #clientType').val('');
