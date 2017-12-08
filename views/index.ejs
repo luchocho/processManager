@@ -78,6 +78,7 @@
 					</div>
 					<div class="row">
 						<div class="form-group col-md-8">
+							<input type="text" name="todo[clientTypeId]" class="hidden" value="" id="clientTypeId">
 							<label for="client" class="col-md-3">Cliente</label>
 							<input type="text" name="todo[client]" class="form-control col-md-9" id="client" list="json-datalist">
 							<datalist id="json-datalist"></datalist>
@@ -85,7 +86,7 @@
 						<div class="form-group col-md-4">
 							<label class="col-md-3" for="clientTypeNumber">Tipo</label>
 							<select class="form-control col-md-9" name="todo[clientTypeNumber]" id="clientTypeNumber">
-								<option selected>Elegir...</option>
+								<option >Elegir...</option>
 								<option value="1">Platino</option>
 								<option value="2">Oro</option>
 								<option value="3">Plata</option>

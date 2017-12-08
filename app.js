@@ -13,9 +13,9 @@ const fs = require('fs');
 var configData = JSON.parse(fs.readFileSync('./config_files/config_data.json'));
 
 app.locals.moment = require('moment');
-var uriConnect = `mongodb://${configData.dbUser}:${configData.dbPassword}@${configData.uriConnect}`
-mongoose.connect(uriConnect, {useMongoClient: true});
-//mongoose.connect("mongodb://localhost/todo_app");
+//var uriConnect = `mongodb://${configData.dbUser}:${configData.dbPassword}@${configData.uriConnect}`
+//mongoose.connect(uriConnect, {useMongoClient: true});
+mongoose.connect("mongodb://localhost/todo_app");
 
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({extended: true}));

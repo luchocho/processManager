@@ -34,9 +34,11 @@ $('#show-process').on('click', '#show-process-close', function() {
 // Create To Do Item
 $('#new-process-form').submit(function(e) {
 	e.preventDefault();
+	console.log(this);
 	var formData = {
 		name: $(this).find('#name').val(),
-		clientName : $(this).find('#client').val(),
+		client : $(this).find('#client').val(),
+		clientTypeId : $(this).find('#clientTypeId').val(),
 		clientTypeNumber : $(this).find('#clientTypeNumber').val(),
 		priorityNumber : $(this).find('#priorityNumber').val(),
 		processType : $(this).find('#selection').val(),
@@ -61,6 +63,7 @@ $('#new-process-form').submit(function(e) {
 		$('#new-process-form .form-result').removeClass('form-error');
 	};
 	var toDoItem = $(this).serialize();
+
 	$.post('/todos', toDoItem, function(data) {
 		paintProcess(data);
 		calcSLATime(data.todos);
@@ -220,12 +223,18 @@ $('.assignUser').on('focus', function(e) {
 //Rellena el campo tipo de empresa al elegir una empresa ya existente del form crear proceso
 $('#client').on('blur', function(e) {
 	$.get(`/client?name=${e.target.value}`, function(client){
+	    console.log(client);
 		if(client.length !== 0){
 			$("#clientTypeNumber option").each(function(el){
+			    console.log(el);
+			    console.log(client[0].clientTypeNumber);
 				if((el) == client[0].clientTypeNumber){
 					($(this)).attr('selected', true)
+				} else {
+				    ($(this)).attr('selected', false)
 				}
 			});
+			$("#clientTypeId").val(client[0].clientTypeId);
 		}
 	});
 });
@@ -420,7 +429,7 @@ function formValidation(data){
 	if((typeof data.name !== 'undefined') && (data.name == '')){
 		 result.push({error : 'true', msg : 'Nombre del proceso'});
 	};
-	if((typeof data.clientName !== 'undefined') && (data.clientName == '')){
+	if((typeof data.clientTypeId !== 'undefined') && (data.clientName == '')){
 		result.push({error : 'true', msg : 'Nombre del cliente'});
 	};
 	if((typeof data.clientTypeNumber !== 'undefined') && ((data.clientTypeNumber == '') || (data.clientTypeNumber == 'Elegir...'))){
