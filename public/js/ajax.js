@@ -232,7 +232,7 @@ $('.assignUser').on('focus', function(e) {
 });
 
 //Rellena el campo tipo de empresa al elegir una empresa ya existente del form crear proceso
-$('#client').on('blur', function(e) {
+$('#client').on('change', function(e) {
 	$.get(`/client?name=${e.target.value}`, function(client){
 	    console.log(client);
 		if(client.length !== 0){
