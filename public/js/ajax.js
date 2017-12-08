@@ -12,13 +12,17 @@ $('#new-process-sign').on('click', function(e) {
 	$('#new-process-form .form-result ul').html('');
 	//reinicia valores de formulario
 	$('#new-process-form #name').val('');
-	$('#new-process-form #client').val('');
+	// $("#new-process-form #client").html('');
 	$('#new-process-form #clientTypeNumber').val('Elegir...');
 	$('#new-process-form #clientType').val('');
 	$('#new-process-form #priorityNumber').val('Elegir...');
 	$('#new-process-form #selection').val('Elegir...');
 	$('#new-process-form #dateDelivery').val('');
 	$('#new-process-form #office').val('');
+	if( $('#new-process-form #client option').length === 1) {
+			fillClientDroplist();
+	}
+
 
 });
 
@@ -191,18 +195,24 @@ $('#todo-list').on('submit', '.delete-item-form', function(e) {
 });
 
 //Rellenar datos de cliente
-$('#client').on('focus', function(e) {
-	$("#json-datalist").html('');
-	var dataList = $("#json-datalist");
+function fillClientDroplist (){
+	var select = $("#client");
 
 	$.get("/client", function(data){
 		data.forEach(function(client){
-			var option = document.createElement('option');
-			option.value = client.name;
-			dataList[0].appendChild(option);
+			// var option = document.createElement('option');
+			// option.textContent = client.name;
+			// option.value = client.name;
+			// inputSelect.appendChild(option);
+
+			var opt = client.name;
+			var el = document.createElement("option");
+			el.textContent = opt;
+			el.value = opt;
+			select[0].appendChild(el);
 		});
 	});
-});
+}
 
 //Rellenar datos de usuario
 $('.assignUser').on('focus', function(e) {
@@ -426,10 +436,11 @@ function paintProcess(todos){
 
 function formValidation(data){
 	var result = [];
+	console.log(data);
 	if((typeof data.name !== 'undefined') && (data.name == '')){
 		 result.push({error : 'true', msg : 'Nombre del proceso'});
 	};
-	if((typeof data.clientTypeId !== 'undefined') && (data.clientName == '')){
+	if((typeof data.clientTypeId !== 'undefined') && ((data.client == '') || (data.client == 'Elige un cliente'))){
 		result.push({error : 'true', msg : 'Nombre del cliente'});
 	};
 	if((typeof data.clientTypeNumber !== 'undefined') && ((data.clientTypeNumber == '') || (data.clientTypeNumber == 'Elegir...'))){

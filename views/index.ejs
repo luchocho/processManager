@@ -80,8 +80,11 @@
 						<div class="form-group col-md-8">
 							<input type="text" name="todo[clientTypeId]" class="hidden" value="" id="clientTypeId">
 							<label for="client" class="col-md-3">Cliente</label>
-							<input type="text" name="todo[client]" class="form-control col-md-9" id="client" list="json-datalist">
-							<datalist id="json-datalist"></datalist>
+							<select	name="todo[client]" class="form-control col-md-9" id="client">
+								<option>Elige un cliente</option>
+							</select>
+							<!-- <input type="text" name="todo[client]" class="form-control col-md-9" id="client" list="json-datalist">
+							<datalist id="json-datalist"></datalist> -->
 						</div>
 						<div class="form-group col-md-4">
 							<label class="col-md-3" for="clientTypeNumber">Tipo</label>
