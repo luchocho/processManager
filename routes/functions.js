@@ -1,5 +1,11 @@
 const fs = require('fs');
 
+
+// function to be used in the .get("/todos"..) route
+function escapeRegex(name) {
+    return name.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+};
+
 function setClientType(clientTypeNumber){
     switch(clientTypeNumber){
        case "1":
@@ -50,6 +56,7 @@ function fetchClientsData(){
 }
 
 module.exports = {
+    escapeRegex,
     setClientType,
     setPriorityNumber,
     fetchClientsData

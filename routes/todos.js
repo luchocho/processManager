@@ -5,183 +5,17 @@ var Client = require("../models/client");
 var User = require("../models/user");
 var middleware = require("../middleware");
 var functions = require("./functions.js");
+var queries = require("./queries.js");
 const fs = require('fs');
 
 
 //ROUTES
 
-
-// function to be used in the .get("/todos"..) route
-function escapeRegex(name) {
-    return name.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
-};
-
-function orderTodos(callback){
-
-  console.log('3');
-  Todo.aggregate([
-        {
-          $match: {stateNumber: {$nin: [1,2,3]}}
-        },
-        {
-          $lookup:
-            {
-              from: "users",
-              localField : "assignUser.id",
-              foreignField: "_id",
-              as: "assignUser"
-            }
-        },
-        {
-        $unwind: "$assignUser"
-        },
-        {
-          $project:
-              {
-                "name":1,
-                "priority":1,
-                "priorityNumber":1,
-                "processType":1,
-                "office":1,
-                "assignUser._id":1,
-                "assignUser.username":1,
-                "assignUser.initials":1,
-                "dateDelivery":1,
-                "createAt":1,
-                "client":1,
-                "dateDelivered":1,
-                "tiempoRestante": {
-                          $subtract: [ "$dateDelivery" , new Date() ]
-                        },
-                "stateNumber":1
-              }
-        },
-        {
-          $sort: {"client.clientTypeNumber":1, priorityNumber: 1 , tiempoRestante: 1}
-        }
-        ], function(err, todos){
-    if(err){
-      console.log(err);
-      return callback(err);
-    } else {
-      callback(null, todos);
-    }
-  });
-}
-
-function orderTodosByName(name, callback){
-  console.log('3bis');
-  Todo.aggregate([
-        {
-          $match: {
-              $and: [
-                        {stateNumber: {$nin: [1,2,3]}},
-                        {'assignUser.username': name}
-                    ]
-            }
-        },
-        {
-          $lookup:
-            {
-              from: "users",
-              localField : "assignUser.id",
-              foreignField: "_id",
-              as: "assignUser"
-            }
-        },
-        {
-        $unwind: "$assignUser"
-        },
-        {
-          $project:
-              {
-                "name":1,
-                "priority":1,
-                "priorityNumber":1,
-                "processType":1,
-                "office":1,
-                "assignUser._id":1,
-                "assignUser.username":1,
-                "assignUser.initials":1,
-                "dateDelivery":1,
-                "createAt":1,
-                "client":1,
-                "dateDelivered":1,
-                "tiempoRestante": {
-                          $subtract: [ "$dateDelivery" , new Date() ]
-                        },
-                "stateNumber":1
-              }
-        },
-        {
-          $sort: {"client.clientTypeNumber":1, priorityNumber: 1 , tiempoRestante: 1}
-        }
-        ], function(err, todos){
-    if(err){
-      console.log(err);
-      return callback(err);
-    } else {
-      callback(null, todos);
-    }
-  });
-}
-
-function searchByName(name, callback){
-  console.log('3tris');
-  Todo.aggregate([
-        {
-          $match: { name: { $regex: name, $options: 'gi' } }
-        },
-        {
-          $lookup:
-            {
-              from: "users",
-              localField : "assignUser.id",
-              foreignField: "_id",
-              as: "assignUser"
-            }
-        },
-        {
-        $unwind: "$assignUser"
-        },
-        {
-          $project:
-              {
-                "name":1,
-                "priority":1,
-                "priorityNumber":1,
-                "processType":1,
-                "office":1,
-                "assignUser._id":1,
-                "assignUser.username":1,
-                "assignUser.initials":1,
-                "dateDelivery":1,
-                "createAt":1,
-                "client":1,
-                "dateDelivered":1,
-                "tiempoRestante": {
-                          $subtract: [ "$dateDelivery" , new Date() ]
-                        },
-                "stateNumber":1
-              }
-        },
-        ], function(err, todos){
-    if(err){
-      console.log(err);
-      return callback(err);
-    } else {
-      console.log(todos);
-      callback(null, todos);
-    }
-  });
-}
-
-
 router.get("/", function(req, res){
   console.log('2');
   if(req.query.keyword) {
-    const regex = new RegExp(escapeRegex(req.query.keyword), 'gi');
-    searchByName(regex, function(err, todos){
+    const regex = new RegExp(functions.escapeRegex(req.query.keyword), 'gi');
+    queries.searchByName(regex, function(err, todos){
       if(req.xhr) {
         if(req.user){
             res.json({todos:todos, id:req.user._id, isAdmin: req.user.isAdmin});
@@ -191,7 +25,7 @@ router.get("/", function(req, res){
       }
     });
   } else if(req.query.name && req.query.name !== 'Todos') {
-      orderTodosByName(req.query.name,function(err,todos){
+      queries.orderTodosByName(req.query.name,function(err,todos){
         if(err){
           console.log(err);
         } else {
@@ -200,7 +34,7 @@ router.get("/", function(req, res){
       });
     } else {
       console.log('7');
-      orderTodos(function(err, todos){
+      queries.orderTodos(function(err, todos){
       if(err){
         console.log(err);
       } else {
@@ -279,7 +113,7 @@ router.post("/", middleware.isLoggedIn, function(req, res){
                                 if(err){
                                   console.log(err);
                                 } else {
-                                    orderTodos(function(err, todos){
+                                    queries.orderTodos(function(err, todos){
                                         if(err){
                                             console.log(err);
                                         }else{
@@ -352,7 +186,7 @@ console.log(req.user);
              if(err){
                console.log(err);
              } else {
-               orderTodos(function(err, todos){
+               queries.orderTodos(function(err, todos){
                  if(err){
                    console.log(err);
                  }else{
@@ -372,7 +206,7 @@ console.log(req.user);
       if(err){
         console.log(err);
       } else {
-        orderTodos(function(err, todos){
+        queries.orderTodos(function(err, todos){
           if(err){
             console.log(err);
           }else{
