@@ -18,37 +18,32 @@ objTodos = {
 		objTodos.searchBar();
 	}
 	,toggleNewProcess : function () {
-		console.log('entra2')	;
 		$('#new-process-sign').on('click', function(e) {
 			e.preventDefault();
 			if(($('#edit-process').css("display") !== "none" ) || ($('#show-process').css("display") !== "none" )){
 				return false;
 			}
+			if ($('#new-process').css('display') == 'none') {
+				//Reinicia errores de formulario
+				$('#new-process-form .form-result').css('display', 'none');
+				$('#new-process-form .form-result').removeClass('form-error');
+				$('#new-process-form .form-result ul').html('');
+				//reinicia valores de formulario
+				$('#new-process-form #name').val('');
+				$('#new-process-form #priorityNumber').val('Elegir...');
+				$('#new-process-form #selection').val('Elegir...');
+				$('#new-process-form #dateDelivery').val('');
+				$('#new-process-form #office').val('');
+				if( $('#new-process-form #client option').length === 1) {
+						objTodos.fillClientDroplist();
+				}
+				else if ($('#new-process-form #client option').length > 1) {
+						$("#new-process-form #client option").prop('selected', false);
+						// $('#new-process-form #clientTypeNumber').val('Elegir...');
+						// $('#new-process-form #clientTypeNumber option').prop('selected', false);
+				}
+			}
 			$('#new-process').toggle();
-			//Reinicia errores de formulario
-			$('#new-process-form .form-result').css('display', 'none');
-			$('#new-process-form .form-result').removeClass('form-error');
-			$('#new-process-form .form-result ul').html('');
-			//reinicia valores de formulario
-			$('#new-process-form #name').val('');
-			// $('#new-process-form #client').val('Elige un cliente');
-			// $("#new-process-form #client").html('');
-			// $('#new-process-form #clientTypeNumber').val('Elegir...');
-			// $('#new-process-form #clientType').val('');
-			$('#new-process-form #priorityNumber').val('Elegir...');
-			$('#new-process-form #selection').val('Elegir...');
-			$('#new-process-form #dateDelivery').val('');
-			$('#new-process-form #office').val('');
-			if( $('#new-process-form #client option').length === 1) {
-					objTodos.fillClientDroplist();
-			}
-			else if ($('#new-process-form #client option').length > 1) {
-					$("#new-process-form #client option").prop('selected', false);
-					// $('#new-process-form #clientTypeNumber').val('Elegir...');
-					// $('#new-process-form #clientTypeNumber option').prop('selected', false);
-			}
-
-
 		});
 	}
 	,toggleEditProcess : function () {

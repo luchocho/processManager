@@ -11,7 +11,7 @@ const fs = require('fs');
 
 //ROUTES
 
-router.get("/", function(req, res){
+router.get("/", middleware.isLoggedIn, function(req, res){
   console.log('2');
   if(req.query.keyword) {
     const regex = new RegExp(functions.escapeRegex(req.query.keyword), 'gi');
@@ -133,7 +133,7 @@ router.post("/", middleware.isLoggedIn, function(req, res){
     });
 });
 
-router.get("/:id", function(req, res){
+router.get("/:id", middleware.isLoggedIn, function(req, res){
     console.log('todos/id');
     Todo.findById(req.params.id, function(err, todo){
         if(err){

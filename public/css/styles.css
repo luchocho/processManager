@@ -2,7 +2,9 @@
 body {
   padding-top: 80px;
   font-family: 'Nunito', sans-serif;
-  background-color: #f1f1f1;
+  /*background-color: #f1f1f1;*/
+  background-color: #333;
+  color: white;
 }
 
 a:link {
@@ -50,11 +52,15 @@ a:link {
   padding: 15px;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
   background-color: white;
+  color: black;
+  border-radius: 4px;
 }
 
 .list-group-item{
   margin-bottom:10px;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  border-radius: 4px;
+  color: black;
 }
 
 /*.form-inline {
@@ -99,6 +105,7 @@ a:link {
 
 .modal-content{
   border: 1px solid #999;
+  color: black;
 }
 
 .bio-image{
