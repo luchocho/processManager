@@ -96,11 +96,12 @@ a:link {
   border: none;
 }
 
-.form-error, .form-result{
+.form-error, .form-result, .form-result-newClient{
   margin-top: 15px;
   background-color: rgba(231, 76, 60,1.0);
   color: white;
   display: none;
+  text-align: left;
 }
 
 .form-error ul{
@@ -110,6 +111,18 @@ a:link {
 .modal-content{
   border: 1px solid #999;
   color: black;
+}
+
+.form-result-newClient {
+    margin-bottom: 0;
+}
+
+#newClient-process-form{
+  margin-bottom: 0;
+}
+
+#newClientForm .modal-footer {
+  padding-bottom: 0;
 }
 
 .bio-image{

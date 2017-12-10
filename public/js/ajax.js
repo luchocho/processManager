@@ -54,7 +54,6 @@ objTodos = {
 		// Create To Do Item
 		$('#new-process-form').submit(function(e) {
 			e.preventDefault();
-			console.log(this);
 			var formData = {
 				name: $(this).find('#name').val(),
 				client : $(this).find('#client').val(),
@@ -255,9 +254,9 @@ objTodos = {
 				if(client.length !== 0){
 					$("#clientTypeNumber option").each(function(el){
 						if((el) == client[0].clientTypeNumber){
-							($(this)).attr('selected', true)
+							($(this)).prop('selected', true)
 						} else {
-					    ($(this)).attr('selected', false)
+					    ($(this)).prop('selected', false)
 						}
 					});
 					$("#clientTypeId").val(client[0].clientTypeId);
@@ -503,6 +502,8 @@ objClient = {
 	,clientModal : function () {
 		$('#createClientButton').on('click', function () {
 			objClient.resetDataModal();
+			$('#newClient-process-form .form-result-newClient').css('display', 'none');
+			$('#newClient-process-form .form-result-newClient').removeClass('form-error');
 			$('#newClientForm').modal('show');
 		});
 	}
@@ -510,45 +511,47 @@ objClient = {
 		//Guardar nuevo cliente
 		$('.modal-body').on('submit', '#newClient-process-form', function(e){
 			e.preventDefault();
-			var newClient = $(this).serialize();
-			var actionUrl = '/client'
-			$.ajax({
-				url: actionUrl,
-				data: newClient,
-				type: 'PUT',
-				success: function(data) {
-					$('#newClientForm').modal('hide');
-				}
-			});
+			var formData = {
+				clientName: $(this).find('#newClient').val(),
+				clientTypeNumber : $(this).find('#newClientTypeNumber').val(),
+			}
+			var result = formValidationClient(formData);
+			if (objClient.modalFormValidation(result) !== false) {
+				var newClient = $(this).serialize();
+				var actionUrl = '/client'
+				$.ajax({
+					url: actionUrl,
+					data: newClient,
+					type: 'PUT',
+					success: function(data) {
+						$('#newClientForm').modal('hide');
+					}
+				});
+			}
 		});
 	}
 	,resetDataModal : function () {
 		$('#newClient-process-form')[0].reset();
 	}
-
-	// ,saveProcess : function () {
-	// 	//Guardar cierre de proceso
-	// 	$('.modal-body').on('submit', '#close-process-form', function(e){
-	// 		e.preventDefault();
-	// 		var toDoItem = $(this).serialize();
-	// 		var actionUrl = '/todos/'+$('#modal-id').val();
-	// 		$.ajax({
-	// 			url: actionUrl,
-	// 			data: toDoItem,
-	// 			type: 'PUT',
-	// 			success: function(data) {
-	// 				objPaintData.paintProcess(data);
-	// 				objPaintData.calcSLATime(data.todos);
-	// 				$('#closeForm').modal('hide');
-	// 			}
-	// 		});
-	// 	});
-	// }
+	,modalFormValidation : function (result) {
+		$('#newClient-process-form .form-result-newClient ul').html('');
+		if(result.length > 0){
+			$('#newClient-process-form .form-result-newClient').addClass('form-error');
+			$('#newClient-process-form .form-result-newClient h4').text('Revisa los siguientes campos: ')
+			result.forEach(function(error){
+				$('#newClient-process-form .form-result-newClient ul').append('<li>' + error.msg + '</li>')
+			});
+			$('#newClient-process-form .form-result-newClient').css('display', 'block');
+			return false;
+		} else {
+			$('#newClient-process-form .form-result-newClient').css('display', 'none');
+			$('#newClient-process-form .form-result-newClient').removeClass('form-error');
+		};
+	}
 }
 
 function formValidation(data){
 	var result = [];
-	console.log(data);
 	if((typeof data.name !== 'undefined') && (data.name == '')){
 		 result.push({error : 'true', msg : 'Nombre del proceso'});
 	};
@@ -577,6 +580,17 @@ function formValidation(data){
 		result.push({error : 'true', msg : 'Responsable'});
 	};
 
+	return result;
+}
+
+function formValidationClient(data) {
+	var result = [];
+	if((typeof data.clientName !== 'undefined') && (data.clientName == '')){
+		 result.push({error : 'true', msg : 'Nombre del cliente'});
+	};
+	if((typeof data.clientTypeNumber !== 'undefined') && ((data.clientTypeNumber == '') || (data.clientTypeNumber == 'Elegir...'))){
+		result.push({error : 'true', msg : 'Tipo de cliente'});
+	};
 	return result;
 }
 
