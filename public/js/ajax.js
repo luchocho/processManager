@@ -507,6 +507,54 @@ objPaintData = {
 	}
 }
 
+objClient = {
+	init : function () {
+		objClient.clientModal();
+		objClient.saveClientModal();
+	}
+	,clientModal : function () {
+		$('#createClientButton').on('click', function () {
+			$('#newClientForm').modal('show');
+		});
+	}
+	,saveClientModal : function () {
+		//Guardar nuevo cliente
+		$('.modal-body').on('submit', '#newClient-process-form', function(e){
+			e.preventDefault();
+			console.log('entra a guardar');
+			var newClient = $(this).serialize();
+			var actionUrl = '/client'
+			$.ajax({
+				url: actionUrl,
+				data: newClient,
+				type: 'PUT',
+				success: function(data) {
+					console.log('cliente guardado');
+					$('#newClientForm').modal('hide');
+				}
+			});
+		});
+	}
+
+	// ,saveProcess : function () {
+	// 	//Guardar cierre de proceso
+	// 	$('.modal-body').on('submit', '#close-process-form', function(e){
+	// 		e.preventDefault();
+	// 		var toDoItem = $(this).serialize();
+	// 		var actionUrl = '/todos/'+$('#modal-id').val();
+	// 		$.ajax({
+	// 			url: actionUrl,
+	// 			data: toDoItem,
+	// 			type: 'PUT',
+	// 			success: function(data) {
+	// 				objPaintData.paintProcess(data);
+	// 				objPaintData.calcSLATime(data.todos);
+	// 				$('#closeForm').modal('hide');
+	// 			}
+	// 		});
+	// 	});
+	// }
+}
 
 function formValidation(data){
 	var result = [];
@@ -549,4 +597,5 @@ function formValidation(data){
  		});
  		setInterval('objPaintData.calcSLATime(todos.todos)', 1800000);
 		objTodos.init();
+		objClient.init();
  });

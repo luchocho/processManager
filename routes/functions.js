@@ -55,11 +55,16 @@ function fetchClientsData(){
     return clientsObj;
 }
 
+function saveClientJson(clients){
+  fs.writeFileSync('./clients.json', JSON.stringify(clients));
+}
+
 module.exports = {
     escapeRegex,
     setClientType,
     setPriorityNumber,
-    fetchClientsData
+    fetchClientsData,
+    saveClientJson
 }
 
 

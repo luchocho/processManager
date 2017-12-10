@@ -123,7 +123,7 @@ router.post("/", middleware.isLoggedIn, function(req, res){
                                   //res.json(newTodo);
                                 }
                             });
-                        } else { //Si no encuentra el cliente, crea los datos del mismo con los datos del form
+                        } else {
                             return false;
                         }
                     }
