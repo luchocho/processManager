@@ -4,182 +4,18 @@ var Todo = require("../models/todo");
 var Client = require("../models/client");
 var User = require("../models/user");
 var middleware = require("../middleware");
+var functions = require("./functions.js");
+var queries = require("./queries.js");
+const fs = require('fs');
 
 
 //ROUTES
 
-
-// function to be used in the .get("/todos"..) route
-function escapeRegex(name) {
-    return name.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
-};
-
-function orderTodos(callback){
-
-  console.log('3');
-  Todo.aggregate([
-        {
-          $match: {stateNumber: {$nin: [1,2,3]}}
-        },
-        {
-          $lookup:
-            {
-              from: "users",
-              localField : "assignUser.id",
-              foreignField: "_id",
-              as: "assignUser"
-            }
-        },
-        {
-        $unwind: "$assignUser"
-        },
-        {
-          $project:
-              {
-                "name":1,
-                "priority":1,
-                "priorityNumber":1,
-                "processType":1,
-                "office":1,
-                "assignUser._id":1,
-                "assignUser.username":1,
-                "assignUser.initials":1,
-                "dateDelivery":1,
-                "createAt":1,
-                "client":1,
-                "dateDelivered":1,
-                "tiempoRestante": {
-                          $subtract: [ "$dateDelivery" , new Date() ]
-                        },
-                "stateNumber":1
-              }
-        },
-        {
-          $sort: {"client.clientTypeNumber":1, priorityNumber: 1 , tiempoRestante: 1}
-        }
-        ], function(err, todos){
-    if(err){
-      console.log(err);
-      return callback(err);
-    } else {
-      callback(null, todos);
-    }
-  });
-}
-
-function orderTodosByName(name, callback){
-  console.log('3bis');
-  Todo.aggregate([
-        {
-          $match: {
-              $and: [
-                        {stateNumber: {$nin: [1,2,3]}},
-                        {'assignUser.username': name}
-                    ]
-            }
-        },
-        {
-          $lookup:
-            {
-              from: "users",
-              localField : "assignUser.id",
-              foreignField: "_id",
-              as: "assignUser"
-            }
-        },
-        {
-        $unwind: "$assignUser"
-        },
-        {
-          $project:
-              {
-                "name":1,
-                "priority":1,
-                "priorityNumber":1,
-                "processType":1,
-                "office":1,
-                "assignUser._id":1,
-                "assignUser.username":1,
-                "assignUser.initials":1,
-                "dateDelivery":1,
-                "createAt":1,
-                "client":1,
-                "dateDelivered":1,
-                "tiempoRestante": {
-                          $subtract: [ "$dateDelivery" , new Date() ]
-                        },
-                "stateNumber":1
-              }
-        },
-        {
-          $sort: {"client.clientTypeNumber":1, priorityNumber: 1 , tiempoRestante: 1}
-        }
-        ], function(err, todos){
-    if(err){
-      console.log(err);
-      return callback(err);
-    } else {
-      callback(null, todos);
-    }
-  });
-}
-
-function searchByName(name, callback){
-  console.log('3tris');
-  Todo.aggregate([
-        {
-          $match: { name: { $regex: name, $options: 'gi' } }
-        },
-        {
-          $lookup:
-            {
-              from: "users",
-              localField : "assignUser.id",
-              foreignField: "_id",
-              as: "assignUser"
-            }
-        },
-        {
-        $unwind: "$assignUser"
-        },
-        {
-          $project:
-              {
-                "name":1,
-                "priority":1,
-                "priorityNumber":1,
-                "processType":1,
-                "office":1,
-                "assignUser._id":1,
-                "assignUser.username":1,
-                "assignUser.initials":1,
-                "dateDelivery":1,
-                "createAt":1,
-                "client":1,
-                "dateDelivered":1,
-                "tiempoRestante": {
-                          $subtract: [ "$dateDelivery" , new Date() ]
-                        },
-                "stateNumber":1
-              }
-        },
-        ], function(err, todos){
-    if(err){
-      console.log(err);
-      return callback(err);
-    } else {
-      console.log(todos);
-      callback(null, todos);
-    }
-  });
-}
-
-
-router.get("/", function(req, res){
+router.get("/", middleware.isLoggedIn, function(req, res){
   console.log('2');
   if(req.query.keyword) {
-    const regex = new RegExp(escapeRegex(req.query.keyword), 'gi');
-    searchByName(regex, function(err, todos){
+    const regex = new RegExp(functions.escapeRegex(req.query.keyword), 'gi');
+    queries.searchByName(regex, function(err, todos){
       if(req.xhr) {
         if(req.user){
             res.json({todos:todos, id:req.user._id, isAdmin: req.user.isAdmin});
@@ -189,7 +25,7 @@ router.get("/", function(req, res){
       }
     });
   } else if(req.query.name && req.query.name !== 'Todos') {
-      orderTodosByName(req.query.name,function(err,todos){
+      queries.orderTodosByName(req.query.name,function(err,todos){
         if(err){
           console.log(err);
         } else {
@@ -198,7 +34,7 @@ router.get("/", function(req, res){
       });
     } else {
       console.log('7');
-      orderTodos(function(err, todos){
+      queries.orderTodos(function(err, todos){
       if(err){
         console.log(err);
       } else {
@@ -222,131 +58,102 @@ router.get("/", function(req, res){
 // });
 
 router.post("/", middleware.isLoggedIn, function(req, res){
-  console.log('1');
- req.body.todo.name = req.sanitize(req.body.todo.name);
- var formData = req.body.todo;
 
- switch(formData.clientTypeNumber){
-   case "1":
-             formData.clientType = "Platino";
-             break;
-   case "2":
-             formData.clientType = "Oro";
-             break;
-   case "3":
-             formData.clientType = "Plata";
-             break;
-   case "4":
-             formData.clientType = "Bronce";
-             break;
-   case "5":
-             formData.clientType = "Estrategico/Clave";
-             break;
-   case "6":
-             formData.clientType = "A exito";
-             break;
- }
+    req.body.todo.name = req.sanitize(req.body.todo.name);
 
- //Creamos objeto con datos del cliente del formulario
- var clientData = {
-   name : formData.client,
-   clientType: formData.clientType,
-   clientTypeNumber : formData.clientTypeNumber
- }
- switch(formData.priorityNumber){
-  case "1":
-            formData.priority = "Alta";
-            break;
-  case "2":
-            formData.priority = "Media";
-            break;
-  case "3":
-            formData.priority = "Baja";
-            break;
- }
- User.find({ username : formData.assignUser}, function(err, user){
-  if(err){
-     console.log(err);
-  } else {
-     if(user.length){ //Si encuentra al usuario, setea los datos en el objeto
-       formData.assignUser = {
-         id: user[0]._id,
-         username: user[0].username
-       }
-       Client.find({ name : clientData.name}, function(err, client){
-         if(err){
+    var formData = req.body.todo;
+    formData.clientType = functions.setClientType(formData.clientTypeNumber);
+    formData.priority = functions.setPriorityNumber(formData.priorityNumber);
+
+    var clientsData = functions.fetchClientsData ();
+    console.log(formData);
+    var clientName;
+    if(typeof formData.clientTypeId !== 'undefined'){
+        clientsData.forEach(function(client){
+            if(client.clientTypeId === formData.clientTypeId){
+                clientName = client.name;
+                return false;
+            }
+         });
+    } else {
+        return false;
+    }
+
+
+    //Creamos objeto con datos del cliente del formulario
+    var clientData = {
+        name : clientName,
+        clientTypeId : formData.clientTypeId,
+        clientType: formData.clientType,
+        clientTypeNumber : formData.clientTypeNumber
+    }
+
+    User.find({ username : formData.assignUser}, function(err, user){
+        if(err){
             console.log(err);
-         } else {
-           if(client.length){ //Si encuentra al cliente, setea los datos en el objeto
-             formData.client = {
-                 id : client[0]._id,
-                 name : client[0].name,
-                 clientType: client[0].clientType,
-                 clientTypeNumber : client[0].clientTypeNumber
-             }
-             Todo.create(formData, function(err, newTodo){ //Crea el proceso sin actualizar los datos del cliente
-                if(err){
-                  console.log(err);
-                } else {
-                  orderTodos(function(err, todos){
-                    if(err){
-                      console.log(err);
-                    }else{
-                      res.json({todos:todos, id:req.user._id, isAdmin: req.user.isAdmin});
-                    }
-                  });
-                  //res.json(newTodo);
+        } else {
+            if(user.length){ //Si encuentra al usuario, setea los datos en el objeto
+                formData.assignUser = {
+                 id: user[0]._id,
+                 username: user[0].username
                 }
-             });
-           } else { //Si no encuentra el cliente, crea los datos del mismo con los datos del form
-             Client.create(clientData, function(err, newClient){
-               if(err){
-                  console.log(err);
-               } else {
-                  formData.client = {
-                      id : newClient._id,
-                      name : newClient.name,
-                      clientType: newClient.clientType,
-                      clientTypeNumber : newClient.clientTypeNumber
-                  }
-                  Todo.create(formData, function(err, newTodo){//crea el proceso luego de crear el cliente
-                     if(err){
-                       console.log(err);
-                     } else {
-                       orderTodos(function(err, todos){
-                         if(err){
-                           console.log(err);
-                         }else{
-                           res.json({todos:todos, id:req.user._id, isAdmin: req.user.isAdmin});
-                         }
-                       });
-                       //res.json(newTodo);
-                     }
-                  });
-              }
-             });
-           }
-         }
-       }).limit(1);
-     }
-  }
- });
+                Client.find({ clientTypeId : clientData.clientTypeId}, function(err, client){
+                    if(err){
+                        console.log(err);
+                    } else {
+                        if(client.length){ //Si encuentra al cliente, setea los datos en el objeto
+                            formData.client = {
+                                id : client[0]._id,
+                                clientTypeId: client[0].clientTypeId,
+                                clientType: client[0].clientType,
+                                clientTypeNumber : client[0].clientTypeNumber
+                            }
+
+                            Todo.create(formData, function(err, newTodo){ //Crea el proceso sin actualizar los datos del cliente
+                                if(err){
+                                  console.log(err);
+                                } else {
+                                    queries.orderTodos(function(err, todos){
+                                        if(err){
+                                            console.log(err);
+                                        }else{
+                                            res.json({todos:todos, id:req.user._id, isAdmin: req.user.isAdmin});
+                                        }
+                                    });
+                                  //res.json(newTodo);
+                                }
+                            });
+                        } else {
+                            return false;
+                        }
+                    }
+                }).limit(1);
+            }
+        }
+    });
 });
 
-router.get("/:id", function(req, res){
-  console.log('todos/id');
- Todo.findById(req.params.id, function(err, todo){
-   if(err){
-     console.log(err);
-     res.redirect("/")
-   } else {
-      if(req.xhr) {
-        res.json(todo);
-      } else {
-        res.render("edit", {todo: todo});
-      }
-   }
- });
+router.get("/:id", middleware.isLoggedIn, function(req, res){
+    console.log('todos/id');
+    Todo.findById(req.params.id, function(err, todo){
+        if(err){
+             console.log(err);
+             res.redirect("/")
+        } else {
+            if(req.xhr) {
+                var clientsData = functions.fetchClientsData ();
+                clientsData.forEach(function(client){
+                    if(client.clientTypeId == todo.client.clientTypeId){
+                        todo.client.name = client.name;
+                        return false;
+                    }
+                });
+                res.json(todo);
+            } else {
+                res.render("edit", {todo: todo});
+            }
+        }
+    });
 });
 
 
@@ -379,7 +186,7 @@ console.log(req.user);
              if(err){
                console.log(err);
              } else {
-               orderTodos(function(err, todos){
+               queries.orderTodos(function(err, todos){
                  if(err){
                    console.log(err);
                  }else{
@@ -399,7 +206,7 @@ console.log(req.user);
       if(err){
         console.log(err);
       } else {
-        orderTodos(function(err, todos){
+        queries.orderTodos(function(err, todos){
           if(err){
             console.log(err);
           }else{

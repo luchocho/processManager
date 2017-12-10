@@ -10,7 +10,7 @@ middlewareObj.isLoggedIn = function(req, res, next){
     }
     // console.log(req.originalUrl);
     // req.session.redirectTo = req.originalUrl;
-    res.redirect("/todos");
+    res.redirect("/");
 }
 
 middlewareObj.checkProcessOwnership = function(req,res, next) {

@@ -78,9 +78,13 @@
 					</div>
 					<div class="row">
 						<div class="form-group col-md-8">
+							<input type="text" name="todo[clientTypeId]" class="hidden" value="" id="clientTypeId">
 							<label for="client" class="col-md-3">Cliente</label>
-							<input type="text" name="todo[client]" class="form-control col-md-9" id="client" list="json-datalist">
-							<datalist id="json-datalist"></datalist>
+							<select	name="todo[client]" class="form-control col-md-9" id="client">
+								<option>Elige un cliente</option>
+							</select>
+							<!-- <input type="text" name="todo[client]" class="form-control col-md-9" id="client" list="json-datalist">
+							<datalist id="json-datalist"></datalist> -->
 						</div>
 						<div class="form-group col-md-4">
 							<label class="col-md-3" for="clientTypeNumber">Tipo</label>
@@ -320,7 +324,7 @@
 							<div class="form-group col-md-12">
 								<label class="col-md-3" for="stateNumber">Estado</label>
 								<select class="form-control col-md-9" name="todo[stateNumber]" id="stateNumber">
-									<option value="1">Cerrado</option>
+									<option value="1" selected>Cerrado</option>
 									<option value="2">Anulado</option>
 									<option value="3">Anulado por cliente</option>
 								</select>
@@ -330,7 +334,7 @@
 							<div class="form-group col-md-6">
 								<label class="col-md-3" for="closeOrigin">Procendencia</label>
 								<select class="form-control col-md-9" name="todo[closeOrigin]" id="closeOrigin">
-									<option value="1">TalentPool</option>
+									<option value="1" selected>TalentPool</option>
 									<option value="2">No TalentPool</option>
 								</select>
 							</div>
@@ -350,4 +354,46 @@
 	  </div>
 	</div>
 
+	<!-- Modal -->
+	<div id="newClientForm" class="modal fade" role="dialog">
+	  <div class="modal-dialog">
+	    <!-- Modal content-->
+	    <div class="modal-content">
+	      <div class="modal-header newClientHeader">
+	        <button type="button" class="close" data-dismiss="modal">&times;</button>
+	        <h2 class="modal-title">Crear Cliente</h2>
+	      </div>
+	      <div class="modal-body">
+					<form id="newClient-process-form">
+						<div class="row">
+							<div class="form-group col-md-8">
+								<label for="newClient" class="col-md-3">Cliente</label>
+								<input type="text" class="form-control col-md-9" name="clientData[name]" value="" id="newClient" placeholder="Nombre del nuevo cliente">
+							</div>
+							<div class="form-group col-md-4">
+								<label class="col-md-3" for="newClientTypeNumber">Tipo</label>
+								<select class="form-control col-md-9" name="clientData[clientTypeNumber]" id="newClientTypeNumber">
+									<option selected>Elegir...</option>
+									<option value="1">Platino</option>
+									<option value="2">Oro</option>
+									<option value="3">Plata</option>
+									<option value="4">Bronce</option>
+									<option value="5">Estrategico/Clave</option>
+									<option value="6">A exito</option>
+								</select>
+							</div>
+	      		</div>
+	      		<div class="modal-footer">
+							<button class="btn btn-default btn-primary save-client">Guardar Cliente</button>
+			        <button type="button" class="btn btn-default btn-danger cancel-modal" data-dismiss="modal">Cancelar</button>
+							<div class="well well-sm form-result-newClient">
+								<h4></h4>
+								<ul></ul>
+							</div>
+			      </div>
+					</form>
+	    	</div>
+	  	</div>
+		</div>
+	</div>
 <% include partials/footer %>
