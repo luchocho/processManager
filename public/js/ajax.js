@@ -29,18 +29,10 @@ objTodos = {
 				$('#new-process-form .form-result').removeClass('form-error');
 				$('#new-process-form .form-result ul').html('');
 				//reinicia valores de formulario
-				$('#new-process-form #name').val('');
-				$('#new-process-form #priorityNumber').val('Elegir...');
-				$('#new-process-form #selection').val('Elegir...');
-				$('#new-process-form #dateDelivery').val('');
-				$('#new-process-form #office').val('');
+				$('#new-process-form')[0].reset();
+				// $('#new-process-form #clientTypeNumber').selectedIndex = -1;
 				if( $('#new-process-form #client option').length === 1) {
 						objTodos.fillClientDroplist();
-				}
-				else if ($('#new-process-form #client option').length > 1) {
-						$("#new-process-form #client option").prop('selected', false);
-						// $('#new-process-form #clientTypeNumber').val('Elegir...');
-						// $('#new-process-form #clientTypeNumber option').prop('selected', false);
 				}
 			}
 			$('#new-process').toggle();
@@ -262,14 +254,10 @@ objTodos = {
 			    console.log(client);
 				if(client.length !== 0){
 					$("#clientTypeNumber option").each(function(el){
-					    console.log(el);
-					    console.log(client[0].clientTypeNumber);
 						if((el) == client[0].clientTypeNumber){
 							($(this)).attr('selected', true)
-							console.log(this);
 						} else {
-						    ($(this)).attr('selected', false)
-								console.log(this);
+					    ($(this)).attr('selected', false)
 						}
 					});
 					$("#clientTypeId").val(client[0].clientTypeId);
@@ -514,6 +502,7 @@ objClient = {
 	}
 	,clientModal : function () {
 		$('#createClientButton').on('click', function () {
+			objClient.resetDataModal();
 			$('#newClientForm').modal('show');
 		});
 	}
@@ -521,7 +510,6 @@ objClient = {
 		//Guardar nuevo cliente
 		$('.modal-body').on('submit', '#newClient-process-form', function(e){
 			e.preventDefault();
-			console.log('entra a guardar');
 			var newClient = $(this).serialize();
 			var actionUrl = '/client'
 			$.ajax({
@@ -529,11 +517,13 @@ objClient = {
 				data: newClient,
 				type: 'PUT',
 				success: function(data) {
-					console.log('cliente guardado');
 					$('#newClientForm').modal('hide');
 				}
 			});
 		});
+	}
+	,resetDataModal : function () {
+		$('#newClient-process-form')[0].reset();
 	}
 
 	// ,saveProcess : function () {
