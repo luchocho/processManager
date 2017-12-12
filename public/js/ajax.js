@@ -404,7 +404,10 @@ objPaintData = {
 				case 'Habitual':
 					$('#selection-image'+todo._id).attr('src','/img/icons8-run.png');
 					break;
-				case 'Agil y de expertise':
+				case 'Agil':
+					$('#selection-image'+todo._id).attr('src','/img/icons8-agil.png');
+					break;
+				case 'Expertise':
 					$('#selection-image'+todo._id).attr('src','/img/icons8-agil.png');
 					break;
 				case 'Estrategica y de impacto':
