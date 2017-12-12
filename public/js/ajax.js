@@ -10,7 +10,6 @@ objTodos = {
 		objTodos.loadEditData();
 		objTodos.updateToDo();
 		objTodos.deleteToDo();
-		objTodos.showUsers();
 		objTodos.fillClientType();
 		objTodos.filter();
 		objTodos.closeProcessData();
@@ -33,6 +32,9 @@ objTodos = {
 				// $('#new-process-form #clientTypeNumber').selectedIndex = -1;
 				if( $('#new-process-form #client option').length === 1) {
 						objTodos.fillClientDroplist();
+				}
+				if( $('#new-process-form #assignUserNew option').length === 1){
+					objTodos.showUsers('#assignUserNew');
 				}
 			}
 			$('#new-process').toggle();
@@ -64,7 +66,7 @@ objTodos = {
 				createAt : $(this).find('#createAt').val(),
 				dateDelivery : $(this).find('#dateDelivery').val(),
 				office : $(this).find('#office').val(),
-				assignUser : $(this).find('#assignUser').val()
+				assignUser : $(this).find('#assignUserNew').val()
 			}
 			var result = formValidation(formData);
 
@@ -109,7 +111,7 @@ objTodos = {
 				$('#show-process #createAt').val(moment(data.createAt).format('YYYY-MM-DD'));
 				$('#show-process #dateDelivery').val(moment(data.dateDelivery).format('YYYY-MM-DD'));
 				$('#show-process #office').val(data.office);
-				$('#show-process #assignUser').val(data.assignUser.username);
+				$('#show-process #assignUserShow').val(data.assignUser.username);
 				$("#show-process option").each(function(el){
 					if((el+1) == data.priorityNumber){
 						($(this)).attr('selected', true)
@@ -140,7 +142,10 @@ objTodos = {
 				$('#edit-process #createAt').val(moment(data.createAt).format('YYYY-MM-DD'));
 				$('#edit-process #dateDelivery').val(moment(data.dateDelivery).format('YYYY-MM-DD'));
 				$('#edit-process #office').val(data.office);
-				$('#edit-process #assignUser').val(data.assignUser.username);
+				$('#edit-process #assignUserEdit').val(data.assignUser.username);
+				if( $('#edit-process #assignUserEdit option').length === 0){
+					objTodos.showUsers('#assignUserEdit');
+				}
 
 				$("#edit-process option").each(function(el){
 					if((el+1) == data.priorityNumber){
@@ -215,22 +220,20 @@ objTodos = {
 		});
 
 	}
-	,showUsers : function () {
+	,showUsers : function (id) {
 		//Rellenar datos de usuario
-		$('.assignUser').on('focus', function(e) {
-			if(!($('#edit-process-form #assignUser').is('[readonly]')) || !($('#new-process-form #assignUser').is('[readonly]'))){
-				$("#json-userlist").html('');
-				var dataList = $("#json-userlist");
-
-				$.get("/user", function(data){
-					data.forEach(function(user){
-						var option = document.createElement('option');
-						option.value = user.username;
-						dataList[0].appendChild(option);
-					});
+		if(!($('#edit-process-form' + id).is('[readonly]')) || !($('#new-process-form' + id).is('[readonly]'))){
+			var select = $(id);
+			$.get("/user", function(data){
+				data.forEach(function(user){
+					var opt = user.username;
+					var el = document.createElement("option");
+					el.textContent = opt;
+					el.value = opt;
+					select[0].appendChild(el);
 				});
-			}
-		});
+			});
+		}
 	}
 	,fillClientDroplist : function () {
 		//Rellenar datos de cliente
@@ -579,7 +582,7 @@ function formValidation(data){
 	if((typeof data.office !== 'undefined') && (data.office == '')){
 		result.push({error : 'true', msg : 'Oficina'});
 	};
-	if((typeof data.assignUser !== 'undefined') && (data.assignUser == '')){
+	if((typeof data.assignUser !== 'undefined') && (data.assignUser == '' || data.assignUser == 'Elige un usuario'  )){
 		result.push({error : 'true', msg : 'Responsable'});
 	};
 
