@@ -13,9 +13,9 @@ const fs = require('fs');
 configData = JSON.parse(fs.readFileSync('./config_files/config_data.json'));
 
 app.locals.moment = require('moment');
-// var uriConnect = `mongodb://${configData.dbUser}:${configData.dbPassword}@${configData.uriConnect}`
-// mongoose.connect(uriConnect, {useMongoClient: true});
-mongoose.connect("mongodb://localhost/todo_app");
+var uriConnect = `mongodb://${configData.dbUser}:${configData.dbPassword}@${configData.uriConnect}`
+mongoose.connect(uriConnect, {useMongoClient: true});
+// mongoose.connect("mongodb://localhost/todo_app");
 
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({extended: true}));
@@ -62,10 +62,10 @@ app.use("/user", userRoutes);
 
 
 //Conexion a Cloud9
-// app.listen(process.env.PORT, process.env.IP, function(){
-//    console.log('The server has started ..');
-// });
+app.listen(process.env.PORT, process.env.IP, function(){
+   console.log('The server has started ..');
+});
 
- app.listen(3000, function() {
-   console.log('Server running on port 3000');
- });
+ // app.listen(3000, function() {
+ //   console.log('Server running on port 3000');
+ // });
