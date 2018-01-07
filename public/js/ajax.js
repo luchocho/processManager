@@ -556,6 +556,39 @@ objClient = {
 	}
 }
 
+objRegistration = {
+	init : function () {
+		objRegistration.addNewUser();
+	}
+	,addNewUser : function () {
+		$('#registerNewUserForm').on('submit', function(e) {
+			// e.preventDefault();
+			var formData = {
+				username: $(this).find('#username').val(),
+				password: $(this).find('#password').val(),
+				initials : $(this).find('#initials').val(),
+				email : $(this).find('#email').val(),
+			}
+			var result = formValidationRegister(formData);
+
+			$('#registerNewUserForm .form-result ul').html('');
+			if(result.length > 0){
+				$('#registerNewUserForm .form-result').addClass('form-error');
+				$('#registerNewUserForm .form-result h4').text('Revisa los siguientes campos: ')
+				result.forEach(function(error){
+					$('#registerNewUserForm .form-result ul').append('<li>' + error.msg + '</li>')
+				});
+				$('#registerNewUserForm .form-result').css('display', 'block');
+				return false;
+			} else {
+				$('#registerNewUserForm .form-result').css('display', 'none');
+				$('#registerNewUserForm .form-result').removeClass('form-error');
+				return true;
+			};
+		});
+
+	}
+}
 function formValidation(data){
 	var result = [];
 	if((typeof data.name !== 'undefined') && (data.name == '')){
@@ -600,6 +633,24 @@ function formValidationClient(data) {
 	return result;
 }
 
+function formValidationRegister(data) {
+	var result = [];
+	if((typeof data.username !== 'undefined') && (data.username == '')){
+		 result.push({error : 'true', msg : 'Nombre del usuario'});
+	};
+	if((typeof data.password !== 'undefined') && (data.password == '')){
+		 result.push({error : 'true', msg : 'Contraseña del usuario'});
+	};
+	if((typeof data.initials !== 'undefined') && (data.initials == '')){
+		 result.push({error : 'true', msg : 'Iniciales del usuario'});
+	};
+	if((typeof data.email !== 'undefined') && (data.email == '')){
+		 result.push({error : 'true', msg : 'Email del usuario'});
+	};
+	return result;
+}
+
+
  //LLamada al calculo del tiempo SLA cada 30 mins
  $(document).ready(function() {
  		$.get('/todos', function(todos) {
@@ -608,4 +659,5 @@ function formValidationClient(data) {
  		setInterval('objPaintData.calcSLATime(todos.todos)', 1800000);
 		objTodos.init();
 		objClient.init();
+		objRegistration.init();
  });
