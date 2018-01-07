@@ -59,6 +59,8 @@ router.put("/", function(req, res){
     clientsArray.push(clientObj);
     functions.saveClientJson(clientsArray);
     clientObj.clientTypeNumber = req.body.clientData.clientTypeNumber;
+    clientObj.clientType = functions.setClientType(req.body.clientData.clientTypeNumber);
+    clientObj.name = '';
     Client.create(clientObj, function (err, client) {
       if (err) {
         console.log(err);

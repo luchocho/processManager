@@ -115,7 +115,8 @@
 								<option selected>Elegir...</option>
 								<option value="Recurrente">Recurrente</option>
 								<option value="Habitual">Habitual</option>
-								<option value="Agil y de expertise">Agil y de expertise</option>
+								<option value="Agil">Agil</option>
+								<option value="Expertise">Expertise</option>
 								<option value="Estrategica y de impacto">Estratégica y de impacto</option>
 								<option value="Otra">Otra</option>
 							</select>
@@ -137,12 +138,13 @@
 							<input type="text" name="todo[office]" class="form-control col-md-9" placeholder="Ciudad" id="office">
 						</div>
 						<div class="form-group col-md-6">
-							<label class="col-md-3" for="assignUser">Responsable</label>
+							<label class="col-md-3" for="assignUserNew">Responsable</label>
 							<% if(currentUser && currentUser.isAdmin) { %>
-								<input type="text" name="todo[assignUser]" class="form-control col-md-9 assignUser" value="<%= currentUser.username %>" id="assignUser"  list="json-userlist">
-								<datalist id="json-userlist"></datalist>
+								<select	name="todo[assignUser]" class="form-control col-md-9 assignUser" value="<%= currentUser.username %>" id="assignUserNew">
+									<option>Elige un usuario</option>
+								</select>
 							<% }else if(currentUser){ %>
-								<input type="text" name="todo[assignUser]" class="form-control col-md-9 assignUser" value="<%= currentUser.username %>" id="assignUser" readonly>
+								<input type="text" name="todo[assignUser]" class="form-control col-md-9 assignUser" value="<%= currentUser.username %>" id="assignUseNewr" readonly>
 							<% } %>
 						</div>
 					</div>
@@ -217,10 +219,10 @@
 						<div class="form-group col-md-6">
 							<label class="col-md-3" for="assignUser">Responsable</label>
 							<% if(currentUser && currentUser.isAdmin) { %>
-								<input type="text" name="todo[assignUser]" class="form-control col-md-9 assignUser" value="" id="assignUser"  list="json-userlist">
-								<datalist id="json-userlist"></datalist>
+								<select	name="todo[assignUser]" class="form-control col-md-9 assignUser" value="" id="assignUserEdit">
+								</select>
 							<% }else if(currentUser){ %>
-								<input type="text" name="todo[assignUser]" class="form-control col-md-9 assignUser" value="" id="assignUser" readonly>
+								<input type="text" name="todo[assignUser]" class="form-control col-md-9 assignUser" value="" id="assignUserEdit" readonly>
 							<% } %>
 						</div>
 					</div>
@@ -291,8 +293,8 @@
 							<input type="text" name="todo[office]" class="form-control col-md-9" value="" id="office" readonly>
 						</div>
 						<div class="form-group col-md-6">
-							<label class="col-md-3" for="assignUser">Responsable</label>
-							<input type="text" name="todo[assignUser]" class="form-control col-md-9 assignUser" value="" id="assignUser" readonly>
+							<label class="col-md-3" for="assignUserShow">Responsable</label>
+							<input type="text" name="todo[assignUser]" class="form-control col-md-9 assignUser" value="" id="assignUserShow" readonly>
 						</div>
 					</div>
 				</div>
