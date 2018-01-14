@@ -7,7 +7,6 @@ var functions = require("./functions.js");
 
 router.get("/", function(req, res){
     var clientsData = functions.fetchClientsData();
-    console.log(clientsData);
     if(req.query.name) {
       clientsData.forEach(function(clientData){
           if(clientData.name == req.query.name){
@@ -36,7 +35,6 @@ router.get("/", function(req, res){
                         }
                     })
                 });
-                console.log(clients);
                 res.json(clients);
             }
         });

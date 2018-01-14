@@ -12,7 +12,6 @@ const fs = require('fs');
 //ROUTES
 
 router.get("/", middleware.isLoggedIn, function(req, res){
-  console.log('2');
   if(req.query.keyword) {
     const regex = new RegExp(functions.escapeRegex(req.query.keyword), 'gi');
     queries.searchByName(regex, function(err, todos){
@@ -32,13 +31,11 @@ router.get("/", middleware.isLoggedIn, function(req, res){
           res.json({todos:todos, id:req.user._id, isAdmin: req.user.isAdmin});
         }
       });
-    } else {
-      console.log('7');
+  } else {
       queries.orderTodos(function(err, todos){
       if(err){
         console.log(err);
       } else {
-        // console.log(todos);
         if(req.xhr) {
           if(req.user){
               res.json({todos:todos, id:req.user._id, isAdmin: req.user.isAdmin});
@@ -66,7 +63,6 @@ router.post("/", middleware.isLoggedIn, function(req, res){
     formData.priority = functions.setPriorityNumber(formData.priorityNumber);
 
     var clientsData = functions.fetchClientsData ();
-    console.log(formData);
     var clientName;
     if(typeof formData.clientTypeId !== 'undefined'){
         clientsData.forEach(function(client){
@@ -134,7 +130,6 @@ router.post("/", middleware.isLoggedIn, function(req, res){
 });
 
 router.get("/:id", middleware.isLoggedIn, function(req, res){
-    console.log('todos/id');
     Todo.findById(req.params.id, function(err, todo){
         if(err){
              console.log(err);
@@ -158,8 +153,6 @@ router.get("/:id", middleware.isLoggedIn, function(req, res){
 
 
 router.put("/:id", middleware.checkProcessOwnership, function(req, res){
-console.log('4');
-console.log(req.user);
   switch(req.body.todo.priorityNumber){
     case "1":
               req.body.todo.priority = "Alta";
@@ -190,11 +183,9 @@ console.log(req.user);
                  if(err){
                    console.log(err);
                  }else{
-                   console.log('todo ok');
                    res.json({todos:todos, id:req.user._id, isAdmin: req.user.isAdmin});
                  }
                });
-                console.log('5');
              }
            });
          }
@@ -210,11 +201,9 @@ console.log(req.user);
           if(err){
             console.log(err);
           }else{
-            console.log('todo ok');
             res.json({todos:todos, id:req.user._id, isAdmin: req.user.isAdmin});
           }
         });
-         console.log('5');
       }
     });
   }

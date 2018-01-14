@@ -58,7 +58,6 @@ router.post('/login', function(req, res, next){
             if(err){
                 return next(err);
             }
-            console.log(req.session.redirectTo);
             var redirectTo = req.session.redirectTo ? req.session.redirectTo : '/todos' ;
             delete req.session.redirectTo;
             res.redirect(redirectTo);
