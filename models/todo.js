@@ -14,7 +14,7 @@ var todoSchema = new mongoose.Schema({
   priorityNumber: Number,
   createAt: {type: Date, default: Date.now },
   dateDelivery: {type: Date, default: Date.now },
-  dateDelivered: {type: Date, default: Date.now },
+  dateClosed: {type: Date, default: Date.now },
   office: String,
   comments: String,
   createUser: String,
@@ -27,7 +27,13 @@ var todoSchema = new mongoose.Schema({
   },
   closeOrigin: Number,
   processType: String,
-  stateNumber: Number
+  stateNumber: Number,
+  state: [
+        {
+           type: mongoose.Schema.Types.ObjectId,
+           ref: "todo_state"
+        }
+     ]
 });
 
 module.exports = mongoose.model("todo", todoSchema);

@@ -337,7 +337,7 @@ objPaintData = {
 
 			if(todo.stateNumber !== 0){
 					//Si proceso cerrado - Diferencia desde fecha de entrega a fecha entregado
-					var restante = fecha2.diff(todo.dateDelivered, 'minutes');
+					var restante = fecha2.diff(todo.dateClosed, 'minutes');
 			} else {
 					//Si proceso abierto - Tiempo restante calculado desde bbdd
 					var restante = ((todo.tiempoRestante-7200000)/1000/60);

@@ -35,7 +35,7 @@ function orderTodos(callback){
                 "dateDelivery":1,
                 "createAt":1,
                 "client":1,
-                "dateDelivered":1,
+                "dateClosed":1,
                 "tiempoRestante": {
                           $subtract: [ "$dateDelivery" , new Date() ]
                         },
@@ -91,7 +91,7 @@ function orderTodosByName( name, callback){
                 "dateDelivery":1,
                 "createAt":1,
                 "client":1,
-                "dateDelivered":1,
+                "dateClosed":1,
                 "tiempoRestante": {
                           $subtract: [ "$dateDelivery" , new Date() ]
                         },
@@ -142,7 +142,7 @@ function searchByName(name, callback){
                 "dateDelivery":1,
                 "createAt":1,
                 "client":1,
-                "dateDelivered":1,
+                "dateClosed":1,
                 "tiempoRestante": {
                           $subtract: [ "$dateDelivery" , new Date() ]
                         },
