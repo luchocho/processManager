@@ -345,7 +345,7 @@ objTodos = {
 				success: function (data) {
 					objPaintData.paintProcess(data);
 					objPaintData.calcSLATime(data.todos);
-					$('#change-state-form').modal('hide');
+					$('#changeStateForm').modal('hide');
 				}
 			});
 		});
@@ -528,7 +528,7 @@ objPaintData = {
 					<div class="pull-right">
 					${todos.isAdmin == false && todos.id !== todo.assignUser._id  ? ''
 						: todos.isAdmin == undefined ? ''
-						: todo.stateNumber == 0 ?
+						:
 						`<a href="#" class="dropdown-toggle change-actions btn btn-sm btn-primary" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Acciones
 							<span class="caret"></span>
 						</a>
@@ -538,7 +538,7 @@ objPaintData = {
 							</li>
 						</ul>
 						<button class="btn btn-sm btn-primary edit-button">Editar</button>
-						<button type="button" class="btn btn-sm btn-info close-button" data-toggle="modal" data-target="#closeForm">Cerrar</button>` : '' }
+						<button type="button" class="btn btn-sm btn-info close-button" data-toggle="modal" data-target="#closeForm">Cerrar</button>` }
 					</div>
 					<div class="clearfix"></div>
 				</li>
