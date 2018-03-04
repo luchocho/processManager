@@ -1,6 +1,15 @@
 
 
 objTodos = {
+	closeStates : [4, 5, 6],
+	validStates : [
+		{ state: 'Nuevo', stateId: 0 },
+		{ state: 'Abierto', stateId: 1 },
+		{ state: 'Pendiente', stateId: 2 },
+		{ state: 'Esperando respuesta interna', stateId: 3 },
+		{ state: 'Esperando respuesta cliente', stateId: 4 }
+	],
+
 	init : function () {
 		objTodos.toggleNewProcess();
 		objTodos.toggleEditProcess();
@@ -15,6 +24,8 @@ objTodos = {
 		objTodos.closeProcessData();
 		objTodos.saveProcess();
 		objTodos.searchBar();
+		objTodos.buttonActions();
+		objTodos.changeState();
 	}
 	,toggleNewProcess : function () {
 		$('#new-process-sign').on('click', function(e) {
@@ -30,11 +41,11 @@ objTodos = {
 				//reinicia valores de formulario
 				$('#new-process-form')[0].reset();
 				// $('#new-process-form #clientTypeNumber').selectedIndex = -1;
-				if( $('#new-process-form #client option').length === 1) {
+				if( $('#new-process-form #new-process-client option').length === 1) {
 						objTodos.fillClientDroplist();
 				}
-				if( $('#new-process-form #assignUserNew option').length === 1){
-					objTodos.showUsers('#assignUserNew');
+				if( $('#new-process-form #new-process-assignUser option').length === 1){
+					objTodos.showUsers('#new-process-assignUser');
 				}
 			}
 			$('#new-process').toggle();
@@ -57,16 +68,15 @@ objTodos = {
 		$('#new-process-form').submit(function(e) {
 			e.preventDefault();
 			var formData = {
-				name: $(this).find('#name').val(),
-				client : $(this).find('#client').val(),
-				clientTypeId : $(this).find('#clientTypeId').val(),
-				clientTypeNumber : $(this).find('#clientTypeNumber').val(),
-				priorityNumber : $(this).find('#priorityNumber').val(),
-				processType : $(this).find('#selection').val(),
-				createAt : $(this).find('#createAt').val(),
-				dateDelivery : $(this).find('#dateDelivery').val(),
-				office : $(this).find('#office').val(),
-				assignUser : $(this).find('#assignUserNew').val()
+				name: $(this).find('#new-process-name').val(),
+				client : $(this).find('#new-process-client').val(),
+				clientTypeNumber : $(this).find('#new-process-clientTypeNumber').val(),
+				priorityNumber : $(this).find('#new-process-priorityNumber').val(),
+				processType : $(this).find('#new-process-selection').val(),
+				createAt : $(this).find('#new-process-createAt').val(),
+				dateDelivery : $(this).find('#new-process-dateDelivery').val(),
+				office : $(this).find('#new-process-office').val(),
+				assignUser : $(this).find('#new-process-assignUser').val()
 			}
 			var result = formValidation(formData);
 
@@ -99,19 +109,19 @@ objTodos = {
 			if(($('#new-process').css("display") !== "none" ) || ($('#edit-process').css("display") !== "none" )){
 				return false;
 			}
-			var listId = $(this).attr('id').split("list");
-			var actionUrl = "/todos/"+listId[1];
+			var listId = $(this).attr('data-item');
+			var actionUrl = "/todos/"+listId;
 			$.get(actionUrl, function(data){
-				$('#show-process #name').val(data.name);
-				$('#show-process #client').val(data.client.name);
-				$('#show-process #clientTypeNumber').val(data.client.clientTypeNumber);
-				$('#show-process #clientType').val(data.client.clientType);
-				$('#show-process #priorityNumber').val(data.priorityNumber);
-				$('#show-process #selection').val(data.processType);
-				$('#show-process #createAt').val(moment(data.createAt).format('YYYY-MM-DD'));
-				$('#show-process #dateDelivery').val(moment(data.dateDelivery).format('YYYY-MM-DD'));
-				$('#show-process #office').val(data.office);
-				$('#show-process #assignUserShow').val(data.assignUser.username);
+				$('#show-process #show-process-name').val(data.name);
+				$('#show-process #show-process-client').val(data.client.name);
+				$('#show-process #show-process-clientTypeNumber').val(data.client.clientTypeNumber);
+				$('#show-process #show-process-clientType').val(data.client.clientType);
+				$('#show-process #show-process-priorityNumber').val(data.priorityNumber);
+				$('#show-process #show-process-selection').val(data.processType);
+				$('#show-process #show-process-createAt').val(moment(data.createAt).format('YYYY-MM-DD'));
+				$('#show-process #show-process-dateDelivery').val(moment(data.dateDelivery).format('YYYY-MM-DD'));
+				$('#show-process #show-process-office').val(data.office);
+				$('#show-process #show-process-assignUser').val(data.assignUser.username);
 				$("#show-process option").each(function(el){
 					if((el+1) == data.priorityNumber){
 						($(this)).attr('selected', true)
@@ -129,22 +139,22 @@ objTodos = {
 			if(($('#new-process').css("display") !== "none" ) || ($('#show-process').css("display") !== "none" )){
 				return false;
 			}
-			var buttonId = $(this).attr('id').split("button");
-			var actionUrl = "/todos/"+buttonId[1];
+			var buttonId = $(this).closest('li').attr('data-item');
+			var actionUrl = "/todos/"+buttonId;
 			$.get(actionUrl, function(data){
-				$('#edit-process #edit_processId').val(data._id);
-				$('#edit-process #name').val(data.name);
-				$('#edit-process #client').val(data.client.name);
-				$('#edit-process #clientTypeNumber').val(data.client.clientTypeNumber);
-				$('#edit-process #clientType').val(data.client.clientType);
-				$('#edit-process #priorityNumber').val(data.priorityNumber);
-				$('#edit-process #selection').val(data.processType);
-				$('#edit-process #createAt').val(moment(data.createAt).format('YYYY-MM-DD'));
-				$('#edit-process #dateDelivery').val(moment(data.dateDelivery).format('YYYY-MM-DD'));
-				$('#edit-process #office').val(data.office);
-				$('#edit-process #assignUserEdit').val(data.assignUser.username);
-				if( $('#edit-process #assignUserEdit option').length === 0){
-					objTodos.showUsers('#assignUserEdit');
+				$('#edit-process #edit_processId').attr('data-item',data._id);
+				$('#edit-process #edit-process-name').val(data.name);
+				$('#edit-process #edit-process-client').val(data.client.name);
+				$('#edit-process #edit-process-clientTypeNumber').val(data.client.clientTypeNumber);
+				$('#edit-process #edit-process-clientType').val(data.client.clientType);
+				$('#edit-process #edit-process-priorityNumber').val(data.priorityNumber);
+				$('#edit-process #edit-process-selection').val(data.processType);
+				$('#edit-process #edit-process-createAt').val(moment(data.createAt).format('YYYY-MM-DD'));
+				$('#edit-process #edit-process-dateDelivery').val(moment(data.dateDelivery).format('YYYY-MM-DD'));
+				$('#edit-process #edit-process-office').val(data.office);
+				$('#edit-process #edit-process-assignUser').val(data.assignUser.username);
+				if( $('#edit-process #edit-process-assignUser option').length === 0){
+					objTodos.showUsers('#edit-process-assignUser');
 				}
 
 				$("#edit-process option").each(function(el){
@@ -162,11 +172,11 @@ objTodos = {
 		$('#edit-process').on('submit', '#edit-process-form', function(e) {
 			e.preventDefault();
 			var formData = {
-				name: $(this).find('#name').val(),
-				priorityNumber : $(this).find('#priorityNumber').val(),
-				createAt : $(this).find('#createAt').val(),
-				dateDelivery : $(this).find('#dateDelivery').val(),
-				office : $(this).find('#office').val(),
+				name: $(this).find('#edit-process-name').val(),
+				priorityNumber : $(this).find('#edit-process-priorityNumber').val(),
+				createAt : $(this).find('#edit-process-createAt').val(),
+				dateDelivery : $(this).find('#edit-process-dateDelivery').val(),
+				office : $(this).find('#edit-process-office').val(),
 			}
 			var result = formValidation(formData);
 
@@ -184,7 +194,7 @@ objTodos = {
 				$('#edit-process-form .form-result').removeClass('form-error');
 			};
 			var toDoItem = $(this).serialize();
-			var actionUrl = '/todos/' + $(this).find('#edit_processId').val();
+			var actionUrl = '/todos/' + $(this).find('#edit_processId').attr('data-item');
 			$.ajax({
 				url: actionUrl,
 				data: toDoItem,
@@ -237,7 +247,7 @@ objTodos = {
 	}
 	,fillClientDroplist : function () {
 		//Rellenar datos de cliente
-		var select = $("#client");
+		var select = $("#new-process-client");
 
 		$.get("/client", function(data){
 			data.forEach(function(client){
@@ -251,18 +261,18 @@ objTodos = {
 	}
 	,fillClientType : function () {
 		//Rellena el campo tipo de empresa al elegir una empresa ya existente del form crear proceso
-		$('#client').on('change', function(e) {
+		$('#new-process-client').on('change', function(e) {
 			$.get(`/client?name=${e.target.value}`, function(client){
 			    console.log(client);
 				if(client.length !== 0){
-					$("#clientTypeNumber option").each(function(el){
-						if((el) == client[0].clientTypeNumber){
+					$("#new-process-clientTypeNumber option").each(function(el){
+						if((el) == client.clientTypeNumber){
 							($(this)).prop('selected', true)
 						} else {
 					    ($(this)).prop('selected', false)
 						}
 					});
-					$("#clientTypeId").val(client[0].clientTypeId);
+
 				}
 			});
 		});
@@ -276,13 +286,82 @@ objTodos = {
 			});
 		});
 	}
+	,buttonActions : function () {
+		$('#todo-list').on('click','.change-actions', function (e) {
+			e.stopPropagation();
+			e.preventDefault();
+			if ($('.dropdown-menu.actions').is(":visible")){
+				$('.dropdown-menu.actions').hide();
+			} else {
+				$(this).next().toggle();
+			}
+		
+		});
+	}
+	,changeState : function () {
+		$('#todo-list').on('click', '.change-state', function (e) {
+			e.stopPropagation();
+			e.preventDefault();
+			$('.dropdown-menu.actions').hide();
+			var buttonId = $(this).closest('.list-group-item').attr('data-item');
+			var actionUrl = "/todos/" + buttonId;
+			$.get(actionUrl, function (todo) {
+				
+				$('#process-todoName').val(todo.name);
+				$('#process-todoId').val(todo._id);
+				$('#process-todoState').val(objTodos.validStates[todo.stateNumber].state);
+
+				$("#process-changeState option").remove();
+				objTodos.fillStateList(todo);
+			});
+
+			$('#changeStateForm').modal('show');
+			objTodos.sendChangeState();
+		});
+	}
+	,fillStateList : function (todo) {
+	
+		var select = $("#process-changeState");
+	
+		var el = document.createElement("option");
+		el.textContent = 'Elegir un nuevo estado';
+		el.selected = true;
+		select[0].appendChild(el);
+
+		objTodos.validStates.forEach(function (validState) {
+			if (todo.stateNumber != validState.stateId) {
+				var el = document.createElement("option");
+				el.textContent = validState.state;
+				el.value = validState.stateId;
+				select[0].appendChild(el);
+			}
+		});
+	}
+	,sendChangeState : function () {
+		$('.modal-body').on('submit', '#change-state-form', function (e) {
+			e.preventDefault();
+			var toDoItem = $(this).serialize();
+			var actionUrl = '/todos/' + $('#process-todoId').val();
+			$.ajax({
+				url: actionUrl,
+				data: toDoItem,
+				type: 'PUT',
+				success: function (data) {
+					objPaintData.paintProcess(data);
+					objPaintData.calcSLATime(data.todos);
+					$('#changeStateForm').modal('hide');
+				}
+			});
+		});
+		
+	}
 	,closeProcessData : function () {
 		//Modal Cerrar proceso
 		$('#todo-list').on('click','.close-button', function(e){
 			e.preventDefault();
 			e.stopPropagation();
-			var buttonId = $(this).attr('id').split("close");
-			var actionUrl = "/todos/"+buttonId[1];
+			var buttonId = $(this).closest('li').attr('data-item');
+			var actionUrl = "/todos/"+buttonId;
 			$.get(actionUrl, function(todo){
 				var fecha2 = moment();
 				var fecha1 = moment(todo.createAt);
@@ -337,7 +416,7 @@ objPaintData = {
 
 			if(todo.stateNumber !== 0){
 					//Si proceso cerrado - Diferencia desde fecha de entrega a fecha entregado
-					var restante = fecha2.diff(todo.dateDelivered, 'minutes');
+					var restante = fecha2.diff(todo.dateClosed, 'minutes');
 			} else {
 					//Si proceso abierto - Tiempo restante calculado desde bbdd
 					var restante = ((todo.tiempoRestante-7200000)/1000/60);
@@ -358,34 +437,35 @@ objPaintData = {
 	,paintProgress : function (sla, todo) {
 		switch(true) {
 			case (sla >= 100):
-												// $('#list'+todo._id).css("backgroundColor", "white");
-												$('#list'+todo._id).addClass('time-over');
-												$('#progress'+todo._id).addClass('progress-bar-grey');
-												$('#progress'+todo._id).attr('aria-valuenow',Math.round(sla));
-												$('#progress'+todo._id).attr('style','width:'+Math.round(sla)+'%');
-												break;
+				// $('#list'+todo._id).css("backgroundColor", "white");
+				$('#list'+todo._id).addClass('time-over');
+				$('#progress'+todo._id).addClass('progress-bar-grey');
+				$('#progress'+todo._id).attr('aria-valuenow',Math.round(sla));
+				$('#progress'+todo._id).attr('style','width:'+Math.round(sla)+'%');
+				break;
 			case (sla >= 75):
-												// $('#list'+todo._id).addClass("dangerTime");
-												$('#progress'+todo._id).addClass('progress-bar-danger');
-												$('#progress'+todo._id).attr('aria-valuenow',Math.round(sla));
-												$('#progress'+todo._id).attr('style','width:'+Math.round(sla)+'%');
-												break;
+				// $('#list'+todo._id).addClass("dangerTime");
+				$('#progress'+todo._id).addClass('progress-bar-danger');
+				$('#progress'+todo._id).attr('aria-valuenow',Math.round(sla));
+				$('#progress'+todo._id).attr('style','width:'+Math.round(sla)+'%');
+				break;
 			case (sla >= 50):
-												// $('#list'+todo._id).addClass("warningTime");
-												$('#progress'+todo._id).addClass('progress-bar-warning');
-												$('#progress'+todo._id).attr('aria-valuenow',Math.round(sla));
-												$('#progress'+todo._id).attr('style','width:'+Math.round(sla)+'%');
-												break;
+				// $('#list'+todo._id).addClass("warningTime");
+				$('#progress'+todo._id).addClass('progress-bar-warning');
+				$('#progress'+todo._id).attr('aria-valuenow',Math.round(sla));
+				$('#progress'+todo._id).attr('style','width:'+Math.round(sla)+'%');
+				break;
 			case (sla >= 0):
-												// $('#list'+todo._id).addClass("safeTime");
-												$('#progress'+todo._id).addClass('progress-bar-success');
-												$('#progress'+todo._id).attr('aria-valuenow',Math.round(sla));
-												$('#progress'+todo._id).attr('style','width:'+Math.round(sla)+'%');
-												break;
+				// $('#list'+todo._id).addClass("safeTime");
+				$('#progress'+todo._id).addClass('progress-bar-success');
+				$('#progress'+todo._id).attr('aria-valuenow',Math.round(sla));
+				$('#progress'+todo._id).attr('style','width:'+Math.round(sla)+'%');
+				break;
 		}
 	}
 	,paintCloseProcess : function (todo) {
-		if(todo.stateNumber !== 0){
+				
+		if (objTodos.closeStates.indexOf(todo.stateNumber) > -1 ){
 			$('#progress'+todo._id).removeClass('active');
 			$('.lead#'+todo._id).css('text-decoration', 'line-through');
 		}
@@ -411,7 +491,7 @@ objPaintData = {
 					$('#selection-image'+todo._id).attr('src','/img/icons8-agil.png');
 					break;
 				case 'Expertise':
-					$('#selection-image'+todo._id).attr('src','/img/icons8-agil.png');
+					$('#selection-image'+todo._id).attr('src','/img/icons8-manager.png');
 					break;
 				case 'Estrategica y de impacto':
 					$('#selection-image'+todo._id).attr('src','/img/icons8-king.png');
@@ -428,7 +508,7 @@ objPaintData = {
 			console.log(todo);
 			$('#todo-list').append(
 				`
-				<li class="list-group-item" id="list${todo._id}" >
+				<li class="list-group-item" id="list${todo._id}" data-item="${todo._id}" >
 					<div class="row">
 						<div class="col-md-8">
 							<span class="lead" id="${todo._id}">
@@ -452,9 +532,17 @@ objPaintData = {
 					<div class="pull-right">
 					${todos.isAdmin == false && todos.id !== todo.assignUser._id  ? ''
 						: todos.isAdmin == undefined ? ''
-						: todo.stateNumber == 0 ?
-						`<button class="btn btn-sm btn-primary edit-button" id="button${todo._id}">Editar</button>
-						<button type="button" class="btn btn-sm btn-info close-button" id="close${todo._id}" data-toggle="modal" data-target="#closeForm">Cerrar</button>` : '' }
+						:
+						`<a href="#" class="dropdown-toggle change-actions btn btn-sm btn-primary" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Acciones
+							<span class="caret"></span>
+						</a>
+						<ul class="dropdown-menu actions">
+							<li class="change-state">
+								<a href="#">Cambiar estados</a>
+							</li>
+						</ul>
+						<button class="btn btn-sm btn-primary edit-button">Editar</button>
+						<button type="button" class="btn btn-sm btn-info close-button" data-toggle="modal" data-target="#closeForm">Cerrar</button>` }
 					</div>
 					<div class="clearfix"></div>
 				</li>
@@ -518,8 +606,8 @@ objClient = {
 		$('.modal-body').on('submit', '#newClient-process-form', function(e){
 			e.preventDefault();
 			var formData = {
-				clientName: $(this).find('#newClient').val(),
-				clientTypeNumber : $(this).find('#newClientTypeNumber').val(),
+				clientName: $(this).find('#newClient-process-newClient').val(),
+				clientTypeNumber : $(this).find('#newClient-process-newClientTypeNumber').val(),
 			}
 			var result = formValidationClient(formData);
 			if (objClient.modalFormValidation(result) !== false) {
@@ -564,10 +652,10 @@ objRegistration = {
 		$('#registerNewUserForm').on('submit', function(e) {
 			// e.preventDefault();
 			var formData = {
-				username: $(this).find('#username').val(),
-				password: $(this).find('#password').val(),
-				initials : $(this).find('#initials').val(),
-				email : $(this).find('#email').val(),
+				username: $(this).find('#register-username').val(),
+				password: $(this).find('#register-password').val(),
+				initials : $(this).find('#register-initials').val(),
+				email : $(this).find('#register-email').val(),
 			}
 			var result = formValidationRegister(formData);
 
@@ -594,7 +682,7 @@ function formValidation(data){
 	if((typeof data.name !== 'undefined') && (data.name == '')){
 		 result.push({error : 'true', msg : 'Nombre del proceso'});
 	};
-	if((typeof data.clientTypeId !== 'undefined') && ((data.client == '') || (data.client == 'Elige un cliente'))){
+	if((data.client == '') || (data.client == 'Elige un cliente')){
 		result.push({error : 'true', msg : 'Nombre del cliente'});
 	};
 	if((typeof data.clientTypeNumber !== 'undefined') && ((data.clientTypeNumber == '') || (data.clientTypeNumber == 'Elegir...'))){

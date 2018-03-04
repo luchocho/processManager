@@ -45,7 +45,7 @@ function setPriorityNumber(priorityNumber){
     return priority;
 }
 
-function fetchClientsData(){
+/* function fetchClientsData(){
     try {
          clientsString = fs.readFileSync('./clients.json');
          clientsObj = JSON.parse(clientsString);
@@ -53,18 +53,16 @@ function fetchClientsData(){
          clientsObj = [];
     }
     return clientsObj;
-}
+} */
 
-function saveClientJson(clients){
+/* function saveClientJson(clients){
   fs.writeFileSync('./clients.json', JSON.stringify(clients));
-}
+} */
 
 module.exports = {
     escapeRegex,
     setClientType,
-    setPriorityNumber,
-    fetchClientsData,
-    saveClientJson
+    setPriorityNumber
 }
 
 

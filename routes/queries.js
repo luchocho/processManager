@@ -5,10 +5,9 @@ var User = require("../models/user");
 
 function orderTodos(callback){
 
-  console.log('3');
   Todo.aggregate([
         {
-          $match: {stateNumber: {$nin: [1,2,3]}}
+          $match: {stateNumber: {$nin: [5,6,7]}}
         },
         {
           $lookup:
@@ -36,7 +35,7 @@ function orderTodos(callback){
                 "dateDelivery":1,
                 "createAt":1,
                 "client":1,
-                "dateDelivered":1,
+                "dateClosed":1,
                 "tiempoRestante": {
                           $subtract: [ "$dateDelivery" , new Date() ]
                         },
@@ -56,8 +55,7 @@ function orderTodos(callback){
   });
 }
 
-function orderTodosByName(name, callback){
-  console.log('3bis');
+function orderTodosByName( name, callback){
   Todo.aggregate([
         {
           $match: {
@@ -93,7 +91,7 @@ function orderTodosByName(name, callback){
                 "dateDelivery":1,
                 "createAt":1,
                 "client":1,
-                "dateDelivered":1,
+                "dateClosed":1,
                 "tiempoRestante": {
                           $subtract: [ "$dateDelivery" , new Date() ]
                         },
@@ -114,7 +112,6 @@ function orderTodosByName(name, callback){
 }
 
 function searchByName(name, callback){
-  console.log('3tris');
   Todo.aggregate([
         {
           $match: { name: { $regex: name, $options: 'gi' } }
@@ -145,7 +142,7 @@ function searchByName(name, callback){
                 "dateDelivery":1,
                 "createAt":1,
                 "client":1,
-                "dateDelivered":1,
+                "dateClosed":1,
                 "tiempoRestante": {
                           $subtract: [ "$dateDelivery" , new Date() ]
                         },
@@ -157,7 +154,6 @@ function searchByName(name, callback){
       console.log(err);
       return callback(err);
     } else {
-      console.log(todos);
       callback(null, todos);
     }
   });
