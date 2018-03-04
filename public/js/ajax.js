@@ -309,11 +309,10 @@ objTodos = {
 				
 				$('#process-todoName').val(todo.name);
 				$('#process-todoId').val(todo._id);
+				$('#process-todoState').val(objTodos.validStates[todo.stateNumber].state);
 
-				if ($('#change-state-form #process-changeState option').length === 1) {
-					objTodos.fillStateList(todo);
-				}
-
+				$("#process-changeState option").remove();
+				objTodos.fillStateList(todo);
 			});
 
 			$('#changeStateForm').modal('show');
@@ -321,8 +320,13 @@ objTodos = {
 		});
 	}
 	,fillStateList : function (todo) {
-
+	
 		var select = $("#process-changeState");
+	
+		var el = document.createElement("option");
+		el.textContent = 'Elegir un nuevo estado';
+		el.selected = true;
+		select[0].appendChild(el);
 
 		objTodos.validStates.forEach(function (validState) {
 			if (todo.stateNumber != validState.stateId) {
