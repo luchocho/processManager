@@ -25,7 +25,10 @@ router.post("/register", function(req, res){
             email: req.body.email,
             avatar: req.body.avatar
         });
-    if(req.body.adminCode === configData.adminPass){
+    /* if(req.body.adminCode === configData.adminPass){
+        newUser.isAdmin = true;
+    } */
+    if(req.body.adminCode === process.env.adminPass){
         newUser.isAdmin = true;
     }
 

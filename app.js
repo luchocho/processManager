@@ -38,7 +38,8 @@ var indexRoutes = require("./routes/index");
 
 // PASSPORT CONFIGURATION
 app.use(require("express-session")({
-    secret: configData.session,
+    // secret: configData.session,
+    secret: process.env.secretsession,
     resave: false,
     saveUninitialized: false
 }));
