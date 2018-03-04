@@ -1,6 +1,15 @@
 
 
 objTodos = {
+	closeStates : [4, 5, 6],
+	validStates : [
+		{ state: 'Nuevo', stateId: 0 },
+		{ state: 'Abierto', stateId: 1 },
+		{ state: 'Pendiente', stateId: 2 },
+		{ state: 'Esperando respuesta interna', stateId: 3 },
+		{ state: 'Esperando respuesta cliente', stateId: 4 }
+	],
+
 	init : function () {
 		objTodos.toggleNewProcess();
 		objTodos.toggleEditProcess();
@@ -15,7 +24,8 @@ objTodos = {
 		objTodos.closeProcessData();
 		objTodos.saveProcess();
 		objTodos.searchBar();
-		objTodos.changeProcessState();
+		objTodos.buttonActions();
+		objTodos.changeState();
 	}
 	,toggleNewProcess : function () {
 		$('#new-process-sign').on('click', function(e) {
@@ -276,10 +286,70 @@ objTodos = {
 			});
 		});
 	}
-	,changeProcessState : function () {
-		$('#change-actions-button').on('click', function (e) {
+	,buttonActions : function () {
+		$('#todo-list').on('click','.change-actions', function (e) {
 			e.stopPropagation();
+			e.preventDefault();
+			if ($('.dropdown-menu.actions').is(":visible")){
+				$('.dropdown-menu.actions').hide();
+			} else {
+				$(this).next().toggle();
+			}
+		
 		});
+	}
+	,changeState : function () {
+		$('#todo-list').on('click', '.change-state', function (e) {
+			e.stopPropagation();
+			e.preventDefault();
+			$('.dropdown-menu.actions').hide();
+			var buttonId = $(this).closest('.list-group-item').attr('data-item');
+			var actionUrl = "/todos/" + buttonId;
+			$.get(actionUrl, function (todo) {
+				
+				$('#process-todoName').val(todo.name);
+				$('#process-todoId').val(todo._id);
+
+				if ($('#change-state-form #process-changeState option').length === 1) {
+					objTodos.fillStateList(todo);
+				}
+
+			});
+
+			$('#changeStateForm').modal('show');
+			objTodos.sendChangeState();
+		});
+	}
+	,fillStateList : function (todo) {
+
+		var select = $("#process-changeState");
+
+		objTodos.validStates.forEach(function (validState) {
+			if (todo.stateNumber != validState.stateId) {
+				var el = document.createElement("option");
+				el.textContent = validState.state;
+				el.value = validState.stateId;
+				select[0].appendChild(el);
+			}
+		});
+	}
+	,sendChangeState : function () {
+		$('.modal-body').on('submit', '#change-state-form', function (e) {
+			e.preventDefault();
+			var toDoItem = $(this).serialize();
+			var actionUrl = '/todos/' + $('#process-todoId').val();
+			$.ajax({
+				url: actionUrl,
+				data: toDoItem,
+				type: 'PUT',
+				success: function (data) {
+					objPaintData.paintProcess(data);
+					objPaintData.calcSLATime(data.todos);
+					$('#change-state-form').modal('hide');
+				}
+			});
+		});
+		
 	}
 	,closeProcessData : function () {
 		//Modal Cerrar proceso
@@ -390,7 +460,8 @@ objPaintData = {
 		}
 	}
 	,paintCloseProcess : function (todo) {
-		if(todo.stateNumber !== 0){
+				
+		if (objTodos.closeStates.indexOf(todo.stateNumber) > -1 ){
 			$('#progress'+todo._id).removeClass('active');
 			$('.lead#'+todo._id).css('text-decoration', 'line-through');
 		}
@@ -458,11 +529,11 @@ objPaintData = {
 					${todos.isAdmin == false && todos.id !== todo.assignUser._id  ? ''
 						: todos.isAdmin == undefined ? ''
 						: todo.stateNumber == 0 ?
-						`<a href="#" id="change-actions-button" class="dropdown-toggle btn btn-sm btn-primary" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Acciones
+						`<a href="#" class="dropdown-toggle change-actions btn btn-sm btn-primary" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Acciones
 							<span class="caret"></span>
 						</a>
 						<ul class="dropdown-menu actions">
-							<li id="createClientButton">
+							<li class="change-state">
 								<a href="#">Cambiar estados</a>
 							</li>
 						</ul>

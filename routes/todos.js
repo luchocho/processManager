@@ -136,8 +136,10 @@ router.get("/:id", middleware.isLoggedIn, function(req, res){
 
 router.put("/:id", middleware.checkProcessOwnership, function(req, res){
  
-  req.body.todo.priority = functions.setPriorityNumber(req.body.todo.priorityNumber);
-  
+  if (req.body.todo.priorityNumber) {
+    req.body.todo.priority = functions.setPriorityNumber(req.body.todo.priorityNumber);
+  }
+    
   if (typeof req.body.todo.assignUser !== 'undefined'){
     //Si usuario esta definido, modificar todo
     User.find({ username : req.body.todo.assignUser}, function(err, user){

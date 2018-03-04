@@ -7,7 +7,7 @@ function orderTodos(callback){
 
   Todo.aggregate([
         {
-          $match: {stateNumber: {$nin: [1,2,3]}}
+          $match: {stateNumber: {$nin: [5,6,7]}}
         },
         {
           $lookup:
