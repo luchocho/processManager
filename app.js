@@ -10,7 +10,7 @@ var express = require("express"),
 
 const fs = require('fs');
 
-configData = JSON.parse(fs.readFileSync('./config_files/config_data.json'));
+// configData = JSON.parse(fs.readFileSync('./config_files/config_data.json'));
 
 app.locals.moment = require('moment');
 //var uriConnect = `mongodb://${configData.dbUser}:${configData.dbPassword}@${configData.uriConnect}`
