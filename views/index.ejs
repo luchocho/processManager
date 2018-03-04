@@ -50,6 +50,14 @@
 						</div>
 						<div class="pull-right">
 							<% if(((currentUser && todo.assignUser._id.equals(currentUser._id )) || (currentUser && currentUser.isAdmin)) && (todo.stateNumber == 0)){ %>
+							<a href="#" id="change-actions-button" class="dropdown-toggle change-actions btn btn-sm btn-primary" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Acciones
+								<span class="caret"></span>
+							</a>
+							<ul class="dropdown-menu actions">
+								<li id="createClientButton">
+									<a href="#">Cambiar estados</a>
+								</li>
+							</ul>
 							<button class="btn btn-sm btn-primary edit-button">Editar</button>
 							<button type="button" class="btn btn-sm btn-info close-button" data-toggle="modal" data-target="#closeForm">Cerrar</button>
 							<% } %>

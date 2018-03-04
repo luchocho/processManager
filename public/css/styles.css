@@ -25,6 +25,12 @@ a:link {
 .navbar-inverse .navbar-nav>.active>a, .navbar-inverse .navbar-nav>.active>a:focus, .navbar-inverse .navbar-nav>.active>a:hover{
   background-color: #1c6fb6;
 }
+
+.dropdown-menu.actions {
+  right: auto;
+  top: auto;
+}
+
 /* Hide to do item edit forms on page load */
 .edit-item-form {
 	display: none;

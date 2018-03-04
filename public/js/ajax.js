@@ -15,6 +15,7 @@ objTodos = {
 		objTodos.closeProcessData();
 		objTodos.saveProcess();
 		objTodos.searchBar();
+		objTodos.changeProcessState();
 	}
 	,toggleNewProcess : function () {
 		$('#new-process-sign').on('click', function(e) {
@@ -275,6 +276,11 @@ objTodos = {
 			});
 		});
 	}
+	,changeProcessState : function () {
+		$('#change-actions-button').on('click', function (e) {
+			e.stopPropagation();
+		});
+	}
 	,closeProcessData : function () {
 		//Modal Cerrar proceso
 		$('#todo-list').on('click','.close-button', function(e){
@@ -357,30 +363,30 @@ objPaintData = {
 	,paintProgress : function (sla, todo) {
 		switch(true) {
 			case (sla >= 100):
-												// $('#list'+todo._id).css("backgroundColor", "white");
-												$('#list'+todo._id).addClass('time-over');
-												$('#progress'+todo._id).addClass('progress-bar-grey');
-												$('#progress'+todo._id).attr('aria-valuenow',Math.round(sla));
-												$('#progress'+todo._id).attr('style','width:'+Math.round(sla)+'%');
-												break;
+				// $('#list'+todo._id).css("backgroundColor", "white");
+				$('#list'+todo._id).addClass('time-over');
+				$('#progress'+todo._id).addClass('progress-bar-grey');
+				$('#progress'+todo._id).attr('aria-valuenow',Math.round(sla));
+				$('#progress'+todo._id).attr('style','width:'+Math.round(sla)+'%');
+				break;
 			case (sla >= 75):
-												// $('#list'+todo._id).addClass("dangerTime");
-												$('#progress'+todo._id).addClass('progress-bar-danger');
-												$('#progress'+todo._id).attr('aria-valuenow',Math.round(sla));
-												$('#progress'+todo._id).attr('style','width:'+Math.round(sla)+'%');
-												break;
+				// $('#list'+todo._id).addClass("dangerTime");
+				$('#progress'+todo._id).addClass('progress-bar-danger');
+				$('#progress'+todo._id).attr('aria-valuenow',Math.round(sla));
+				$('#progress'+todo._id).attr('style','width:'+Math.round(sla)+'%');
+				break;
 			case (sla >= 50):
-												// $('#list'+todo._id).addClass("warningTime");
-												$('#progress'+todo._id).addClass('progress-bar-warning');
-												$('#progress'+todo._id).attr('aria-valuenow',Math.round(sla));
-												$('#progress'+todo._id).attr('style','width:'+Math.round(sla)+'%');
-												break;
+				// $('#list'+todo._id).addClass("warningTime");
+				$('#progress'+todo._id).addClass('progress-bar-warning');
+				$('#progress'+todo._id).attr('aria-valuenow',Math.round(sla));
+				$('#progress'+todo._id).attr('style','width:'+Math.round(sla)+'%');
+				break;
 			case (sla >= 0):
-												// $('#list'+todo._id).addClass("safeTime");
-												$('#progress'+todo._id).addClass('progress-bar-success');
-												$('#progress'+todo._id).attr('aria-valuenow',Math.round(sla));
-												$('#progress'+todo._id).attr('style','width:'+Math.round(sla)+'%');
-												break;
+				// $('#list'+todo._id).addClass("safeTime");
+				$('#progress'+todo._id).addClass('progress-bar-success');
+				$('#progress'+todo._id).attr('aria-valuenow',Math.round(sla));
+				$('#progress'+todo._id).attr('style','width:'+Math.round(sla)+'%');
+				break;
 		}
 	}
 	,paintCloseProcess : function (todo) {
@@ -452,7 +458,15 @@ objPaintData = {
 					${todos.isAdmin == false && todos.id !== todo.assignUser._id  ? ''
 						: todos.isAdmin == undefined ? ''
 						: todo.stateNumber == 0 ?
-						`<button class="btn btn-sm btn-primary edit-button">Editar</button>
+						`<a href="#" id="change-actions-button" class="dropdown-toggle btn btn-sm btn-primary" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Acciones
+							<span class="caret"></span>
+						</a>
+						<ul class="dropdown-menu actions">
+							<li id="createClientButton">
+								<a href="#">Cambiar estados</a>
+							</li>
+						</ul>
+						<button class="btn btn-sm btn-primary edit-button">Editar</button>
 						<button type="button" class="btn btn-sm btn-info close-button" data-toggle="modal" data-target="#closeForm">Cerrar</button>` : '' }
 					</div>
 					<div class="clearfix"></div>
