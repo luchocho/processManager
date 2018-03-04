@@ -59,7 +59,6 @@ objTodos = {
 			var formData = {
 				name: $(this).find('#new-process-name').val(),
 				client : $(this).find('#new-process-client').val(),
-				clientTypeId : $(this).find('#new-process-clientTypeId').val(),
 				clientTypeNumber : $(this).find('#new-process-clientTypeNumber').val(),
 				priorityNumber : $(this).find('#new-process-priorityNumber').val(),
 				processType : $(this).find('#new-process-selection').val(),
@@ -256,13 +255,13 @@ objTodos = {
 			    console.log(client);
 				if(client.length !== 0){
 					$("#new-process-clientTypeNumber option").each(function(el){
-						if((el) == client[0].clientTypeNumber){
+						if((el) == client.clientTypeNumber){
 							($(this)).prop('selected', true)
 						} else {
 					    ($(this)).prop('selected', false)
 						}
 					});
-					$("#new-process-clientTypeId").val(client[0].clientTypeId);
+
 				}
 			});
 		});
@@ -594,7 +593,7 @@ function formValidation(data){
 	if((typeof data.name !== 'undefined') && (data.name == '')){
 		 result.push({error : 'true', msg : 'Nombre del proceso'});
 	};
-	if((typeof data.clientTypeId !== 'undefined') && ((data.client == '') || (data.client == 'Elige un cliente'))){
+	if((data.client == '') || (data.client == 'Elige un cliente')){
 		result.push({error : 'true', msg : 'Nombre del cliente'});
 	};
 	if((typeof data.clientTypeNumber !== 'undefined') && ((data.clientTypeNumber == '') || (data.clientTypeNumber == 'Elegir...'))){

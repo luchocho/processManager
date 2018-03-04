@@ -6,7 +6,6 @@ var todoSchema = new mongoose.Schema({
         id: { type: mongoose.Schema.Types.ObjectId,
               ref: "Client"},
         name: String,
-        clientTypeId: Number,
         clientType: String,
         clientTypeNumber: Number
           },

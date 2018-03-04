@@ -56,99 +56,81 @@ router.get("/", middleware.isLoggedIn, function(req, res){
 
 router.post("/", middleware.isLoggedIn, function(req, res){
 
-    req.body.todo.name = req.sanitize(req.body.todo.name);
+  req.body.todo.name = req.sanitize(req.body.todo.name);
 
-    var formData = req.body.todo;
-    formData.clientType = functions.setClientType(formData.clientTypeNumber);
-    formData.priority = functions.setPriorityNumber(formData.priorityNumber);
+  var formData = req.body.todo;
 
-    var clientsData = functions.fetchClientsData ();
-    var clientName;
-    if(typeof formData.clientTypeId !== 'undefined'){
-        clientsData.forEach(function(client){
-            if(client.clientTypeId === formData.clientTypeId){
-                clientName = client.name;
-                return false;
-            }
-         });
+  todoObj = {
+    name: req.body.todo.name,
+    stateNumber: req.body.todo.stateNumber,
+    priorityNumber: req.body.todo.priorityNumber,
+    processType: req.body.todo.processType,
+    createAt: req.body.todo.createAt,
+    dateDelivery: req.body.todo.dateDelivery,
+    office: req.body.todo.office,
+    assignUser: req.body.todo.assignUser,
+    client : {
+      name: req.body.todo.client,
+      clientTypeNumber: req.body.todo.clientTypeNumber,
+    }
+  }
+
+  todoObj.client.clientType = functions.setClientType(todoObj.client.clientTypeNumber);
+  todoObj.priority = functions.setPriorityNumber(todoObj.priorityNumber);
+
+  User.find({ username: todoObj.assignUser}, function(err, user){
+    if(err){todoObj
+        console.log(err);
     } else {
-        return false;
-    }
-
-
-    //Creamos objeto con datos del cliente del formulario
-    var clientData = {
-        name : clientName,
-        clientTypeId : formData.clientTypeId,
-        clientType: formData.clientType,
-        clientTypeNumber : formData.clientTypeNumber
-    }
-
-    User.find({ username : formData.assignUser}, function(err, user){
-        if(err){
-            console.log(err);
-        } else {
-            if(user.length){ //Si encuentra al usuario, setea los datos en el objeto
-                formData.assignUser = {
-                 id: user[0]._id,
-                 username: user[0].username
-                }
-                Client.find({ clientTypeId : clientData.clientTypeId}, function(err, client){
-                    if(err){
-                        console.log(err);
-                    } else {
-                        if(client.length){ //Si encuentra al cliente, setea los datos en el objeto
-                            formData.client = {
-                                id : client[0]._id,
-                                clientTypeId: client[0].clientTypeId,
-                                clientType: client[0].clientType,
-                                clientTypeNumber : client[0].clientTypeNumber
-                            }
-
-                            Todo.create(formData, function(err, newTodo){ //Crea el proceso sin actualizar los datos del cliente
-                                if(err){
-                                  console.log(err);
-                                } else {
-                                    queries.orderTodos(function(err, todos){
-                                        if(err){
-                                            console.log(err);
-                                        }else{
-                                            res.json({todos:todos, id:req.user._id, isAdmin: req.user.isAdmin});
-                                        }
-                                    });
-                                  //res.json(newTodo);
-                                }
-                            });
-                        } else {
-                            return false;
-                        }
-                    }
-                }).limit(1);
-            }
+      if(user.length){ //Si encuentra al usuario, setea los datos en el objeto
+        todoObj.assignUser = {
+          id: user[0]._id,
+          username: user[0].username
         }
-    });
+
+        Client.findOne({ name: todoObj.client.name}, function(err, clientFound){
+          if(err){
+            console.log(err); 
+          } else {
+            if(clientFound){ //Si encuentra al cliente, setea los datos en el objeto
+              Todo.create(todoObj, function (err, newTodo) { //Crea el proceso sin actualizar los datos del cliente
+                if (err) {
+                  console.log(err);
+                } else {
+                  queries.orderTodos(function (err, todos) {
+                    if (err) {
+                      console.log(err);
+                    } else {
+                      res.json({ todos: todos, id: req.user._id, isAdmin: req.user.isAdmin });
+                    }
+                  });
+                  //res.json(newTodo);
+                }
+              });
+            } else {
+              res.json({});
+            }
+          }
+        }).limit(1);
+      }
+    }
+  });
 });
 
 router.get("/:id", middleware.isLoggedIn, function(req, res){
-    Todo.findById(req.params.id, function(err, todo){
-        if(err){
-             console.log(err);
-             res.redirect("/")
-        } else {
-            if(req.xhr) {
-                var clientsData = functions.fetchClientsData ();
-                clientsData.forEach(function(client){
-                    if(client.clientTypeId == todo.client.clientTypeId){
-                        todo.client.name = client.name;
-                        return false;
-                    }
-                });
-                res.json(todo);
-            } else {
-                res.render("edit", {todo: todo});
-            }
-        }
-    });
+  Todo.findById(req.params.id, function(err, todo){
+    if(err){
+      console.log(err);
+      res.redirect("/")
+    } else {
+      if(req.xhr) {
+        console.log(todo);
+        res.json(todo);
+      } else {
+        res.render("edit", {todo: todo});
+      }
+    }
+  });
 });
 
 

@@ -6,35 +6,20 @@ var functions = require("./functions.js");
 
 
 router.get("/", function(req, res){
-    var clientsData = functions.fetchClientsData();
-    if(req.query.name) {
-      clientsData.forEach(function(clientData){
-          if(clientData.name == req.query.name){
-              clientTypeId = clientData.clientTypeId;
-          }
-      });
-      if(typeof clientTypeId !== 'undefined'){
-          Client.find({clientTypeId: clientTypeId},{ clientTypeNumber: 1}, function(err, client){
-              if(err){
-                  console.log(err);
-              } else {
-                  client[0].clientTypeId = clientTypeId;
-                  res.json(client);
-              }
-          });
-      }
-    } else {
-        Client.find({},{clientTypeId : 1}, function(err, clients){
-            if(err){
+
+    if (req.query.name) {
+        Client.findOne({ name: req.query.name}, function (err, client) {
+            if (err) {
                 console.log(err);
             } else {
-                clientsData.forEach(function(clientObj){
-                    clients.forEach(function(client){
-                        if(clientObj.clientTypeId == client.clientTypeId){
-                            client.name = clientObj.name;
-                        }
-                    })
-                });
+                res.json(client);
+            }
+        });
+    } else {
+        Client.find({}, function (err, clients) {
+            if (err) {
+                console.log(err);
+            } else {
                 res.json(clients);
             }
         });
@@ -42,32 +27,37 @@ router.get("/", function(req, res){
 });
 
 router.put("/", function(req, res){
-  var clientsArray = functions.fetchClientsData();
-  var clientObj = {
-    name : req.body.clientData.name,
-    clientTypeId : clientsArray.length + 1
-  };
-  var duplicateClient = clientsArray.filter(function(client){
-      if(client.name == req.body.clientData.name){
-        return client;
-      }
-  });
+  
+    if (typeof req.body.clientData.name === 'undefined') {
+        return false
+    } else {
+        req.body.clientData.name = req.sanitize(req.body.clientData.name);
+        if (req.body.clientData.name.trim().length == 0) {
+            return false;
+        }
+    }
 
-  if(duplicateClient.length === 0) {
-    clientsArray.push(clientObj);
-    functions.saveClientJson(clientsArray);
-    clientObj.clientTypeNumber = req.body.clientData.clientTypeNumber;
-    clientObj.clientType = functions.setClientType(req.body.clientData.clientTypeNumber);
-    clientObj.name = '';
-    Client.create(clientObj, function (err, client) {
-      if (err) {
-        console.log(err);
-      } else {
-        res.json(client);
-      }
-    })
-  }
-
+    var formData = req.body.clientData;
+    formData.clientType = functions.setClientType(formData.clientTypeNumber);
+     
+    
+    Client.findOne({name:formData.name}, function (err,clientFound) {
+        if (err) {
+            console.log(err);
+        } else {
+            if (clientFound) {
+                return false;
+            }
+            
+            Client.create(formData, function (err, client) {
+                if (err) {
+                    console.log(err);
+                } else {
+                    res.json(client);
+                }
+            });        
+        }
+    });
 });
 
 module.exports = router;
