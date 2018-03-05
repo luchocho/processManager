@@ -1,11 +1,11 @@
 
 
 objTodos = {
-	closeStates : [4, 5, 6],
+	closeStates : [5, 6, 7],
 	validStates : [
 		{ state: 'Nuevo', stateId: 0 },
 		{ state: 'Abierto', stateId: 1 },
-		{ state: 'Pendiente', stateId: 2 },
+		{ state: 'Candidaturas entregadas', stateId: 2 },
 		{ state: 'Esperando respuesta interna', stateId: 3 },
 		{ state: 'Esperando respuesta cliente', stateId: 4 }
 	],
