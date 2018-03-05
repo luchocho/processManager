@@ -1,7 +1,7 @@
 
 
 objTodos = {
-	closeStates : [4, 5, 6],
+	closeStates : [5, 6, 7],
 	validStates : [
 		{ state: 'Nuevo', stateId: 0 },
 		{ state: 'Abierto', stateId: 1 },
