@@ -42,9 +42,10 @@ node_modules/
 
 # Config files #
 ######################
-config_files/
+config_files/config_data.json
 
 # Idea #
 #########
 .idea/
 clients.json
+

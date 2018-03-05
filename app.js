@@ -1,3 +1,5 @@
+require('./config_files/config');
+
 var express = require("express"),
     app     = express(),
     mongoose = require("mongoose"),
@@ -10,10 +12,10 @@ var express = require("express"),
 
 const fs = require('fs');
 
-// configData = JSON.parse(fs.readFileSync('./config_files/config_data.json'));
+const port = process.env.PORT;
 
 app.locals.moment = require('moment');
-//var uriConnect = `mongodb://${configData.dbUser}:${configData.dbPassword}@${configData.uriConnect}`
+
 var uriConnect = `mongodb://${process.env.userdb}:${process.env.passdb}@${process.env.uriConnect}`
 mongoose.connect(uriConnect, {useMongoClient: true});
 //mongoose.connect("mongodb://localhost/todo_app");
@@ -38,7 +40,6 @@ var indexRoutes = require("./routes/index");
 
 // PASSPORT CONFIGURATION
 app.use(require("express-session")({
-    // secret: configData.session,
     secret: process.env.secretsession,
     resave: false,
     saveUninitialized: false
@@ -63,11 +64,6 @@ app.use("/user", userRoutes);
 
 
 
-//Conexion a Cloud9
- app.listen(process.env.PORT, process.env.IP, function(){
-    console.log('The server has started ..');
- });
-/* 
- app.listen(3000, function() {
-   console.log('Server running on port 3000');
- }); */
+app.listen(port, function () {
+    console.log(`Started on port ${port}`);
+});
