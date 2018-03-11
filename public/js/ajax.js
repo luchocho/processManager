@@ -9,6 +9,16 @@ objTodos = {
 		{ state: 'Esperando respuesta interna', stateId: 3 },
 		{ state: 'Esperando respuesta cliente', stateId: 4 }
 	],
+	allStates: [
+		{ state: 'Nuevo', stateId: 0 },
+		{ state: 'Abierto', stateId: 1 },
+		{ state: 'Candidaturas entregadas', stateId: 2 },
+		{ state: 'Esperando respuesta interna', stateId: 3 },
+		{ state: 'Esperando respuesta cliente', stateId: 4 },
+		{ state: 'Cerrado', stateId: 5 },
+		{ state: 'Anulado', stateId: 6 },
+		{ state: 'Anulado por cliente', stateId: 7 }
+	],
 
 	init : function () {
 		objTodos.toggleNewProcess();
@@ -311,7 +321,7 @@ objTodos = {
 				$('#process-todoId').val(todo._id);
 				$('#process-changeStateDate').val(moment());
 
-				$('#process-todoState').val(objTodos.validStates[todo.stateNumber].state);
+				$('#process-todoState').val(objTodos.allStates[todo.stateNumber].state);
 
 				$("#process-changeState option").remove();
 				objTodos.fillStateList(todo);
