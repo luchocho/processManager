@@ -35,10 +35,13 @@ router.post("/", middleware.checkProcessOwnership ,function (req, res) {
                 if (err) {
                     console.log(err);
                 } else {
+                    
                     //save state
                     state.save(); 
+                    
                     //Connect new state to todo
                     todo.state.push(state);
+                    
                     todo.stateNumber = req.body.todo.stateId;
 
                     if (closeStates.indexOf(todo.stateNumber) > -1) {
@@ -59,7 +62,6 @@ router.post("/", middleware.checkProcessOwnership ,function (req, res) {
                         
                     } else {
                         todo.save();
-
                         res.json({ todo_id: req.params.id, state: state });
                     }
                 }

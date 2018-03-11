@@ -36,6 +36,7 @@ objTodos = {
 		objTodos.searchBar();
 		objTodos.buttonActions();
 		objTodos.changeState();
+		objTodos.sendChangeState();
 	}
 	,toggleNewProcess : function () {
 		$('#new-process-sign').on('click', function(e) {
@@ -328,7 +329,7 @@ objTodos = {
 			});
 
 			$('#changeStateForm').modal('show');
-			objTodos.sendChangeState();
+			
 		});
 	}
 	,fillStateList : function (todo) {
@@ -356,6 +357,7 @@ objTodos = {
 			var toDoItem = $(this).serialize();
 			
 			var actionUrl = `/todos/${$('#process-todoId').val()}/states`;
+			
 			$.post(actionUrl, toDoItem, function (data) {
 				$('#changeStateForm').modal('hide');
 			});
