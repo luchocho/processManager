@@ -273,7 +273,7 @@ objTodos = {
 		//Rellena el campo tipo de empresa al elegir una empresa ya existente del form crear proceso
 		$('#new-process-client').on('change', function(e) {
 			$.get(`/client?name=${e.target.value}`, function(client){
-			    console.log(client);
+
 				if(client.length !== 0){
 					$("#new-process-clientTypeNumber option").each(function(el){
 						if((el) == client.clientTypeNumber){

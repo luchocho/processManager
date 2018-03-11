@@ -51,7 +51,6 @@ router.post("/", middleware.checkProcessOwnership ,function (req, res) {
                                 if (err) {
                                     console.log(err);
                                 } else {
-                                    console.log(todos);
                                     res.json({ todos: todos, id: req.user._id, isAdmin: req.user.isAdmin });
                                 }
                             });

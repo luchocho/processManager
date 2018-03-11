@@ -142,7 +142,6 @@ router.get("/:id", middleware.isLoggedIn, function(req, res){
       res.redirect("/")
     } else {
       if(req.xhr) {
-        console.log(todo);
         res.json(todo);
       } else {
         res.render("edit", {todo: todo});
