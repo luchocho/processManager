@@ -29,6 +29,7 @@ app.use(methodOverride('_method'));
 var Todo = require("./models/todo");
 var Client = require("./models/client");
 var User = require("./models/user");
+var State = require("./models/todo_state");
 
 // UserSchema.plugin(passportLocalMongoose);
 
@@ -37,6 +38,7 @@ var todoRoutes = require("./routes/todos");
 var clientRoutes = require("./routes/clients");
 var userRoutes = require("./routes/users");
 var indexRoutes = require("./routes/index");
+var stateRoutes = require("./routes/todo_state");
 
 // PASSPORT CONFIGURATION
 app.use(require("express-session")({
@@ -59,6 +61,7 @@ app.use("/", indexRoutes);
 app.use("/todos", todoRoutes);
 app.use("/client", clientRoutes);
 app.use("/user", userRoutes);
+app.use("/todos/:id/states", stateRoutes);
 
 
 

@@ -60,7 +60,7 @@ function orderTodosByName( name, callback){
         {
           $match: {
               $and: [
-                        {stateNumber: {$nin: [1,2,3]}},
+                        {stateNumber: {$nin: [5,6,7]}},
                         {'assignUser.username': name}
                     ]
             }

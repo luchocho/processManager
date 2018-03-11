@@ -1,7 +1,7 @@
 var mongoose = require("mongoose");
 
 var todo_stateSchema = new mongoose.Schema({
-  stateNumber: Number,
+  stateId: Number,
   dateState: {type: Date, default: Date.now },
 });
 

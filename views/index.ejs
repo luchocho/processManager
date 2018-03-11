@@ -45,7 +45,7 @@
 						</div>
 						<div class="progress">
 							<div class="progress-bar progress-bar-striped active" id="progress<%=todo._id%>" role="progressbar"
-  								aria-valuenow="" aria-valuemin="0" aria-valuemax="100" style="width:">
+  								aria-valuenow="" aria-valuemin="0" aria-valuemax="100">
 							</div>
 						</div>
 						<div class="pull-right">
@@ -332,7 +332,7 @@
 						<div class="row">
 							<div class="form-group col-md-12">
 								<label class="col-md-3" for="close-process-stateNumber">Estado</label>
-								<select class="form-control col-md-9" name="todo[stateNumber]" id="close-process-stateNumber">
+								<select class="form-control col-md-9" name="todo[stateId]" id="close-process-stateNumber">
 									<option value="5" selected>Cerrado</option>
 									<option value="6">Anulado</option>
 									<option value="7">Anulado por cliente</option>
@@ -349,7 +349,7 @@
 							</div>
 							<div class="form-group col-md-6">
 								<label class="col-md-3" for="close-process-dateClosed">Finalizado</label>
-								<input type="date" name="todo[dateClosed]" class="form-control col-md-9" value="<%= moment().format('YYYY-MM-DD') %>" id="close-process-dateClosed" readonly>
+								<input type="date" name="todo[dateState]" class="form-control col-md-9" value="<%= moment().format('YYYY-MM-DD') %>" id="close-process-dateClosed" readonly>
 							</div>
 						</div>
 						<button class="btn btn-block btn-success save-modal">Guardar Proceso</button>
@@ -422,6 +422,7 @@
 								<label for="process-todoName" class="col-md-3">Proceso</label>
 								<input type="text" class="form-control col-md-9" value="" id="process-todoName" readonly>
 								<input type="text" class="hidden" value="" name="todo[id]" id="process-todoId">
+								<input type="text" class="hidden" value="" name="todo[dateState]" id="process-changeStateDate">
 							</div>
 							<div class="form-group col-md-5">
 								<label for="process-todoState" class="col-md-9">Estado Actual</label>
@@ -431,7 +432,7 @@
 						<div class="row">
 							<div class="form-group col-md-7">
 								<label class="col-md-3" for="process-changeState">Estados</label>
-								<select class="form-control col-md-9" name="todo[stateNumber]" id="process-changeState">
+								<select class="form-control col-md-9" name="todo[stateId]" id="process-changeState">
 									<!-- <option selected>Elegir un nuevo estado</option> -->
 								</select>
 							</div>

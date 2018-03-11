@@ -9,6 +9,16 @@ objTodos = {
 		{ state: 'Esperando respuesta interna', stateId: 3 },
 		{ state: 'Esperando respuesta cliente', stateId: 4 }
 	],
+	allStates: [
+		{ state: 'Nuevo', stateId: 0 },
+		{ state: 'Abierto', stateId: 1 },
+		{ state: 'Candidaturas entregadas', stateId: 2 },
+		{ state: 'Esperando respuesta interna', stateId: 3 },
+		{ state: 'Esperando respuesta cliente', stateId: 4 },
+		{ state: 'Cerrado', stateId: 5 },
+		{ state: 'Anulado', stateId: 6 },
+		{ state: 'Anulado por cliente', stateId: 7 }
+	],
 
 	init : function () {
 		objTodos.toggleNewProcess();
@@ -26,6 +36,7 @@ objTodos = {
 		objTodos.searchBar();
 		objTodos.buttonActions();
 		objTodos.changeState();
+		objTodos.sendChangeState();
 	}
 	,toggleNewProcess : function () {
 		$('#new-process-sign').on('click', function(e) {
@@ -263,7 +274,7 @@ objTodos = {
 		//Rellena el campo tipo de empresa al elegir una empresa ya existente del form crear proceso
 		$('#new-process-client').on('change', function(e) {
 			$.get(`/client?name=${e.target.value}`, function(client){
-			    console.log(client);
+
 				if(client.length !== 0){
 					$("#new-process-clientTypeNumber option").each(function(el){
 						if((el) == client.clientTypeNumber){
@@ -304,19 +315,21 @@ objTodos = {
 			e.preventDefault();
 			$('.dropdown-menu.actions').hide();
 			var buttonId = $(this).closest('.list-group-item').attr('data-item');
-			var actionUrl = "/todos/" + buttonId;
+			var actionUrl = `/todos/${buttonId}/states`;
 			$.get(actionUrl, function (todo) {
-				
+
 				$('#process-todoName').val(todo.name);
 				$('#process-todoId').val(todo._id);
-				$('#process-todoState').val(objTodos.validStates[todo.stateNumber].state);
+				$('#process-changeStateDate').val(moment());
+
+				$('#process-todoState').val(objTodos.allStates[todo.stateNumber].state);
 
 				$("#process-changeState option").remove();
 				objTodos.fillStateList(todo);
 			});
 
 			$('#changeStateForm').modal('show');
-			objTodos.sendChangeState();
+			
 		});
 	}
 	,fillStateList : function (todo) {
@@ -340,17 +353,13 @@ objTodos = {
 	,sendChangeState : function () {
 		$('.modal-body').on('submit', '#change-state-form', function (e) {
 			e.preventDefault();
+
 			var toDoItem = $(this).serialize();
-			var actionUrl = '/todos/' + $('#process-todoId').val();
-			$.ajax({
-				url: actionUrl,
-				data: toDoItem,
-				type: 'PUT',
-				success: function (data) {
-					objPaintData.paintProcess(data);
-					objPaintData.calcSLATime(data.todos);
-					$('#changeStateForm').modal('hide');
-				}
+			
+			var actionUrl = `/todos/${$('#process-todoId').val()}/states`;
+			
+			$.post(actionUrl, toDoItem, function (data) {
+				$('#changeStateForm').modal('hide');
 			});
 		});
 		
@@ -378,16 +387,12 @@ objTodos = {
 		$('.modal-body').on('submit', '#close-process-form', function(e){
 			e.preventDefault();
 			var toDoItem = $(this).serialize();
-			var actionUrl = '/todos/'+$('#modal-id').val();
-			$.ajax({
-				url: actionUrl,
-				data: toDoItem,
-				type: 'PUT',
-				success: function(data) {
-					objPaintData.paintProcess(data);
-					objPaintData.calcSLATime(data.todos);
-					$('#closeForm').modal('hide');
-				}
+			var actionUrl = `/todos/${$('#modal-id').val()}/states`;
+
+			$.post(actionUrl, toDoItem, function (data) {
+				objPaintData.paintProcess(data);
+				objPaintData.calcSLATime(data.todos);
+				$('#closeForm').modal('hide');
 			});
 		});
 	}
@@ -414,7 +419,7 @@ objPaintData = {
 			//Total de tiempo para el proceso
 			var total = fecha2.diff(fecha1, 'minutes');
 
-			if(todo.stateNumber !== 0){
+			if (objTodos.closeStates.indexOf(todo.stateNumber) > -1) {
 					//Si proceso cerrado - Diferencia desde fecha de entrega a fecha entregado
 					var restante = fecha2.diff(todo.dateClosed, 'minutes');
 			} else {
@@ -505,7 +510,6 @@ objPaintData = {
 	,paintProcess : function (todos) {
 		$('#todo-list').html('');
 		todos.todos.forEach(function(todo){
-			console.log(todo);
 			$('#todo-list').append(
 				`
 				<li class="list-group-item" id="list${todo._id}" data-item="${todo._id}" >
@@ -526,7 +530,7 @@ objPaintData = {
 					</div>
 					<div class="progress">
 						<div class="progress-bar progress-bar-striped active" id="progress${todo._id}" role="progressbar"
-								aria-valuenow="" aria-valuemin="0" aria-valuemax="100" style="width:">
+								aria-valuenow="" aria-valuemin="0" aria-valuemax="100">
 						</div>
 					</div>
 					<div class="pull-right">
@@ -737,7 +741,6 @@ function formValidationRegister(data) {
 	};
 	return result;
 }
-
 
  //LLamada al calculo del tiempo SLA cada 30 mins
  $(document).ready(function() {
