@@ -417,7 +417,7 @@ objPaintData = {
 			//Total de tiempo para el proceso
 			var total = fecha2.diff(fecha1, 'minutes');
 
-			if(todo.stateNumber !== 0){
+			if (objTodos.closeStates.indexOf(todo.stateNumber) > -1) {
 					//Si proceso cerrado - Diferencia desde fecha de entrega a fecha entregado
 					var restante = fecha2.diff(todo.dateClosed, 'minutes');
 			} else {
