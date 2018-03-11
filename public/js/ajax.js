@@ -528,7 +528,7 @@ objPaintData = {
 					</div>
 					<div class="progress">
 						<div class="progress-bar progress-bar-striped active" id="progress${todo._id}" role="progressbar"
-								aria-valuenow="" aria-valuemin="0" aria-valuemax="100" style="width:">
+								aria-valuenow="" aria-valuemin="0" aria-valuemax="100">
 						</div>
 					</div>
 					<div class="pull-right">
