@@ -375,16 +375,12 @@ objTodos = {
 		$('.modal-body').on('submit', '#close-process-form', function(e){
 			e.preventDefault();
 			var toDoItem = $(this).serialize();
-			var actionUrl = '/todos/'+$('#modal-id').val();
-			$.ajax({
-				url: actionUrl,
-				data: toDoItem,
-				type: 'PUT',
-				success: function(data) {
-					objPaintData.paintProcess(data);
-					objPaintData.calcSLATime(data.todos);
-					$('#closeForm').modal('hide');
-				}
+			var actionUrl = `/todos/${$('#modal-id').val()}/states`;
+
+			$.post(actionUrl, toDoItem, function (data) {
+				objPaintData.paintProcess(data);
+				objPaintData.calcSLATime(data.todos);
+				$('#closeForm').modal('hide');
 			});
 		});
 	}
@@ -502,7 +498,6 @@ objPaintData = {
 	,paintProcess : function (todos) {
 		$('#todo-list').html('');
 		todos.todos.forEach(function(todo){
-			console.log(todo);
 			$('#todo-list').append(
 				`
 				<li class="list-group-item" id="list${todo._id}" data-item="${todo._id}" >

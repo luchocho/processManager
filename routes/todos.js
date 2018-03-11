@@ -3,6 +3,7 @@ var router = express.Router();
 var Todo = require("../models/todo");
 var Client = require("../models/client");
 var User = require("../models/user");
+var State = require("../models/todo_state");
 var middleware = require("../middleware");
 var functions = require("./functions.js");
 var queries = require("./queries.js");
@@ -97,14 +98,31 @@ router.post("/", middleware.isLoggedIn, function(req, res){
                 if (err) {
                   console.log(err);
                 } else {
-                  queries.orderTodos(function (err, todos) {
+                  var todoStateHistory = {
+                    stateId: todoObj.stateNumber,
+                    dateState: todoObj.createAt
+                  }
+                  State.create(todoStateHistory, function (err, state) {
                     if (err) {
                       console.log(err);
                     } else {
-                      res.json({ todos: todos, id: req.user._id, isAdmin: req.user.isAdmin });
+
+                      //save state
+                      state.save();
+                      //Connect new state to todo
+                      newTodo.state.push(state);
+                      newTodo.save();
+                      
+                      queries.orderTodos(function (err, todos) {
+                        if (err) {
+                          console.log(err);
+                        } else {
+                          res.json({ todos: todos, id: req.user._id, isAdmin: req.user.isAdmin });
+                        }
+                      });
+                    //res.json(newTodo);
                     }
                   });
-                  //res.json(newTodo);
                 }
               });
             } else {
@@ -140,51 +158,31 @@ router.put("/:id", middleware.checkProcessOwnership, function(req, res){
     req.body.todo.priority = functions.setPriorityNumber(req.body.todo.priorityNumber);
   }
     
-  if (typeof req.body.todo.assignUser !== 'undefined'){
-    //Si usuario esta definido, modificar todo
-    User.find({ username : req.body.todo.assignUser}, function(err, user){
-      if(err){
-         console.log(err);
-      } else {
-          if(user.length){ //Si encuentra al usuario, setea los datos en el objeto
-           req.body.todo.assignUser = {
-             id: user[0]._id,
-             username: user[0].username
-           }
-           Todo.findByIdAndUpdate(req.params.id, req.body.todo, {new: true}, function(err, todo){
-             if(err){
-               console.log(err);
-             } else {
-               queries.orderTodos(function(err, todos){
-                 if(err){
-                   console.log(err);
-                 }else{
-                   res.json({todos:todos, id:req.user._id, isAdmin: req.user.isAdmin});
-                 }
-               });
-             }
-           });
-         }
-      }
-    });
-  } else{
-    //Si usuario no esta definido, cerrar proceso
-    Todo.findByIdAndUpdate(req.params.id, req.body.todo, {new: true}, function(err, todo){
-      if(err){
+  User.find({ username : req.body.todo.assignUser}, function(err, user){
+    if(err){
         console.log(err);
-      } else {
-        queries.orderTodos(function(err, todos){
-          if(err){
-            console.log(err);
-          }else{
-            res.json({todos:todos, id:req.user._id, isAdmin: req.user.isAdmin});
+    } else {
+        if(user.length){ //Si encuentra al usuario, setea los datos en el objeto
+          req.body.todo.assignUser = {
+            id: user[0]._id,
+            username: user[0].username
           }
-        });
-      }
-    });
-  }
-
-
+          Todo.findByIdAndUpdate(req.params.id, req.body.todo, {new: true}, function(err, todo){
+            if(err){
+              console.log(err);
+            } else {
+              queries.orderTodos(function(err, todos){
+                if(err){
+                  console.log(err);
+                }else{
+                  res.json({todos:todos, id:req.user._id, isAdmin: req.user.isAdmin});
+                }
+              });
+            }
+          });
+        }
+    }
+  });
 });
 
 router.delete("/:id", middleware.checkProcessOwnership, function(req, res){
