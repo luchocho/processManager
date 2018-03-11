@@ -422,6 +422,7 @@
 								<label for="process-todoName" class="col-md-3">Proceso</label>
 								<input type="text" class="form-control col-md-9" value="" id="process-todoName" readonly>
 								<input type="text" class="hidden" value="" name="todo[id]" id="process-todoId">
+								<input type="text" class="hidden" value="" name="todo[dateState]" id="process-changeStateDate">
 							</div>
 							<div class="form-group col-md-5">
 								<label for="process-todoState" class="col-md-9">Estado Actual</label>
@@ -431,7 +432,7 @@
 						<div class="row">
 							<div class="form-group col-md-7">
 								<label class="col-md-3" for="process-changeState">Estados</label>
-								<select class="form-control col-md-9" name="todo[stateNumber]" id="process-changeState">
+								<select class="form-control col-md-9" name="todo[stateId]" id="process-changeState">
 									<!-- <option selected>Elegir un nuevo estado</option> -->
 								</select>
 							</div>

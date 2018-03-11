@@ -304,11 +304,13 @@ objTodos = {
 			e.preventDefault();
 			$('.dropdown-menu.actions').hide();
 			var buttonId = $(this).closest('.list-group-item').attr('data-item');
-			var actionUrl = "/todos/" + buttonId;
+			var actionUrl = `/todos/${buttonId}/states`;
 			$.get(actionUrl, function (todo) {
-				
+
 				$('#process-todoName').val(todo.name);
 				$('#process-todoId').val(todo._id);
+				$('#process-changeStateDate').val(moment());
+
 				$('#process-todoState').val(objTodos.validStates[todo.stateNumber].state);
 
 				$("#process-changeState option").remove();
@@ -340,17 +342,12 @@ objTodos = {
 	,sendChangeState : function () {
 		$('.modal-body').on('submit', '#change-state-form', function (e) {
 			e.preventDefault();
+
 			var toDoItem = $(this).serialize();
-			var actionUrl = '/todos/' + $('#process-todoId').val();
-			$.ajax({
-				url: actionUrl,
-				data: toDoItem,
-				type: 'PUT',
-				success: function (data) {
-					objPaintData.paintProcess(data);
-					objPaintData.calcSLATime(data.todos);
-					$('#changeStateForm').modal('hide');
-				}
+			
+			var actionUrl = `/todos/${$('#process-todoId').val()}/states`;
+			$.post(actionUrl, toDoItem, function (data) {
+				$('#changeStateForm').modal('hide');
 			});
 		});
 		
@@ -737,7 +734,6 @@ function formValidationRegister(data) {
 	};
 	return result;
 }
-
 
  //LLamada al calculo del tiempo SLA cada 30 mins
  $(document).ready(function() {
